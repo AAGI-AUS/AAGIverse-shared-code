@@ -1,0 +1,28 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "AAGI Shared Code"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: database/index.qmd
+        text: Database
+      - href: database/table.qmd
+        text: Browse Table
+      - href: database/submit.qmd
+        text: Submit your code!
+      - href: database/data_dictionary.qmd
+        text: Data Dictionary
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    css: assets/styles.scss
+
+execute:
+  freeze: auto

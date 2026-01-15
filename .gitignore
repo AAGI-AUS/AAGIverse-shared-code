@@ -1,0 +1,6 @@
+_site/
+.quarto/
+.Rproj.user/
+renv/library/
+data/raw/
+data/processed/*.parquet
