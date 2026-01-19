@@ -1,0 +1,39 @@
+---
+title: "AAGI Shared Code Database"
+---
+
+## Motivation
+
+- Reduce duplication in our coding practices
+- Offer shared resources to support growing AAGI community, especially new comers
+- Improve statistical rigour and coding practices
+- Create opportunites to connect and collaborate
+- Identify greatest code duplication/overlap for creating software
+
+## FAQs
+
+### How to use the database
+
+#### Who is the database for? 
+
+#### How can the code be used? 
+
+#### What does the existing license mean for my usage?
+
+#### How can code owners be acknowledged?
+
+
+### How to contribute to the database 
+
+#### What type of code can be shared? 
+
+#### What if my code is not public? 
+
+#### I don't know how to use GitHub
+
+#### What license should I choose for my code?
+
+
+
+
+
