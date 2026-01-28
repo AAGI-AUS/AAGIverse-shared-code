@@ -3,7 +3,7 @@ project:
   output-dir: _site
 
 website:
-  title: "AAGI Shared Code"
+  title: "AAGI Shared Code / Code Commons"
   navbar:
     left:
       - href: index.qmd
