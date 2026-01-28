@@ -2,13 +2,18 @@
 title: "Welcome!"
 ---
 
-This is a collection of  code that has been developed, reused, and refined across the AAGI network — shared to make our everyday work easier. 
-
 ## What is this?
 
-This is a curated collection of biometric code that has been developed and reused across AAGI projects. The focus is on practical, working code — the kind that often lives in personal folders but proves useful again and again.
+This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in AAGI projects.
 
-Code here is shared to support collaboration, consistency, and efficiency across teams. Not everything is polished or packaged, and that’s okay.
+Code here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community. 
+
+## Who is the database for? 
+
+This resource is created for AAGI Biometricians in mind.
+
+It may be useful for other uses case from different fields. If this is the case, we encourage you to reach out to the code custodian/maintainer for more context and collaboration. 
+
 
 ## What kind of code will you find?
 
