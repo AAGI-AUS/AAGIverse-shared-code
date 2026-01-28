@@ -12,26 +12,12 @@ title: "AAGI Shared Code Database"
 
 ## FAQs
 
-### How to use the database
-
-#### Who is the database for? 
-
-#### How can the code be used? 
-
-#### What does the existing license mean for my usage?
-
-#### How can code owners be acknowledged?
+### Who is the database for? 
 
 
-### How to contribute to the database 
 
-#### What type of code can be shared? 
 
-#### What if my code is not public? 
 
-#### I don't know how to use GitHub
-
-#### What license should I choose for my code?
 
 
 

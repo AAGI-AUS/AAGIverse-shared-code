@@ -12,15 +12,21 @@ Code here is shared to support collaboration, consistency, and efficiency across
 
 ## What kind of code will you find?
 
-You’ll find a mix of materials, including:
+You’ll find a mix of materials, including ultility functions for:
 
-- Analysis scripts and utility functions
+- data processing and checking
 
-- Data processing and visualisation code
+- data visualisation
+
+- model diagnostics 
+
+- computing summary statistics
+
+- format outputs for reorting
 
 Some contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.
 
-> Explore the database
+> [Explore the database](database/dtable.qmd)
 
 ## How can I contribute?
 
@@ -32,9 +38,9 @@ Contributing is intentionally lightweight. You can:
 
 - Contribute to documentation with examples or data
 
-Code does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here]. Often clear context and basic attribution is more than enough. 
+Code does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough. 
 
-> Learn more on how you can contribute 
+> [Learn more on how you can contribute](database/submit.qmd) 
 
 ##  How should I use the code?
 
@@ -46,4 +52,4 @@ This resource is sustained by recognition and collaboration. All code is shared 
 
 - Contribute improvements if you wish
 
-> Learn more how to use shared code responsibly
+> [Learn more how to use shared code responsibly](database/usage.qmd)

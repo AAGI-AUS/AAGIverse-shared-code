@@ -9,13 +9,13 @@ website:
       - href: index.qmd
         text: Home
       - href: database/index.qmd
-        text: Database
+        text: About
       - href: database/dtable.qmd
-        text: Browse Table
+        text: Explore Database
       - href: database/submit.qmd
-        text: Submit your code!
-      - href: database/metadata.qmd
-        text: Data Dictionary
+        text: Contribute
+      - href: database/usage.qmd
+        text: Using Shared Code
 
 format:
   html:

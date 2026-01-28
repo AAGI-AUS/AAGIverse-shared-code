@@ -1,0 +1,11 @@
+# How to contribute to the database 
+
+## FAQs
+
+### What type of code can be shared? 
+
+### What if my code is not public? 
+
+### I don't know how to use GitHub
+
+### What license should I choose for my code?

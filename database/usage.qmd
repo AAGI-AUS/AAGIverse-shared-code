@@ -1,0 +1,7 @@
+# How can shared code be used? 
+
+## FAQs
+
+### What does the existing license mean for my usage?
+
+### How can code owners be acknowledged?
