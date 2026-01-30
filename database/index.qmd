@@ -2,7 +2,9 @@
 title: "AAGI Shared Code Database"
 ---
 
-## Motivation
+## Our motivation
+
+This project was motivated by our team's desire to:
 
 - Reduce duplication in our coding practices
 - Offer shared resources to support growing AAGI community, especially new comers
@@ -10,16 +12,33 @@ title: "AAGI Shared Code Database"
 - Create opportunites to connect and collaborate
 - Identify greatest code duplication/overlap for creating software
 
-## FAQs
+## What is desk drawer code?
 
-### Who is the database for? 
+Desk drawer code refers to functions that have been created and reused for multiple projects. They may notn neccesarily packaged but have stood the test of successive projects. This type of code often resides in personal folders or your one's "desk drawers" making it less accessible to others who might benefit from its use. This project is about bringing that code to one place for the benefit of the wider AAGI community.
 
-This resource is created for AAGI 
+### 🧑‍🍳 Attributes of desk-drawer code based on usage
 
-### 
+Code that is:
 
+-  in regularly use (implies is up-to-date) in your analytical workflow
+- often duplicated across projects for their usefulness
+- shared with others because it also solves a common problem
+- reused and improved over successive projects
 
+### 🥚 Attributes of desk-drawer code based on the problems it solves
 
+Code that: 
+
+-  Wrangles data that is always consistent format e.g. machine outputs, marker data into genomic related matrix
+-  Checks  or visualises data that has a predictable layout e.g. field/glasshouse design
+- Extracts  useful components from model outputs for checking/reporting/visualising
+- Computes summary statistics from regularly used model outputs
+- Formats results nicely e.g. tables in QMD/RMD
+
+### 🧁 Attributes of desk-drawer code based on it's outcome:
+You don't have to write from scratch every time
+Makes your code tidy, readable. It's modularised
+The workload on common tasks are reduced.
 
 ## Our team
 

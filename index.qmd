@@ -4,7 +4,7 @@ title: "Welcome!"
 
 ## What is this?
 
-This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in AAGI projects.
+This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.
 
 Code here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community. 
 
@@ -12,8 +12,7 @@ Code here is shared to support collaboration, consistency, and make our work eas
 
 This resource is created for AAGI Biometricians in mind.
 
-It may be useful for other uses case from different fields. If this is the case, we encourage you to reach out to the code custodian/maintainer for more context and collaboration. 
-
+It may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration. 
 
 ## What kind of code will you find?
 
