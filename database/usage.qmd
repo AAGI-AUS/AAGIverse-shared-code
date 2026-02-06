@@ -34,6 +34,10 @@ We talk about the attributes of desk-drawer code in our About section, but in ge
 
 We also have others projects such as [AAGI Crop Analytics Cookbook]() and the [AAGI Blog]() that are great platforms for sharing code that may not fit the criteria for desk-drawer code but is still useful to the community. If you are unsure, we encourage you to [reach out to us]() and we can discuss how to best share it with the community.
 
+### What programmaing languages are accepted?
+
+We are open to code in any programming language that is commonly used in the AAGI community. This includes, but is not limited to, R, Python, and Julia. The most important thing is that the code is well-documented and can be easily understood and used by others in the community.
+
 ### Do I need to maintain the code after I share it?
 
 The level of maintenance is up to you. We understand that everyone has different levels of experience and availability, so we want to make the process as flexible as possible. You can let others now in a README what type of code maintenance you can provide. This can simply be a message letting users know that the code is shared as-is and may not be actively maintained.
