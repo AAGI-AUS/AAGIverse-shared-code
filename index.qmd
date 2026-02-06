@@ -44,7 +44,7 @@ Contributing is intentionally lightweight. You can:
 
 Code does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough. 
 
-> [Learn more on how you can contribute](database/submit.qmd) 
+> [Learn more on how you can contribute](database/usage.qmd) 
 
 ##  How should I use the code?
 

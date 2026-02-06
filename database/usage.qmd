@@ -26,7 +26,7 @@ We understand everyone has different levels of experience and availability, so w
 
 3. **Consider code access options**: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It's okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access.
 
-## FAQs
+# FAQs
 
 ### What type of code can be shared?
 

@@ -3,17 +3,16 @@ project:
   output-dir: _site
 
 website:
-  title: "AAGI Shared Code / Code Commons"
+  title: "AAGI Shared Code"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
       - href: database/index.qmd
         text: About
-      - href: database/dtable.qmd
-        text: Explore Database
       - href: database/usage.qmd
         text: Usage and Contributions
+      - href: database/dtable.qmd
+        text: Explore Database
+
 
 format:
   html:
