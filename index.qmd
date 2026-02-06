@@ -10,13 +10,13 @@ Code here is shared to support collaboration, consistency, and make our work eas
 
 ## Who is the database for? 
 
-This resource is created for AAGI Biometricians in mind.
+This resource is created with AAGI Biometricians in mind.
 
 It may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration. 
 
 ## What kind of code will you find?
 
-You’ll find a mix of materials, including ultility functions for:
+You’ll find a mix of materials, including utility functions for:
 
 - data processing and checking
 
@@ -26,7 +26,7 @@ You’ll find a mix of materials, including ultility functions for:
 
 - computing summary statistics
 
-- format outputs for reorting
+- format outputs for reporting
 
 Some contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.
 
