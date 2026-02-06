@@ -14,7 +14,7 @@ Here are some general guidelines for using shared code from our database:
 
 This is a living resource that we hope will grow and evolve with the AAGI community. We encourage everyone to contribute their desk-drawer code to help build a rich database of shared resources.  We want  a frictionless submission process that minimises barriers to contribute to the community. If you have code that you think would be useful to others, all you need to do is reach out to [our team]() and we will work with you to get your code added to the database.
 
-<!-- Can we make a contact form here or link to Github issues for submissions? -->
+<!-- TODO: Can we make a contact form here or link to Github issues for submissions? -->
 
 ## What to expect once you've reached out to us:
 
@@ -22,9 +22,11 @@ We understand everyone has different levels of experience and availability, so w
 
 1. **Prepare Your Code**: Ensure that your code is well-documented and includes any necessary instructions for use. This will help others understand how to use your code effectively. We can assist you with this process if needed, so don't worry if you're not sure how to document your code or if you have never shared code before. LLM can be a helpful tool for generating documentation and providing guidance on best practices for sharing code. 
 
-2. **Choose a License**: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you're unsure about which license to choose, you can refer to [Choose a License](https://choosealicense.com/) for guidance. We are also happy to chat about this with you to help you make an informed decision.
+2. **Consult your AAGI node's intellectual property (IP)registry**: AAGI collaborates with many different partners and we have to honour various IP obligations. Each node will have a registry that will detail which outputs can be shared with the AAGI network. Generally, any "Developed IP" can be shared. Please check your AAGI node's intellectual property registry to ensure that you have the right to share the code and that it does not contain any proprietary information. Given the nature of desk-drawer code, we suspect it should be the case! If you have any questions about this process or need assistance, please don't hesitate to [reach out to us](). We can help you navigate this step and ensure that your code is shared in compliance with your AAGI's policies.
 
-3. **Consider code access options**: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It's okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access.
+3. **Choose a License**: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you're unsure about which license to choose, you can refer to [Choose a License](https://choosealicense.com/) for guidance. We are also happy to chat about this with you to help you make an informed decision.
+
+4. **Consider code access options**: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It's okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access.
 
 # FAQs
 
