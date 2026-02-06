@@ -1,7 +1,45 @@
 # How can shared code be used? 
 
+In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors. 
+
+Here are some general guidelines for using shared code from our database:
+
+1. **Check the License**: Before using any code, check the license under which it is shared. This will inform you of how you can use, modify, and distribute the code. Common licenses include MIT, GPL, and Apache, each with its own terms. To learn more about different licenses, you can visit [Choose a License](https://choosealicense.com/).
+
+2. **Give Credit**: If you use code from the database, make sure to give proper credit to the original authors. We encourage to reach out to the code owner(s) to let them know how their code will be used and to ask if they would like to be acknowledged in a specific way. These conversations can help foster collaboration and ensure that contributions are recognised appropriately. This can be done by citing the code in your project documentation, including a note in your code comments or acknowledging the code maintainer(s) in an acknowledgement/contributions section of your report. 
+
+3. **Follow Best Practices**: When using shared code, it's important to follow best practices for coding and documentation. This includes writing clear comments, maintaining the integrity of the original code, and ensuring that any modifications you make are well-documented.
+
+# How to contribute to the database
+
+This is a living resource that we hope will grow and evolve with the AAGI community. We encourage everyone to contribute their desk-drawer code to help build a rich database of shared resources.  We want  a frictionless submission process that minimises barriers to contribute to the community. If you have code that you think would be useful to others, all you need to do is reach out to [our team]() and we will work with you to get your code added to the database.
+
+<!-- Can we make a contact form here or link to Github issues for submissions? -->
+
+## What to expect once you've reached out to us:
+
+We understand everyone has different levels of experience and availability, so we will work with you to make the process as smooth as possible. Once you reach out to us, we will work with you to:
+
+1. **Prepare Your Code**: Ensure that your code is well-documented and includes any necessary instructions for use. This will help others understand how to use your code effectively. We can assist you with this process if needed, so don't worry if you're not sure how to document your code or if you have never shared code before. LLM can be a helpful tool for generating documentation and providing guidance on best practices for sharing code. 
+
+2. **Choose a License**: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you're unsure about which license to choose, you can refer to [Choose a License](https://choosealicense.com/) for guidance. We are also happy to chat about this with you to help you make an informed decision.
+
+3. **Consider code access options**: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It's okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access.
+
 ## FAQs
 
-### What does the existing license mean for my usage?
+### What type of code can be shared?
 
-### How can code owners be acknowledged?
+We talk about the attributes of desk-drawer code in our About section, but in general we are looking for code that is in regular use, solves common problems, and has been improved over successive projects. These could be functions or scripts that can be turned into functions that help with data wrangling, checking or visualising data, extracting useful components from model outputs, computing summary statistics, or formatting results. 
+
+We also have others projects such as [AAGI Crop Analytics Cookbook]() and the [AAGI Blog]() that are great platforms for sharing code that may not fit the criteria for desk-drawer code but is still useful to the community. If you are unsure, we encourage you to [reach out to us]() and we can discuss how to best share it with the community.
+
+### Do I need to maintain the code after I share it?
+
+The level of maintenance is up to you. We understand that everyone has different levels of experience and availability, so we want to make the process as flexible as possible. You can let others now in a README what type of code maintenance you can provide. This can simply be a message letting users know that the code is shared as-is and may not be actively maintained.
+
+If you are able to maintain the code and keep it up-to-date, you can provide details in your README on how users can provide useful feedback or report bugs such as submitting a GitHub issue or directly contacting you.
+
+### I've made updates to someone else's code, can I share it back to the database?
+
+Yes! We encourage collaboration and sharing improvements to code. If you have made updates to someone else's code, you can share it back to the database by reaching out to us and providing details about the changes you made. We will work with you to get your updated code added to the database and ensure that proper credit is given to the original author(s) as well as yourself for the improvements.

@@ -12,10 +12,8 @@ website:
         text: About
       - href: database/dtable.qmd
         text: Explore Database
-      - href: database/submit.qmd
-        text: Contribute
       - href: database/usage.qmd
-        text: Using Shared Code
+        text: Usage and Contributions
 
 format:
   html:
