@@ -25,7 +25,9 @@ datatable(
   rownames = FALSE,
   options = list(
     pageLength = 25,
-    scrollX = TRUE
+    scrollX = TRUE,
+    searchHighlight = TRUE,
+    search = list(regex = TRUE, caseInsensitive = TRUE),
   )
 )
 ```
