@@ -49,6 +49,24 @@ Code that:
 ::: {.team-grid}
 
 ::: {.team-card}
+![](../assets/team/vivi-arief.png){.team-photo alt="Vivi Arief headshot"}
+<p class="team-name">Vivi Arief</p>
+<p class="team-role">Consult</p>
+:::
+
+::: {.team-card}
+![](../assets/team/robert-armstrong.png){.team-photo alt="Robert Armstrong headshot"}
+<p class="team-name">Robert Armstrong</p>
+<p class="team-role">Advice</p>
+:::
+
+::: {.team-card}
+![](../assets/team/adam-sparks.png){.team-photo alt="Adam Sparks headshot"}
+<p class="team-name">Adam Sparks</p>
+<p class="team-role">Advice, Design and Development</p>
+:::
+
+::: {.team-card}
 ![](../assets/team/rose-megirian.png){.team-photo alt="Rose Megirian headshot"}
 <p class="team-name">Rose Megirian</p>
 <p class="team-role">Documentation and Design</p>
@@ -69,13 +87,13 @@ Code that:
 ::: {.team-card}
 ![](../assets/team/sam-rogers.png){.team-photo alt="Sam Rogers headshot"}
 <p class="team-name">Sam Rogers</p>
-<p class="team-role">Curation &amp; content</p>
+<p class="team-role">Advice, Design and Development</p>
 :::
 
 ::: {.team-card}
 ![](../assets/team/fonti-kar.png){.team-photo alt="Fonti Kar headshot"}
 <p class="team-name">Fonti Kar</p>
-<p class="team-role">Project lead</p>
+<p class="team-role">Project Lead</p>
 :::
 
 :::
