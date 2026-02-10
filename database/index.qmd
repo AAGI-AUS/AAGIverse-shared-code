@@ -41,8 +41,6 @@ Code that:
 - Makes your code tidy, readable. It's modularised
 - The workload on common tasks are reduced.
 
-## Our team
-
 <!-- Photos of team in a nice grid, each photo with a circular crop  -->
 ## Our team
 
