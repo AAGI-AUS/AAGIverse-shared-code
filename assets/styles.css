@@ -1,0 +1,40 @@
+/* css styles */
+
+/* Team grid */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.team-card {
+  text-align: center;
+}
+
+.team-photo {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 0.6rem auto;
+  /* optional: subtle border */
+  border: 2px solid rgba(0,0,0,0.08);
+}
+
+.team-name {
+  font-weight: 600;
+  margin: 0;
+}
+
+.team-role {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.team-links {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+}

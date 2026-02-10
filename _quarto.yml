@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: _site
+  resources:
+    - assets
 
 website:
   title: "AAGI Shared Code"
@@ -19,7 +21,7 @@ format:
     theme: cosmo
     toc: true
     code-fold: true
-    css: assets/styles.scss
+    css: assets/styles.css
 
 execute:
   freeze: auto
