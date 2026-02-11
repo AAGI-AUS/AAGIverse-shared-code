@@ -41,7 +41,7 @@ Code that:
 - Makes your code tidy, readable. It's modularised
 - The workload on common tasks are reduced.
 
-<!-- Photos of team in a nice grid, each photo with a circular crop  -->
+
 ## Our team
 
 ::: {.team-grid}
@@ -77,10 +77,11 @@ Code that:
 :::
 
 ::: {.team-card}
-![](../assets/team/emi-tanaka.png){.team-photo alt="Emi Tanaka headshot"}
+[![](../assets/team/emi-tanaka.png){.team-photo alt="Emi Tanaka headshot"}](https://github.com/emitanaka){target="_blank" rel="noopener"}
 <p class="team-name">Emi Tanaka</p>
 <p class="team-role">Project Lead</p>
 :::
+
 
 ::: {.team-card}
 ![](../assets/team/sam-rogers.png){.team-photo alt="Sam Rogers headshot"}
