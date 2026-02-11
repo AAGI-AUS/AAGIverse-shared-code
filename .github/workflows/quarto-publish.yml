@@ -30,7 +30,7 @@ jobs:
 
       - name: Restore renv
         run: |
-        Rscript -e 'install.packages("renv", repos="https://cloud.r-project.org"); renv::restore()'
+            Rscript -e 'install.packages("renv", repos="https://cloud.r-project.org"); renv::restore()'
 
       # If you fetch data before rendering, run your scripts here (optional):
       # - name: Refresh data
