@@ -1,47 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome!",
-    "section": "",
-    "text": "This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.\nCode here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community."
-  },
-  {
-    "objectID": "index.html#what-is-this",
-    "href": "index.html#what-is-this",
-    "title": "Welcome!",
-    "section": "",
-    "text": "This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.\nCode here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community."
-  },
-  {
-    "objectID": "index.html#who-is-the-database-for",
-    "href": "index.html#who-is-the-database-for",
-    "title": "Welcome!",
-    "section": "Who is the database for?",
-    "text": "Who is the database for?\nThis resource is created for AAGI Biometricians in mind.\nIt may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration."
-  },
-  {
-    "objectID": "index.html#what-kind-of-code-will-you-find",
-    "href": "index.html#what-kind-of-code-will-you-find",
-    "title": "Welcome!",
-    "section": "What kind of code will you find?",
-    "text": "What kind of code will you find?\nYou’ll find a mix of materials, including ultility functions for:\n\ndata processing and checking\ndata visualisation\nmodel diagnostics\ncomputing summary statistics\nformat outputs for reorting\n\nSome contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.\n\nExplore the database"
-  },
-  {
-    "objectID": "index.html#how-can-i-contribute",
-    "href": "index.html#how-can-i-contribute",
-    "title": "Welcome!",
-    "section": "How can I contribute?",
-    "text": "How can I contribute?\nContributing is intentionally lightweight. You can:\n\nShare a function you’ve reused in multiple projects\nMake improvements by working on bug fixes to existing code\nContribute to documentation with examples or data\n\nCode does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough.\n\nLearn more on how you can contribute"
-  },
-  {
-    "objectID": "index.html#how-should-i-use-the-code",
-    "href": "index.html#how-should-i-use-the-code",
-    "title": "Welcome!",
-    "section": "How should I use the code?",
-    "text": "How should I use the code?\nThis resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:\n\nReuse it directly in your own work\nAdapt it to suit your project needs\nContribute improvements if you wish\n\n\nLearn more how to use shared code responsibly"
-  },
-  {
     "objectID": "database/index.html",
     "href": "database/index.html",
     "title": "AAGI Shared Code Database",
@@ -67,7 +25,49 @@
     "href": "database/index.html#our-team",
     "title": "AAGI Shared Code Database",
     "section": "Our team",
-    "text": "Our team"
+    "text": "Our team\n\n\n\n\nVivi Arief\n\n\nConsult\n\n\n\n\n\nRobert Armstrong\n\n\nAdvice\n\n\n\n\n\nAdam Sparks\n\n\nAdvice, Design and Development\n\n\n\n\n\nRose Megirian\n\n\nDocumentation and Design\n\n\n\n\n\nJulian Taylor\n\n\nProject Lead\n\n\n\n\n\nEmi Tanaka\n\n\nProject Lead\n\n\n\n\n\nSam Rogers\n\n\nAdvice, Design and Development\n\n\n\n\n\nFonti Kar\n\n\nProject Lead"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome!",
+    "section": "",
+    "text": "This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.\nCode here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community."
+  },
+  {
+    "objectID": "index.html#what-is-this",
+    "href": "index.html#what-is-this",
+    "title": "Welcome!",
+    "section": "",
+    "text": "This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.\nCode here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community."
+  },
+  {
+    "objectID": "index.html#who-is-the-database-for",
+    "href": "index.html#who-is-the-database-for",
+    "title": "Welcome!",
+    "section": "Who is the database for?",
+    "text": "Who is the database for?\nThis resource is created with AAGI Biometricians in mind.\nIt may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration."
+  },
+  {
+    "objectID": "index.html#what-kind-of-code-will-you-find",
+    "href": "index.html#what-kind-of-code-will-you-find",
+    "title": "Welcome!",
+    "section": "What kind of code will you find?",
+    "text": "What kind of code will you find?\nYou’ll find a mix of materials, including utility functions for:\n\ndata processing and checking\ndata visualisation\nmodel diagnostics\ncomputing summary statistics\nformat outputs for reporting\n\nSome contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.\n\nExplore the database"
+  },
+  {
+    "objectID": "index.html#how-can-i-contribute",
+    "href": "index.html#how-can-i-contribute",
+    "title": "Welcome!",
+    "section": "How can I contribute?",
+    "text": "How can I contribute?\nContributing is intentionally lightweight. You can:\n\nShare a function you’ve reused in multiple projects\nMake improvements by working on bug fixes to existing code\nContribute to documentation with examples or data\n\nCode does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough.\n\nLearn more on how you can contribute"
+  },
+  {
+    "objectID": "index.html#how-should-i-use-the-code",
+    "href": "index.html#how-should-i-use-the-code",
+    "title": "Welcome!",
+    "section": "How should I use the code?",
+    "text": "How should I use the code?\nThis resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:\n\nReuse it directly in your own work\nAdapt it to suit your project needs\nContribute improvements if you wish\n\n\nLearn more how to use shared code responsibly"
   },
   {
     "objectID": "database/usage.html",
