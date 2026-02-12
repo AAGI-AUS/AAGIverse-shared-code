@@ -15,11 +15,9 @@ library(readr)
 library(dplyr)
 library(DT)
 
+source(here("scripts/00_helpers.R"))
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
-df$`Code link` <- paste0("<a href='", df$`Code link`, "'>", df$`Code link`, "</a>")
-df$Website <- paste0("<a href='", df$df$Website, "'>", df$df$Website, "</a>")
-# Do we need to handle missing emails? Probably...
-df$Email <- ifelse(!is.null(df$Email) && !is.na(df$Email), paste0("<a href='mailto:", df$Email, "'>", df$Email, "</a>"), "") 
+df <- df |> mutate(make_hyperlink(Website))
 ```
 
 ```{r}
