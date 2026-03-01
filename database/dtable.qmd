@@ -18,6 +18,14 @@ library(DT)
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
 ```
 
+::: {.callout-tip collapse="true"}
+## Searching The Table
+
+The table search box is case insensitive, and will search across all columns and return rows that match the search term(s).
+You can also use regular expressions (regex) to search the table.
+
+:::
+
 ```{r}
 datatable(
   df,
@@ -27,7 +35,7 @@ datatable(
     pageLength = 25,
     scrollX = TRUE,
     searchHighlight = TRUE,
-    search = list(regex = TRUE, caseInsensitive = TRUE),
+    search = list(regex = TRUE, caseInsensitive = TRUE)
   )
 )
 ```
