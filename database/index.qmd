@@ -41,9 +41,58 @@ Code that:
 - Makes your code tidy, readable. It's modularised
 - The workload on common tasks are reduced.
 
+
 ## Our team
 
-<!-- Photos of team in a nice grid, each photo with a circular crop  -->
+::: {.team-grid}
+
+::: {.team-card}
+![](../assets/team/vivi-arief.png){.team-photo alt="Vivi Arief headshot"}
+<p class="team-name">Vivi Arief</p>
+<p class="team-role">Consult</p>
+:::
+
+::: {.team-card}
+![](../assets/team/robert-armstrong.png){.team-photo alt="Robert Armstrong headshot"}
+<p class="team-name">Robert Armstrong</p>
+<p class="team-role">Advice</p>
+:::
+
+::: {.team-card}
+![](../assets/team/adam-sparks.png){.team-photo alt="Adam Sparks headshot"}
+<p class="team-name">Adam Sparks</p>
+<p class="team-role">Advice, Design and Development</p>
+:::
+
+::: {.team-card}
+![](../assets/team/rose-megirian.png){.team-photo alt="Rose Megirian headshot"}
+<p class="team-name">Rose Megirian</p>
+<p class="team-role">Documentation and Design</p>
+:::
+
+::: {.team-card}
+![](../assets/team/julian-taylor.png){.team-photo alt="Julian Taylor headshot"}
+<p class="team-name">Julian Taylor</p>
+<p class="team-role">Project Lead</p>
+:::
+
+::: {.team-card}
+[![](../assets/team/emi-tanaka.png){.team-photo alt="Emi Tanaka headshot"}](https://github.com/emitanaka){target="_blank" rel="noopener"}
+<p class="team-name">Emi Tanaka</p>
+<p class="team-role">Project Lead</p>
+:::
 
 
+::: {.team-card}
+![](../assets/team/sam-rogers.png){.team-photo alt="Sam Rogers headshot"}
+<p class="team-name">Sam Rogers</p>
+<p class="team-role">Advice, Design and Development</p>
+:::
 
+::: {.team-card}
+![](../assets/team/fonti-kar.png){.team-photo alt="Fonti Kar headshot"}
+<p class="team-name">Fonti Kar</p>
+<p class="team-role">Project Lead</p>
+:::
+
+:::

@@ -15,7 +15,11 @@ library(readr)
 library(dplyr)
 library(DT)
 
+source(here("scripts/00_helpers.R"))
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
+df <- df |> mutate(Website = make_hyperlink(Website), 
+`Code link` = make_hyperlink(`Code link`), 
+Email = make_hyperlink_email(Email))
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -35,7 +39,7 @@ datatable(
     pageLength = 25,
     scrollX = TRUE,
     searchHighlight = TRUE,
-    search = list(regex = TRUE, caseInsensitive = TRUE)
-  )
+    search = list(regex = TRUE, caseInsensitive = TRUE), 
+    escape = FALSE
 )
 ```
