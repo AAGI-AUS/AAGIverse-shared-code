@@ -22,6 +22,14 @@ df <- df |> mutate(Website = make_hyperlink(Website),
 Email = make_hyperlink_email(Email))
 ```
 
+::: {.callout-tip collapse="true"}
+## Searching The Table
+
+The table search box is case insensitive, and will search across all columns and return rows that match the search term(s).
+You can also use regular expressions (regex) to search the table.
+
+:::
+
 ```{r}
 datatable(
   df,
@@ -29,8 +37,9 @@ datatable(
   rownames = FALSE,
   options = list(
     pageLength = 25,
-    scrollX = TRUE
-  ), 
-  escape = FALSE
+    scrollX = TRUE,
+    searchHighlight = TRUE,
+    search = list(regex = TRUE, caseInsensitive = TRUE), 
+    escape = FALSE
 )
 ```
