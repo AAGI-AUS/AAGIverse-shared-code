@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: _site
+  resources:
+    - assets
 
 website:
   title: "AAGI Shared Code"
