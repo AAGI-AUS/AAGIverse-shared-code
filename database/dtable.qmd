@@ -40,6 +40,6 @@ datatable(
     scrollX = TRUE,
     searchHighlight = TRUE,
     search = list(regex = TRUE, caseInsensitive = TRUE), 
-    escape = FALSE
+    escape = FALSE)
 )
 ```
