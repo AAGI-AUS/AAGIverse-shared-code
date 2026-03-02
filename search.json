@@ -1,33 +1,5 @@
 [
   {
-    "objectID": "database/index.html",
-    "href": "database/index.html",
-    "title": "AAGI Shared Code Database",
-    "section": "",
-    "text": "This project was motivated by our team’s desire to:\n\nReduce duplication in our coding practices\nOffer shared resources to support growing AAGI community, especially new comers\nImprove statistical rigour and coding practices\nCreate opportunites to connect and collaborate\nIdentify greatest code duplication/overlap for creating software"
-  },
-  {
-    "objectID": "database/index.html#our-motivation",
-    "href": "database/index.html#our-motivation",
-    "title": "AAGI Shared Code Database",
-    "section": "",
-    "text": "This project was motivated by our team’s desire to:\n\nReduce duplication in our coding practices\nOffer shared resources to support growing AAGI community, especially new comers\nImprove statistical rigour and coding practices\nCreate opportunites to connect and collaborate\nIdentify greatest code duplication/overlap for creating software"
-  },
-  {
-    "objectID": "database/index.html#what-is-desk-drawer-code",
-    "href": "database/index.html#what-is-desk-drawer-code",
-    "title": "AAGI Shared Code Database",
-    "section": "What is desk drawer code?",
-    "text": "What is desk drawer code?\nDesk drawer code refers to functions that have been created and reused for multiple projects. They may not be neccesarily packaged but have stood the test of successive projects. This type of code often resides in personal folders or your one’s “desk drawers” making it less accessible to others who might benefit from its use. This project is about bringing that code to one place for the benefit of the wider AAGI community.\n\n🧑‍🍳 Attributes of desk-drawer code based on usage\nCode that is:\n\nin regularly use (implies is up-to-date) in your analytical workflow\noften duplicated across projects for their usefulness\nshared with others because it also solves a common problem\nreused and improved over successive projects\n\n\n\n🥚 Attributes of desk-drawer code based on the problems it solves\nCode that:\n\nWrangles data that is always consistent format e.g. machine outputs, marker data into genomic related matrix\nChecks or visualises data that has a predictable layout e.g. field/glasshouse design\nExtracts useful components from model outputs for checking/reporting/visualising\nComputes summary statistics from regularly used model outputs\nFormats results nicely e.g. tables in QMD/RMD\n\n\n\n🧁 Attributes of desk-drawer code based on it’s outcome:\n\nYou don’t have to write from scratch every time\nMakes your code tidy, readable. It’s modularised\nThe workload on common tasks are reduced."
-  },
-  {
-    "objectID": "database/index.html#our-team",
-    "href": "database/index.html#our-team",
-    "title": "AAGI Shared Code Database",
-    "section": "Our team",
-    "text": "Our team\n\n\n\n\nVivi Arief\n\n\nConsult\n\n\n\n\n\nRobert Armstrong\n\n\nAdvice\n\n\n\n\n\nAdam Sparks\n\n\nAdvice, Design and Development\n\n\n\n\n\nRose Megirian\n\n\nDocumentation and Design\n\n\n\n\n\nJulian Taylor\n\n\nProject Lead\n\n\n\n\n\nEmi Tanaka\n\n\nProject Lead\n\n\n\n\n\nSam Rogers\n\n\nAdvice, Design and Development\n\n\n\n\n\nFonti Kar\n\n\nProject Lead"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Welcome!",
@@ -68,6 +40,34 @@
     "title": "Welcome!",
     "section": "How should I use the code?",
     "text": "How should I use the code?\nThis resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:\n\nReuse it directly in your own work\nAdapt it to suit your project needs\nContribute improvements if you wish\n\n\nLearn more how to use shared code responsibly"
+  },
+  {
+    "objectID": "database/index.html",
+    "href": "database/index.html",
+    "title": "AAGI Shared Code Database",
+    "section": "",
+    "text": "This project was motivated by our team’s desire to:\n\nReduce duplication in our coding practices\nOffer shared resources to support growing AAGI community, especially new comers\nImprove statistical rigour and coding practices\nCreate opportunites to connect and collaborate\nIdentify greatest code duplication/overlap for creating software"
+  },
+  {
+    "objectID": "database/index.html#our-motivation",
+    "href": "database/index.html#our-motivation",
+    "title": "AAGI Shared Code Database",
+    "section": "",
+    "text": "This project was motivated by our team’s desire to:\n\nReduce duplication in our coding practices\nOffer shared resources to support growing AAGI community, especially new comers\nImprove statistical rigour and coding practices\nCreate opportunites to connect and collaborate\nIdentify greatest code duplication/overlap for creating software"
+  },
+  {
+    "objectID": "database/index.html#what-is-desk-drawer-code",
+    "href": "database/index.html#what-is-desk-drawer-code",
+    "title": "AAGI Shared Code Database",
+    "section": "What is desk drawer code?",
+    "text": "What is desk drawer code?\nDesk drawer code refers to functions that have been created and reused for multiple projects. They may not be neccesarily packaged but have stood the test of successive projects. This type of code often resides in personal folders or your one’s “desk drawers” making it less accessible to others who might benefit from its use. This project is about bringing that code to one place for the benefit of the wider AAGI community.\n\n🧑‍🍳 Attributes of desk-drawer code based on usage\nCode that is:\n\nin regularly use (implies is up-to-date) in your analytical workflow\noften duplicated across projects for their usefulness\nshared with others because it also solves a common problem\nreused and improved over successive projects\n\n\n\n🥚 Attributes of desk-drawer code based on the problems it solves\nCode that:\n\nWrangles data that is always consistent format e.g. machine outputs, marker data into genomic related matrix\nChecks or visualises data that has a predictable layout e.g. field/glasshouse design\nExtracts useful components from model outputs for checking/reporting/visualising\nComputes summary statistics from regularly used model outputs\nFormats results nicely e.g. tables in QMD/RMD\n\n\n\n🧁 Attributes of desk-drawer code based on it’s outcome:\n\nYou don’t have to write from scratch every time\nMakes your code tidy, readable. It’s modularised\nThe workload on common tasks are reduced."
+  },
+  {
+    "objectID": "database/index.html#our-team",
+    "href": "database/index.html#our-team",
+    "title": "AAGI Shared Code Database",
+    "section": "Our team",
+    "text": "Our team\n\n\n\n\nVivi Arief\n\n\nConsult\n\n\n\n\n\nRobert Armstrong\n\n\nAdvice\n\n\n\n\n\nAdam Sparks\n\n\nAdvice, Design and Development\n\n\n\n\n\nRose Megirian\n\n\nDocumentation and Design\n\n\n\n\n\nJulian Taylor\n\n\nProject Lead\n\n\n\n\n\nEmi Tanaka\n\n\nProject Lead\n\n\n\n\n\nSam Rogers\n\n\nAdvice, Design and Development\n\n\n\n\n\nFonti Kar\n\n\nProject Lead"
   },
   {
     "objectID": "database/usage.html",
