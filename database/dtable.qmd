@@ -17,7 +17,9 @@ library(DT)
 
 source(here("scripts/00_helpers.R"))
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
-df <- df |> mutate(make_hyperlink(Website))
+df <- df |> mutate(Website = make_hyperlink(Website), 
+`Code link` = make_hyperlink(`Code link`), 
+Email = make_hyperlink_email(Email))
 ```
 
 ```{r}
