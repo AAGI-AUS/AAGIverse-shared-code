@@ -1,5 +1,5 @@
 make_hyperlink <- function(x) {
-  return(paste0("<a href='", x,"'>", x,"</a>"))
+  return(paste0("<a href='", x,"' target='_blank'>", x,"</a>"))
 }
 
 make_hyperlink_email <- function(x) {
