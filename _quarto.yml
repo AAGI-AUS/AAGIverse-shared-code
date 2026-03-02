@@ -15,13 +15,13 @@ website:
       - href: database/dtable.qmd
         text: Explore Database
 
-
 format:
   html:
     theme: cosmo
     toc: true
     code-fold: true
-    css: assets/styles.css
+    css: assets/styles.scss
+    page-layout: full
 
 execute:
   freeze: auto

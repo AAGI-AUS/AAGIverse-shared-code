@@ -9,6 +9,8 @@ suppressPackageStartupMessages({
     library(lubridate)
 })
 
+source("scripts/00_helpers.R")
+
 # ------------------------------------------------------------
 # Project configuration (change here if needed)
 # ------------------------------------------------------------
@@ -28,8 +30,9 @@ df <- read_csv(RAW_CSV, show_col_types = FALSE) |>
 header_lookup <- setNames(header_key$submission_question, header_key$dt_display_header)
 
 df <- df |>
-    rename(all_of(header_lookup))
-
+    rename(all_of(header_lookup)) #|> 
+    # mutate(`Code link` = make_hyperlink(`Code link`),
+            # Website = make_hyperlink(Website)) 
 
 dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
 write_csv(df, OUT_CSV)
