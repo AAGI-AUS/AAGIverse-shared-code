@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "database/dtable.html",
+    "href": "database/dtable.html",
+    "title": "Browse the Database",
+    "section": "",
+    "text": "TipSearching The Table\n\n\n\n\n\nThe table search box is case insensitive, and will search across all columns and return rows that match the search term(s). You can also use regular expressions (regex) to search the table."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Welcome!",
