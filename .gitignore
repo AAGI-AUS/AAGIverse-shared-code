@@ -4,5 +4,9 @@ _site/
 renv/library/
 data/raw/
 data/processed/*.parquet
-
+README.html
 /.quarto/
+.DS_Store
+README_files/
+
+
