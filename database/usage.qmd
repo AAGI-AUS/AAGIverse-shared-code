@@ -2,7 +2,7 @@
 
 In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors. Below are some general guidelines for using shared code from our database:
 
-# Navigating intellectual property of AAGI outputs
+# Navigating intellectual property
 
 When contributing code to the AAGI shared code database, it’s helpful to understand where the code originated and what permissions apply. Not all code is treated the same: some may have been written before a project began, some may have been developed during project work, and some may rely on external libraries or datasets. These are handled differently. 
 
