@@ -21,7 +21,7 @@ Click here for the code [submission Google form](https://docs.google.com/forms/d
 :::
 <!-- TODO: Can we make a contact form here or link to Github issues for submissions? -->
 
-## What to expect once you've reached out to us:
+## What to expect once you've reached out to us
 
 We understand everyone has different levels of experience and availability, so we will work with you to make the process as smooth as possible. Once you reach out to us, we will work with you to:
 

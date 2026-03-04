@@ -20,7 +20,7 @@ format:
     theme: cosmo
     toc: true
     code-fold: true
-    css: assets/styles.scss
+    css: assets/styles.css
     page-layout: full
 
 execute:
