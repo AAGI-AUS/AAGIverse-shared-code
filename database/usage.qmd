@@ -14,6 +14,11 @@ Here are some general guidelines for using shared code from our database:
 
 This is a living resource that we hope will grow and evolve with the AAGI community. We encourage everyone to contribute their desk-drawer code to help build a rich database of shared resources.  We want  a frictionless submission process that minimises barriers to contribute to the community. If you have code that you think would be useful to others, all you need to do is reach out to [our team]() and we will work with you to get your code added to the database.
 
+If you are familar with GitHub and licenses, you can also submit your code directly via a Google Form process. We will review the submission and work with you to ensure that it is properly documented and licensed before adding it to the database.
+
+::: {.callout-note}
+Click here for the code [submission Google form](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){target="_blank"}.
+:::
 <!-- TODO: Can we make a contact form here or link to Github issues for submissions? -->
 
 ## What to expect once you've reached out to us:
