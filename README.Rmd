@@ -48,7 +48,7 @@ install.packages("renv")
 4. Restore the R environment. This will take a while and install all the required dependencies needed to render the entire website.
 
 ```{r}
-renv::restore
+renv::restore()
 ```
 
 5. Click on any .qmd and hit 'Render' or use the `quarto render` and `quarto preview` command on the command line

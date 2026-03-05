@@ -37,7 +37,7 @@ datatable(
     pageLength = 25,
     scrollX = TRUE,
     searchHighlight = TRUE,
-    search = list(regex = TRUE, caseInsensitive = TRUE), 
+    search = list(regex = TRUE, caseInsensitive = TRUE)
     )
 )
 ```

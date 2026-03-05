@@ -7,25 +7,25 @@
 
 This project was motivated by our team’s desire to:
 
--   Reduce duplication in our coding practices
--   Offer shared resources to support growing AAGI community, especially
-    new comers
--   Improve statistical rigour and coding practices
--   Create opportunites to connect and collaborate
--   Identify areas of greatest code duplication/overlap for creating
-    software
+- Reduce duplication in our coding practices
+- Offer shared resources to support growing AAGI community, especially
+  new comers
+- Improve statistical rigour and coding practices
+- Create opportunites to connect and collaborate
+- Identify areas of greatest code duplication/overlap for creating
+  software
 
 ## Contents
 
 In this repository, you will find the code that:
 
--   Compiles the metadata of shared [desk-drawer
-    code](https://aagi-aus.github.io/AAGIverse-shared-code/database/#what-is-desk-drawer-code)
-    into a [searchable
-    database](https://aagi-aus.github.io/AAGIverse-shared-code/database/dtable.html)
--   Provides
-    [guidance](https://aagi-aus.github.io/AAGIverse-shared-code/database/usage.html)
-    on how to interact and contribute to the database
+- Compiles the metadata of shared [desk-drawer
+  code](https://aagi-aus.github.io/AAGIverse-shared-code/database/#what-is-desk-drawer-code)
+  into a [searchable
+  database](https://aagi-aus.github.io/AAGIverse-shared-code/database/dtable.html)
+- Provides
+  [guidance](https://aagi-aus.github.io/AAGIverse-shared-code/database/usage.html)
+  on how to interact and contribute to the database
 
 ## Dependencies
 
@@ -46,7 +46,7 @@ install.packages("renv")
     the required dependencies needed to render the entire website.
 
 ``` r
-renv::restore
+renv::restore()
 ```
 
 5.  Click on any .qmd and hit ‘Render’ or use the `quarto render` and
