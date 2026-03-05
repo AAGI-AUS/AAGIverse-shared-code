@@ -1,0 +1,61 @@
+name: Refresh data, render, deploy (Quarto)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *"  # daily 18:00 UTC (optional)
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      # If you use renv (recommended), restore deps:
+      - name: Restore renv
+        run: |
+          Rscript -e 'install.packages("renv", repos="https://cloud.r-project.org"); renv::restore()'
+
+      # Pull + clean your sheet data
+      - name: Fetch data from Google Sheet (published CSV)
+        run: Rscript scripts/01_fetch_data.R
+
+      - name: Clean and validate data
+        run: Rscript scripts/02_clean_validate.R
+
+      # Render site (DT reads data/processed/submissions_cleaned.csv)
+      - name: Render site
+        run: quarto render
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
