@@ -32,11 +32,12 @@ datatable(
   df,
   filter = "top",
   rownames = FALSE,
+  escape = FALSE,
   options = list(
     pageLength = 25,
     scrollX = TRUE,
     searchHighlight = TRUE,
     search = list(regex = TRUE, caseInsensitive = TRUE), 
-    escape = FALSE)
+    )
 )
 ```

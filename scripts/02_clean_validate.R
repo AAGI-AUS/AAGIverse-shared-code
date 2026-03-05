@@ -32,7 +32,7 @@ header_lookup <- setNames(header_key$submission_question, header_key$dt_display_
 df_clean <- df |>
     rename(all_of(header_lookup)) |>
     mutate(`Software website` = make_hyperlink(`Software website`),
-           `Code maintainer` = make_hyperlink_email(`Email`))
+           `Email` = make_hyperlink_email(`Email`))
 
 dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
 write_csv(df_clean, OUT_CSV)
