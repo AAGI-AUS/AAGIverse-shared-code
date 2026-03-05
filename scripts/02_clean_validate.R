@@ -29,12 +29,12 @@ df <- read_csv(RAW_CSV, show_col_types = FALSE) |>
 # Rename columns based on header key
 header_lookup <- setNames(header_key$submission_question, header_key$dt_display_header)
 
-df <- df |>
-    rename(all_of(header_lookup)) #|> 
-    # mutate(`Code link` = make_hyperlink(`Code link`),
-            # Website = make_hyperlink(Website)) 
+df_clean <- df |>
+    rename(all_of(header_lookup)) |>
+    mutate(`Software website` = make_hyperlink(`Software website`),
+           `Code maintainer` = make_hyperlink_email(`Email`))
 
 dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
-write_csv(df, OUT_CSV)
+write_csv(df_clean, OUT_CSV)
 
 cat("✓ Data cleaned and validated successfully\n")
