@@ -30,9 +30,16 @@ df <- read_csv(RAW_CSV, show_col_types = FALSE) |>
 header_lookup <- setNames(header_key$submission_question, header_key$dt_display_header)
 
 df_clean <- df |>
-    rename(all_of(header_lookup)) |>
-    mutate(`Software website` = make_hyperlink(`Software website`),
-           `Email` = make_hyperlink_email(`Email`))
+  rename(all_of(header_lookup)) |>
+  mutate( # Format the website and email
+    `Software website` = make_hyperlink(`Software website`),
+    `Email` = make_hyperlink_email(`Email`)
+  ) |> 
+  mutate( # Format the long Description field
+    `Description preview` = truncate_field(`Description`),
+    `Description` = tooltip_span(`Description`, `Description preview`)
+  ) |> 
+  select(-`Description preview`)
 
 dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
 write_csv(df_clean, OUT_CSV)
