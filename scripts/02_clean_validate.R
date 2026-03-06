@@ -29,6 +29,7 @@ df <- read_csv(RAW_CSV, show_col_types = FALSE) |>
 # Rename columns based on header key
 header_lookup <- setNames(header_key$submission_question, header_key$dt_display_header)
 
+# HTML formating
 df_clean <- df |>
   rename(all_of(header_lookup)) |>
   mutate( # Format the website and email
@@ -36,7 +37,7 @@ df_clean <- df |>
     `Email` = make_hyperlink_email(`Email`)
   ) |> 
   mutate( # Format the long Description field
-    `Description preview` = truncate_field(`Description`),
+    `Description preview` = truncate_field(`Description`, nchar = 80),
     `Description` = tooltip_span(`Description`, `Description preview`)
   ) |> 
   select(-`Description preview`)

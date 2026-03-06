@@ -43,3 +43,9 @@
   margin-top: 0.35rem;
   font-size: 0.9rem;
 }
+
+/* DT table nice-ness */
+table span[title] {
+  border-bottom: 1px dotted #bbb;
+}
+

@@ -20,12 +20,14 @@ df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = 
 ```
 
 ::: {.callout-tip collapse="true"}
-## Searching The Table
+## Interacting with the database
 
-The table search box is case insensitive, and will search across all columns and return rows that match the search term(s).
-You can also use regular expressions (regex) to search the table.
+- The **search box** is case insensitive, and will search across all columns and return rows that match the search term(s).
+You can also use regular expressions (regex) to search the table. 
 
+- **Hover** your cursor to view the full **description** for each row! 
 :::
+
 
 ```{r}
 datatable(
