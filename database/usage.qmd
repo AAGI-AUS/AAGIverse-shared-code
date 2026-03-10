@@ -1,8 +1,22 @@
 # How can shared code be used? 
 
-In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors. 
+In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors. Below are some general guidelines for using shared code from our database:
 
-Here are some general guidelines for using shared code from our database:
+# Navigating intellectual property
+
+When contributing code to the AAGI shared code database, it’s helpful to understand where the code originated and what permissions apply. Not all code is treated the same: some may have been written before a project began, some may have been developed during project work, and some may rely on external libraries or datasets. These are handled differently. 
+
+The table below is a simple guide to common IP categories you may encounter. In most cases, sharing is straightforward — the main goal is simply to ensure the code is shared appropriately and with clear attribution.
+
+| Term | Definition | Examples | What to do when sharing code |
+|-----|-------------|----------|------------------------------|
+| **Background IP** | Intellectual property that existed **before** the current project or was developed **outside** the scope of the project. It is typically owned by the individual, their employer, or another organisation. | Personal utility functions developed before joining the project; code from a previous project; existing R packages or scripts you already maintained. | Confirm you have the right to share it. If appropriate, include the original license and attribution. If the code belongs to another organisation or project, check their sharing policy before contributing. |
+| **Developed IP** | Intellectual property created **during the course of a project** and within the scope of project activities or funding agreements. Ownership and sharing rights may depend on organisational policies or project contracts. | Data processing scripts written for the project; statistical models developed for an AAGI study; functions created specifically to analyse project datasets. | Check project or organisational policies on sharing. If allowed, share the code under the agreed license and include context (project name, purpose, authors). If unsure, consult the project lead or relevant governance contact before sharing. |
+| **Third-party IP** | Code or software created by **external parties** and reused in the project under their own licenses or terms of use. | CRAN packages; GitHub libraries; scripts obtained from collaborators or external researchers. | Do not redistribute the code unless the license allows it. Instead, reference the source and license, and direct users to the original repository or package. |
+
+If you are unsure which category applies, don’t worry — most contributions fall into background IP or developed IP, and sharing is usually straightforward. When in doubt, reach out. We can help. 
+
+# Guidelines for using shared code
 
 1. **Check the License**: Before using any code, check the license under which it is shared. This will inform you of how you can use, modify, and distribute the code. Common licenses include MIT, GPL, and Apache, each with its own terms. To learn more about different licenses, you can visit [Choose a License](https://choosealicense.com/).
 
@@ -41,7 +55,7 @@ We talk about the attributes of desk-drawer code in our About section, but in ge
 
 We also have others projects such as [AAGI Crop Analytics Cookbook]() and the [AAGI Blog]() that are great platforms for sharing code that may not fit the criteria for desk-drawer code but is still useful to the community. If you are unsure, we encourage you to [reach out to us]() and we can discuss how to best share it with the community.
 
-### What programmaing languages are accepted?
+### What programming languages are accepted?
 
 We are open to code in any programming language that is commonly used in the AAGI community. This includes, but is not limited to, R, Python, and Julia. The most important thing is that the code is well-documented and can be easily understood and used by others in the community.
 
