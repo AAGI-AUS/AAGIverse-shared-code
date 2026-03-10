@@ -8,7 +8,7 @@ on:
     - cron: "0 18 * * *"  # daily 18:00 UTC (optional)
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
