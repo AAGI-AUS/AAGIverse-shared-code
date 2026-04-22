@@ -42,6 +42,27 @@
     "text": "How should I use the code?\nThis resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:\n\nReuse it directly in your own work\nAdapt it to suit your project needs\nContribute improvements if you wish\n\n\nLearn more how to use shared code responsibly"
   },
   {
+    "objectID": "database/usage.html",
+    "href": "database/usage.html",
+    "title": "How can shared code be used?",
+    "section": "",
+    "text": "In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors.\nHere are some general guidelines for using shared code from our database:\n\nCheck the License: Before using any code, check the license under which it is shared. This will inform you of how you can use, modify, and distribute the code. Common licenses include MIT, GPL, and Apache, each with its own terms. To learn more about different licenses, you can visit Choose a License.\nGive Credit: If you use code from the database, make sure to give proper credit to the original authors. We encourage to reach out to the code owner(s) to let them know how their code will be used and to ask if they would like to be acknowledged in a specific way. These conversations can help foster collaboration and ensure that contributions are recognised appropriately. This can be done by citing the code in your project documentation, including a note in your code comments or acknowledging the code maintainer(s) in an acknowledgement/contributions section of your report.\nFollow Best Practices: When using shared code, it’s important to follow best practices for coding and documentation. This includes writing clear comments, maintaining the integrity of the original code, and ensuring that any modifications you make are well-documented."
+  },
+  {
+    "objectID": "database/usage.html#what-to-expect-once-youve-reached-out-to-us",
+    "href": "database/usage.html#what-to-expect-once-youve-reached-out-to-us",
+    "title": "How can shared code be used?",
+    "section": "What to expect once you’ve reached out to us",
+    "text": "What to expect once you’ve reached out to us\nWe understand everyone has different levels of experience and availability, so we will work with you to make the process as smooth as possible. Once you reach out to us, we will work with you to:\n\nPrepare Your Code: Ensure that your code is well-documented and includes any necessary instructions for use. This will help others understand how to use your code effectively. We can assist you with this process if needed, so don’t worry if you’re not sure how to document your code or if you have never shared code before. LLM can be a helpful tool for generating documentation and providing guidance on best practices for sharing code.\nConsult your AAGI node’s intellectual property (IP)registry: AAGI collaborates with many different partners and we have to honour various IP obligations. Each node will have a registry that will detail which outputs can be shared with the AAGI network. Generally, any “Developed IP” can be shared. Please check your AAGI node’s intellectual property registry to ensure that you have the right to share the code and that it does not contain any proprietary information. Given the nature of desk-drawer code, we suspect it should be the case! If you have any questions about this process or need assistance, please don’t hesitate to reach out to us. We can help you navigate this step and ensure that your code is shared in compliance with your AAGI’s policies.\nChoose a License: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you’re unsure about which license to choose, you can refer to Choose a License for guidance. We are also happy to chat about this with you to help you make an informed decision.\nConsider code access options: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It’s okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access."
+  },
+  {
+    "objectID": "database/dtable.html",
+    "href": "database/dtable.html",
+    "title": "Browse the Database",
+    "section": "",
+    "text": "TipInteracting with the database\n\n\n\n\n\n\nThe search box is case insensitive, and will search across all columns and return rows that match the search term(s). You can also use regular expressions (regex) to search the table.\nHover your cursor to view the full description for each row!"
+  },
+  {
     "objectID": "database/index.html",
     "href": "database/index.html",
     "title": "AAGI Shared Code Database",
@@ -68,26 +89,5 @@
     "title": "AAGI Shared Code Database",
     "section": "Our team",
     "text": "Our team\n\n\n\n\nVivi Arief\n\n\nConsult\n\n\n\n\n\nRobert Armstrong\n\n\nAdvice\n\n\n\n\n\nAdam Sparks\n\n\nAdvice, Design and Development\n\n\n\n\n\nRose Megirian\n\n\nDocumentation and Design\n\n\n\n\n\nJulian Taylor\n\n\nProject Lead\n\n\n\n\n\nEmi Tanaka\n\n\nProject Lead\n\n\n\n\n\nSam Rogers\n\n\nAdvice, Design and Development\n\n\n\n\n\nFonti Kar\n\n\nProject Lead"
-  },
-  {
-    "objectID": "database/usage.html",
-    "href": "database/usage.html",
-    "title": "How can shared code be used?",
-    "section": "",
-    "text": "In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors.\nHere are some general guidelines for using shared code from our database:\n\nCheck the License: Before using any code, check the license under which it is shared. This will inform you of how you can use, modify, and distribute the code. Common licenses include MIT, GPL, and Apache, each with its own terms. To learn more about different licenses, you can visit Choose a License.\nGive Credit: If you use code from the database, make sure to give proper credit to the original authors. We encourage to reach out to the code owner(s) to let them know how their code will be used and to ask if they would like to be acknowledged in a specific way. These conversations can help foster collaboration and ensure that contributions are recognised appropriately. This can be done by citing the code in your project documentation, including a note in your code comments or acknowledging the code maintainer(s) in an acknowledgement/contributions section of your report.\nFollow Best Practices: When using shared code, it’s important to follow best practices for coding and documentation. This includes writing clear comments, maintaining the integrity of the original code, and ensuring that any modifications you make are well-documented."
-  },
-  {
-    "objectID": "database/usage.html#what-to-expect-once-youve-reached-out-to-us",
-    "href": "database/usage.html#what-to-expect-once-youve-reached-out-to-us",
-    "title": "How can shared code be used?",
-    "section": "What to expect once you’ve reached out to us",
-    "text": "What to expect once you’ve reached out to us\nWe understand everyone has different levels of experience and availability, so we will work with you to make the process as smooth as possible. Once you reach out to us, we will work with you to:\n\nPrepare Your Code: Ensure that your code is well-documented and includes any necessary instructions for use. This will help others understand how to use your code effectively. We can assist you with this process if needed, so don’t worry if you’re not sure how to document your code or if you have never shared code before. LLM can be a helpful tool for generating documentation and providing guidance on best practices for sharing code.\nConsult your AAGI node’s intellectual property (IP)registry: AAGI collaborates with many different partners and we have to honour various IP obligations. Each node will have a registry that will detail which outputs can be shared with the AAGI network. Generally, any “Developed IP” can be shared. Please check your AAGI node’s intellectual property registry to ensure that you have the right to share the code and that it does not contain any proprietary information. Given the nature of desk-drawer code, we suspect it should be the case! If you have any questions about this process or need assistance, please don’t hesitate to reach out to us. We can help you navigate this step and ensure that your code is shared in compliance with your AAGI’s policies.\nChoose a License: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you’re unsure about which license to choose, you can refer to Choose a License for guidance. We are also happy to chat about this with you to help you make an informed decision.\nConsider code access options: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It’s okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access."
-  },
-  {
-    "objectID": "database/dtable.html",
-    "href": "database/dtable.html",
-    "title": "Browse the Database",
-    "section": "",
-    "text": "TipInteracting with the database\n\n\n\n\n\n\nThe search box is case insensitive, and will search across all columns and return rows that match the search term(s). You can also use regular expressions (regex) to search the table.\nHover your cursor to view the full description for each row!"
   }
 ]
