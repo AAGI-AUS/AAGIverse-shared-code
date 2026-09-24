@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -39,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-4897d45d2f75ed4f519693be625836c5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-3e9b1289f5f353c49b617ce48ad2bc38.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -121,6 +124,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#how-can-shared-code-be-used" id="toc-how-can-shared-code-be-used" class="nav-link active" data-scroll-target="#how-can-shared-code-be-used">How can shared code be used?</a></li>
+  <li><a href="#navigating-intellectual-property" id="toc-navigating-intellectual-property" class="nav-link" data-scroll-target="#navigating-intellectual-property">Navigating intellectual property</a></li>
+  <li><a href="#guidelines-for-using-shared-code" id="toc-guidelines-for-using-shared-code" class="nav-link" data-scroll-target="#guidelines-for-using-shared-code">Guidelines for using shared code</a></li>
   <li><a href="#how-to-contribute-to-the-database" id="toc-how-to-contribute-to-the-database" class="nav-link" data-scroll-target="#how-to-contribute-to-the-database">How to contribute to the database</a>
   <ul class="collapse">
   <li><a href="#what-to-expect-once-youve-reached-out-to-us" id="toc-what-to-expect-once-youve-reached-out-to-us" class="nav-link" data-scroll-target="#what-to-expect-once-youve-reached-out-to-us">What to expect once you’ve reached out to us</a></li>
@@ -128,7 +133,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#faqs" id="toc-faqs" class="nav-link" data-scroll-target="#faqs">FAQs</a>
   <ul class="collapse">
   <li><a href="#what-type-of-code-can-be-shared" id="toc-what-type-of-code-can-be-shared" class="nav-link" data-scroll-target="#what-type-of-code-can-be-shared">What type of code can be shared?</a></li>
-  <li><a href="#what-programmaing-languages-are-accepted" id="toc-what-programmaing-languages-are-accepted" class="nav-link" data-scroll-target="#what-programmaing-languages-are-accepted">What programmaing languages are accepted?</a></li>
+  <li><a href="#what-programming-languages-are-accepted" id="toc-what-programming-languages-are-accepted" class="nav-link" data-scroll-target="#what-programming-languages-are-accepted">What programming languages are accepted?</a></li>
   <li><a href="#do-i-need-to-maintain-the-code-after-i-share-it" id="toc-do-i-need-to-maintain-the-code-after-i-share-it" class="nav-link" data-scroll-target="#do-i-need-to-maintain-the-code-after-i-share-it">Do I need to maintain the code after I share it?</a></li>
   <li><a href="#ive-made-updates-to-someone-elses-code-can-i-share-it-back-to-the-database" id="toc-ive-made-updates-to-someone-elses-code-can-i-share-it-back-to-the-database" class="nav-link" data-scroll-target="#ive-made-updates-to-someone-elses-code-can-i-share-it-back-to-the-database">I’ve made updates to someone else’s code, can I share it back to the database?</a></li>
   </ul></li>
@@ -143,8 +148,52 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="how-can-shared-code-be-used" class="level1">
 <h1>How can shared code be used?</h1>
-<p>In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors.</p>
-<p>Here are some general guidelines for using shared code from our database:</p>
+<p>In the spirit of open science, we encourage the use of AAGI shared code in your projects. We only ask users to respect the licenses set by the code contributors. Below are some general guidelines for using shared code from our database:</p>
+</section>
+<section id="navigating-intellectual-property" class="level1">
+<h1>Navigating intellectual property</h1>
+<p>When contributing code to the AAGI shared code database, it’s helpful to understand where the code originated and what permissions apply. Not all code is treated the same: some may have been written before a project began, some may have been developed during project work, and some may rely on external libraries or datasets. These are handled differently.</p>
+<p>The table below is a simple guide to common IP categories you may encounter. In most cases, sharing is straightforward — the main goal is simply to ensure the code is shared appropriately and with clear attribution.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 22%">
+<col style="width: 17%">
+<col style="width: 51%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Definition</th>
+<th>Examples</th>
+<th>What to do when sharing code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Background IP</strong></td>
+<td>Intellectual property that existed <strong>before</strong> the current project or was developed <strong>outside</strong> the scope of the project. It is typically owned by the individual, their employer, or another organisation.</td>
+<td>Personal utility functions developed before joining the project; code from a previous project; existing R packages or scripts you already maintained.</td>
+<td>Confirm you have the right to share it. If appropriate, include the original license and attribution. If the code belongs to another organisation or project, check their sharing policy before contributing.</td>
+</tr>
+<tr class="even">
+<td><strong>Developed IP</strong></td>
+<td>Intellectual property created <strong>during the course of a project</strong> and within the scope of project activities or funding agreements. Ownership and sharing rights may depend on organisational policies or project contracts.</td>
+<td>Data processing scripts written for the project; statistical models developed for an AAGI study; functions created specifically to analyse project datasets.</td>
+<td>Check project or organisational policies on sharing. If allowed, share the code under the agreed license and include context (project name, purpose, authors). If unsure, consult the project lead or relevant governance contact before sharing.</td>
+</tr>
+<tr class="odd">
+<td><strong>Third-party IP</strong></td>
+<td>Code or software created by <strong>external parties</strong> and reused in the project under their own licenses or terms of use.</td>
+<td>CRAN packages; GitHub libraries; scripts obtained from collaborators or external researchers.</td>
+<td>Do not redistribute the code unless the license allows it. Instead, reference the source and license, and direct users to the original repository or package.</td>
+</tr>
+</tbody>
+</table>
+<p>If you are unsure which category applies, don’t worry — most contributions fall into background IP or developed IP, and sharing is usually straightforward. When in doubt, reach out. We can help.</p>
+</section>
+<section id="guidelines-for-using-shared-code" class="level1">
+<h1>Guidelines for using shared code</h1>
 <ol type="1">
 <li><p><strong>Check the License</strong>: Before using any code, check the license under which it is shared. This will inform you of how you can use, modify, and distribute the code. Common licenses include MIT, GPL, and Apache, each with its own terms. To learn more about different licenses, you can visit <a href="https://choosealicense.com/">Choose a License</a>.</p></li>
 <li><p><strong>Give Credit</strong>: If you use code from the database, make sure to give proper credit to the original authors. We encourage to reach out to the code owner(s) to let them know how their code will be used and to ask if they would like to be acknowledged in a specific way. These conversations can help foster collaboration and ensure that contributions are recognised appropriately. This can be done by citing the code in your project documentation, including a note in your code comments or acknowledging the code maintainer(s) in an acknowledgement/contributions section of your report.</p></li>
@@ -187,8 +236,8 @@ Note
 <p>We talk about the attributes of desk-drawer code in our About section, but in general we are looking for code that is in regular use, solves common problems, and has been improved over successive projects. These could be functions or scripts that can be turned into functions that help with data wrangling, checking or visualising data, extracting useful components from model outputs, computing summary statistics, or formatting results.</p>
 <p>We also have others projects such as <a href="">AAGI Crop Analytics Cookbook</a> and the <a href="">AAGI Blog</a> that are great platforms for sharing code that may not fit the criteria for desk-drawer code but is still useful to the community. If you are unsure, we encourage you to <a href="">reach out to us</a> and we can discuss how to best share it with the community.</p>
 </section>
-<section id="what-programmaing-languages-are-accepted" class="level3">
-<h3 class="anchored" data-anchor-id="what-programmaing-languages-are-accepted">What programmaing languages are accepted?</h3>
+<section id="what-programming-languages-are-accepted" class="level3">
+<h3 class="anchored" data-anchor-id="what-programming-languages-are-accepted">What programming languages are accepted?</h3>
 <p>We are open to code in any programming language that is commonly used in the AAGI community. This includes, but is not limited to, R, Python, and Julia. The most important thing is that the code is well-documented and can be easily understood and used by others in the community.</p>
 </section>
 <section id="do-i-need-to-maintain-the-code-after-i-share-it" class="level3">
