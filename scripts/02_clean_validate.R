@@ -9,7 +9,7 @@ suppressPackageStartupMessages({
     library(lubridate)
 })
 
-source("scripts/00_helpers.R")
+source(here("scripts/00_helpers.R"))
 
 # ------------------------------------------------------------
 # Project configuration (change here if needed)

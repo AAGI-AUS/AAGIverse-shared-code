@@ -5,20 +5,26 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 18 * * *"  # daily 18:00 UTC (optional)
+    - cron: "0 18 * * *"  # daily 18:00 UTC
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Pinned so the PPM distro codename in RENV_CONFIG_REPOS_OVERRIDE matches.
+    # If you bump this, bump the codename below to match.
+    runs-on: ubuntu-24.04
+
+    env:
+      # renv restores against the repositories recorded in renv.lock, which
+      # point at source CRAN. Without this override it compiles every package
+      # from source and rlang fails to build.
+      RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/noble/latest
 
     steps:
       - name: Checkout
@@ -29,11 +35,12 @@ jobs:
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.2'  # must match the R version pinned in renv.lock
+          use-public-rspm: true
 
-      # If you use renv (recommended), restore deps:
-      - name: Restore renv
-        run: |
-          Rscript -e 'install.packages("renv", repos="https://cloud.r-project.org"); renv::restore()'
+      - name: Restore renv (cached)
+        uses: r-lib/actions/setup-renv@v2
 
       # Pull + clean your sheet data
       - name: Fetch data from Google Sheet (published CSV)
@@ -46,14 +53,8 @@ jobs:
       - name: Render site
         run: quarto render
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _site
-  
