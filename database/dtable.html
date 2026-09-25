@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Browse the database – AAGI Shared Code</title>
+<title>Browse the Database – AAGI Shared Code</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -42,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-73b0ff3878a4e6fc3716dc69a6aaefa3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-6bc8889dfaed3ac47add4336f30a353f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-55617497126496852ff9f5a59253c640.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,11 +73,29 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="../site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="../site_libs/datatables-binding-0.34.0/datatables.js"></script>
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="../site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="../site_libs/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet">
+<script src="../site_libs/nouislider-7.0.10/jquery.nouislider.min.js"></script>
+<link href="../site_libs/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
+<script src="../site_libs/selectize-0.12.0/selectize.min.js"></script>
+<link href="../site_libs/dt-plugin-searchhighlight-1.13.6/source.css" rel="stylesheet">
+<script src="../site_libs/dt-plugin-searchhighlight-1.13.6/jquery.highlight.js"></script>
+<script src="../site_libs/dt-plugin-searchhighlight-1.13.6/source.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
 
 
+<link rel="stylesheet" href="../assets/styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -114,21 +132,23 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Browse the database</h1>
+<h1 class="title">Browse the Database</h1>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -140,274 +160,31 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="db-controls">
-<label class="visually-hidden" for="db-search">Search the database</label> <input id="db-search" class="db-search" type="search" autocomplete="off" placeholder="Search by package, author, keyword or description…">
-<p class="db-count-line">
-<strong id="db-count">6</strong> of 6 entries
-</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div class="db-chips" role="group" aria-label="Filter by code keyword">
-<p><button type="button" class="chip" data-key="data analysis" aria-pressed="false">Data analysis</button><button type="button" class="chip" data-key="data validation" aria-pressed="false">Data validation</button><button type="button" class="chip" data-key="data visualiation" aria-pressed="false">Data visualiation</button><button type="button" class="chip" data-key="design of experiments" aria-pressed="false">Design of experiments</button><button type="button" class="chip" data-key="model diagnostics" aria-pressed="false">Model diagnostics</button><button type="button" class="chip" data-key="model post-processing" aria-pressed="false">Model post-processing</button> <button type="button" class="chip chip-clear" id="db-clear">Clear filters</button></p>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Interacting with the database
 </div>
-<div class="db-results">
-<article class="entry" data-search="heritable emi tanaka australian national university reporting heritability estimates is an important to quantitative genetics studies and breeding experiments. here we provide functions to calculate various broad-sense heritabilities from 'asreml' and 'lme4' model objects. all methods we have implemented in this package have extensively discussed in the article by schmidt et al. (2019) data analysis multi-environment trials single environment trials r gpl-3 r package" data-keywords="data analysis">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://anu-aagi.github.io/heritable/" target="_blank" rel="noopener">heritable</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">GPL-3</span><span class="badge-meta">R package</span>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-</header>
-<p class="entry-by">
-Emi Tanaka <span class="sep">/</span> Australian National University
-</p>
-<p class="entry-desc">
-Reporting heritability estimates is an important to quantitative genetics studies and breeding experiments. Here we provide functions to calculate various broad-sense heritabilities from ‘asreml’ and ‘lme4’ model objects. All methods we have implemented in this package have extensively discussed in the article by Schmidt et al.&nbsp;(2019)
-</p>
-<ul class="entry-tags">
-<li>
-Multi-environment trials
-</li>
-<li>
-Single environment trials
-</li>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>The <strong>search box</strong> is case insensitive, and will search across all columns and return rows that match the search term(s). You can also use regular expressions (regex) to search the table.</p></li>
+<li><p><strong>Hover</strong> your cursor to view the full <strong>description</strong> for each row!</p></li>
 </ul>
-<p class="entry-links">
-<a href="mailto:emi.tanaka@anu.edu.au">Contact maintainer</a>
-</p>
-</article>
-<article class="entry" data-search="cbadasreml adam sparks curtin university a collection of helper functions for small-plot trial analysis using asreml-r data analysis model diagnostics data analysis asreml small plot trial r gpl-3 r package" data-keywords="data analysis|model diagnostics">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://github.com/AAGI-AUS/CBADASReml" target="_blank" rel="noopener">CBADASReml</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">GPL-3</span><span class="badge-meta">R package</span>
 </div>
-</header>
-<p class="entry-by">
-Adam Sparks <span class="sep">/</span> Curtin University
-</p>
-<p class="entry-desc">
-A collection of helper functions for small-plot trial analysis using ASReml-R
-</p>
-<ul class="entry-tags">
-<li>
-Data analysis
-</li>
-<li>
-ASREML
-</li>
-<li>
-Small plot trial
-</li>
-</ul>
-<p class="entry-links">
-<a href="mailto:adam.sparks@curtin.edu.au">Contact maintainer</a>
-</p>
-</article>
-<article class="entry" data-search="biometryassist sam rogers adelaide university the goal of biometryassist is to provide functions to aid in the design and analysis of agronomic-style experiments through easy access to documentation and helper functions, especially while teaching these concepts. data analysis data visualiation model diagnostics experimental design multi-environment trials r mit package/module/library" data-keywords="data analysis|data visualiation|model diagnostics">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://biometryhub.github.io/biometryassist/" target="_blank" rel="noopener">biometryassist</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">MIT</span><span class="badge-meta">Package/Module/Library</span>
 </div>
-</header>
-<p class="entry-by">
-Sam Rogers <span class="sep">/</span> Adelaide University
-</p>
-<p class="entry-desc">
-The goal of biometryassist is to provide functions to aid in the Design and Analysis of Agronomic-style experiments through easy access to documentation and helper functions, especially while teaching these concepts.
-</p>
-<ul class="entry-tags">
-<li>
-Experimental design
-</li>
-<li>
-Multi-environment trials
-</li>
-</ul>
-<p class="entry-links">
-<a href="mailto:sam.rogers@adelaide.edu.au">Contact maintainer</a>
-</p>
-</article>
-<article class="entry" data-search="speed sam rogers adelaide university the speed package optimises spatial experimental designs by rearranging treatments to improve statistical efficiency while maintaining statistical validity. it uses simulated annealing to: minimise treatment adjacency (reducing neighbour effects) maintain spatial balance across rows and columns respect blocking constraints if specified provide visualisation tools for design evaluation data visualiation design of experiments experimental design r mit package/module/library" data-keywords="data visualiation|design of experiments">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://github.com/biometryhub/speed/" target="_blank" rel="noopener">speed</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">MIT</span><span class="badge-meta">Package/Module/Library</span>
 </div>
-</header>
-<p class="entry-by">
-Sam Rogers <span class="sep">/</span> Adelaide University
-</p>
-<p class="entry-desc">
-The speed package optimises spatial experimental designs by rearranging treatments to improve statistical efficiency while maintaining statistical validity. It uses simulated annealing to: Minimise treatment adjacency (reducing neighbour effects) Maintain spatial balance across rows and columns Respect blocking constraints if specified Provide visualisation tools for design evaluation
-</p>
-<ul class="entry-tags">
-<li>
-Experimental design
-</li>
-</ul>
-<p class="entry-links">
-<a href="mailto:sam.rogers@adelaide.edu.au">Contact maintainer</a>
-</p>
-</article>
-<article class="entry" data-search="wgaim julian taylor adelaide university wgaim (whole genome analysis using integrated modelling) is a unified whole-genome analysis toolkit for plant breeding populations, built entirely around the asreml-r linear mixed modelling engine. it capable of readying genetic marker data for analysis as well as conducting univariate and multi-xx qtl, gwas and genomic prediction analyses. additional to the genomic analyses, it has a suite of visualisations to help intepret the results of the analyses. data analysis data visualiation multivariate multi-environment quantitative trait loci genome wide association analysis genomic prediction line seelction gene-trait analyses r gpl-3 package/module/library" data-keywords="data analysis|data visualiation">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://github.com/DrJ001/wgAim" target="_blank" rel="noopener">wgAim</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">GPL-3</span><span class="badge-meta">Package/Module/Library</span>
+<div class="cell">
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-6cffcf48dbb483f8cd14" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-6cffcf48dbb483f8cd14">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["Emi Tanaka","Adam Sparks","Sam Rogers","Sam Rogers","Julian Taylor","Julian Taylor"],["Australian National University","Curtin University","Adelaide University","Adelaide University","Adelaide University","Adelaide University"],["<a href='mailto:emi.tanaka@anu.edu.au'>emi.tanaka@anu.edu.au<\/a>","<a href='mailto:adam.sparks@curtin.edu.au'>adam.sparks@curtin.edu.au<\/a>","<a href='mailto:sam.rogers@adelaide.edu.au'>sam.rogers@adelaide.edu.au<\/a>","<a href='mailto:sam.rogers@adelaide.edu.au'>sam.rogers@adelaide.edu.au<\/a>","<a href='mailto:julian.taylor@adelaide.edu.au'>julian.taylor@adelaide.edu.au<\/a>","<a href='mailto:julian.taylor@adelaide.edu.au'>julian.taylor@adelaide.edu.au<\/a>"],["Biometry","Biometry","Biometry","Biometry","Biometry","Biometry"],["R package","R package","Package/Module/Library","Package/Module/Library","Package/Module/Library","Package/Module/Library"],["Data analysis","Data analysis, Model diagnostics","Data analysis, Data visualiation, Model diagnostics","Data visualiation, Design of experiments","Data analysis, Data visualiation","Data analysis, Data validation, Data visualiation, Model post-processing"],["Multi-environment trials, Single environment trials","Data analysis, ASREML, Small plot trial","Experimental design, Multi-environment trials","Experimental design","multivariate, multi-environment, quantitative trait loci, genome wide association analysis, genomic prediction, line seelction, gene-trait analyses","Multi-environment trials, Multiple comparisons, accuracy, simulation, random regression, factor analytic models, FAST, iClass, wald tests"],["GPL-3","GPL-3","MIT","MIT","GPL-3","MIT"],["<a href='https://anu-aagi.github.io/heritable/' target='_blank'>https://anu-aagi.github.io/heritable/<\/a>","<a href='https://github.com/AAGI-AUS/CBADASReml' target='_blank'>https://github.com/AAGI-AUS/CBADASReml<\/a>","<a href='https://biometryhub.github.io/biometryassist/' target='_blank'>https://biometryhub.github.io/biometryassist/<\/a>","<a href='https://github.com/biometryhub/speed/' target='_blank'>https://github.com/biometryhub/speed/<\/a>","<a href='https://github.com/DrJ001/wgAim' target='_blank'>https://github.com/DrJ001/wgAim<\/a>","<a href='https://github.com/DrJ001/biomAid' target='_blank'>https://github.com/DrJ001/biomAid<\/a>"],["R","R","R","R","R","R"],["<span title=\"Reporting heritability estimates is an important to quantitative genetics studies and breeding experiments. Here we provide functions to calculate various broad-sense heritabilities from 'asreml' and 'lme4' model objects. All methods we have implemented in this package have extensively discussed in the article by Schmidt et al. (2019)\">Reporting heritability estimates is an important to quantitative genetics studie…<\/span>","<span title=\"A collection of helper functions for small-plot trial analysis using ASReml-R\">A collection of helper functions for small-plot trial analysis using ASReml-R…<\/span>","<span title=\"The goal of biometryassist is to provide functions to aid in the Design and Analysis of Agronomic-style experiments through easy access to documentation and helper functions, especially while teaching these concepts.\">The goal of biometryassist is to provide functions to aid in the Design and Anal…<\/span>","<span title=\"The speed package optimises spatial experimental designs by rearranging treatments to improve statistical efficiency while maintaining statistical validity. It uses simulated annealing to: Minimise treatment adjacency (reducing neighbour effects) Maintain spatial balance across rows and columns Respect blocking constraints if specified Provide visualisation tools for design evaluation\">The speed package optimises spatial experimental designs by rearranging treatmen…<\/span>","<span title=\"wgAim (whole genome Analysis using integrated modelling) is a unified whole-genome analysis toolkit for plant breeding populations, built entirely around the ASReml-R linear mixed modelling engine. It capable of readying genetic marker data for analysis as well as conducting univariate and multi-xx QTL, GWAS and genomic prediction analyses. Additional to the genomic analyses, it has a suite of visualisations to help intepret the results of the analyses.\">wgAim (whole genome Analysis using integrated modelling) is a unified whole-geno…<\/span>","<span title=\"The biomAid package has been specifically built to provide biometricians with flexible functions for interpreting and further modelling of fixed and random effects from complex linear mixed models fitted with software such as ASReml-R V4. There are tools for summarising and interpreting effects from factor analytic models, conducting bespoke multiple comparisons, conducting random and fixed regressions of correlated effects, calculating accuracy and generalised heritability, simulating multi-environment multi-treatment data and padding out data from irregular trial layouts. See the GitHub repository for more information.\">The biomAid package has been specifically built to provide biometricians with fl…<\/span>"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Code maintainer<\/th>\n      <th>Organisation<\/th>\n      <th>Email<\/th>\n      <th>Field<\/th>\n      <th>Code type<\/th>\n      <th>Code keywords<\/th>\n      <th>Topic keywords<\/th>\n      <th>License<\/th>\n      <th>Software website<\/th>\n      <th>Language<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":25,"scrollX":true,"searchHighlight":true,"search":{"regex":true,"caseInsensitive":true},"columnDefs":[{"name":"Code maintainer","targets":0},{"name":"Organisation","targets":1},{"name":"Email","targets":2},{"name":"Field","targets":3},{"name":"Code type","targets":4},{"name":"Code keywords","targets":5},{"name":"Topic keywords","targets":6},{"name":"License","targets":7},{"name":"Software website","targets":8},{"name":"Language","targets":9},{"name":"Description","targets":10}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>
-</header>
-<p class="entry-by">
-Julian Taylor <span class="sep">/</span> Adelaide University
-</p>
-<p class="entry-desc">
-wgAim (whole genome Analysis using integrated modelling) is a unified whole-genome analysis toolkit for plant breeding populations, built entirely around the ASReml-R linear mixed modelling engine. It capable of readying genetic marker data for analysis as well as conducting univariate and multi-xx QTL, GWAS and genomic prediction analyses. Additional to the genomic analyses, it has a suite of visualisations to help intepret the results of the analyses.
-</p>
-<ul class="entry-tags">
-<li>
-multivariate
-</li>
-<li>
-multi-environment
-</li>
-<li>
-quantitative trait loci
-</li>
-<li>
-genome wide association analysis
-</li>
-<li>
-genomic prediction
-</li>
-<li>
-line seelction
-</li>
-<li>
-gene-trait analyses
-</li>
-</ul>
-<p class="entry-links">
-<a href="mailto:julian.taylor@adelaide.edu.au">Contact maintainer</a>
-</p>
-</article>
-<article class="entry" data-search="biomaid julian taylor adelaide university the biomaid package has been specifically built to provide biometricians with flexible functions for interpreting and further modelling of fixed and random effects from complex linear mixed models fitted with software such as asreml-r v4. there are tools for summarising and interpreting effects from factor analytic models, conducting bespoke multiple comparisons, conducting random and fixed regressions of correlated effects, calculating accuracy and generalised heritability, simulating multi-environment multi-treatment data and padding out data from irregular trial layouts. see the github repository for more information. data analysis data validation data visualiation model post-processing multi-environment trials multiple comparisons accuracy simulation random regression factor analytic models fast iclass wald tests r mit package/module/library" data-keywords="data analysis|data validation|data visualiation|model post-processing">
-<header class="entry-head">
-<h3 class="entry-name anchored">
-<a href="https://github.com/DrJ001/biomAid" target="_blank" rel="noopener">biomAid</a>
-</h3>
-<div class="entry-badges">
-<span class="badge-meta is-lang">R</span><span class="badge-meta is-license">MIT</span><span class="badge-meta">Package/Module/Library</span>
 </div>
-</header>
-<p class="entry-by">
-Julian Taylor <span class="sep">/</span> Adelaide University
-</p>
-<p class="entry-desc">
-The biomAid package has been specifically built to provide biometricians with flexible functions for interpreting and further modelling of fixed and random effects from complex linear mixed models fitted with software such as ASReml-R V4. There are tools for summarising and interpreting effects from factor analytic models, conducting bespoke multiple comparisons, conducting random and fixed regressions of correlated effects, calculating accuracy and generalised heritability, simulating multi-environment multi-treatment data and padding out data from irregular trial layouts. See the GitHub repository for more information.
-</p>
-<ul class="entry-tags">
-<li>
-Multi-environment trials
-</li>
-<li>
-Multiple comparisons
-</li>
-<li>
-accuracy
-</li>
-<li>
-simulation
-</li>
-<li>
-random regression
-</li>
-<li>
-factor analytic models
-</li>
-<li>
-FAST
-</li>
-<li>
-iClass
-</li>
-<li>
-wald tests
-</li>
-</ul>
-<p class="entry-links">
-<a href="mailto:julian.taylor@adelaide.edu.au">Contact maintainer</a>
-</p>
-</article>
-</div>
-<p class="db-empty" id="db-empty" hidden="">
-No entries match that search. Try a broader term or clear the filters.
-</p>
-<script>
-(function () {
-  const input  = document.getElementById('db-search');
-  const chips  = Array.from(document.querySelectorAll('.chip[data-key]'));
-  const clear  = document.getElementById('db-clear');
-  const cards  = Array.from(document.querySelectorAll('.entry'));
-  const count  = document.getElementById('db-count');
-  const empty  = document.getElementById('db-empty');
-  const active = new Set();
-
-  function apply() {
-    const term = input.value.trim().toLowerCase();
-    let shown = 0;
-    cards.forEach(card => {
-      const hay  = card.dataset.search || '';
-      const keys = (card.dataset.keywords || '').split('|').filter(Boolean);
-      const okText = !term || hay.includes(term);
-      // OR within the facet: any selected keyword is enough to match.
-      const okChip = active.size === 0 || keys.some(k => active.has(k));
-      const show = okText && okChip;
-      card.hidden = !show;
-      if (show) shown++;
-    });
-    count.textContent = shown;
-    empty.hidden = shown !== 0;
-  }
-
-  input.addEventListener('input', apply);
-
-  chips.forEach(chip => chip.addEventListener('click', () => {
-    const key = chip.dataset.key;
-    const on  = active.has(key);
-    if (on) { active.delete(key); } else { active.add(key); }
-    chip.setAttribute('aria-pressed', String(!on));
-    apply();
-  }));
-
-  clear.addEventListener('click', () => {
-    active.clear();
-    chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
-    input.value = '';
-    apply();
-  });
-
-  // Allow the landing page to deep-link a search or a keyword.
-  const params = new URLSearchParams(location.search);
-  const q = params.get('q');
-  if (q) input.value = q;
-  const k = (params.get('k') || '').toLowerCase();
-  if (k) {
-    const chip = chips.find(c => c.dataset.key === k);
-    if (chip) { active.add(k); chip.setAttribute('aria-pressed', 'true'); }
-  }
-  apply();
-})();
-</script>
 
 
 
@@ -485,7 +262,7 @@ No entries match that search. Try a broader term or clear the filters.
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/AAGI-AUS\.github\.io\/AAGIverse-shared-code\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

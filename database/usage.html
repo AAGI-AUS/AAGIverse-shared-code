@@ -42,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-73b0ff3878a4e6fc3716dc69a6aaefa3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-6bc8889dfaed3ac47add4336f30a353f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-55617497126496852ff9f5a59253c640.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,6 +75,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
+<link rel="stylesheet" href="../assets/styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -114,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -140,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
@@ -152,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="navigating-intellectual-property" class="level1">
 <h1>Navigating intellectual property</h1>
 <p>When contributing code to the AAGI shared code database, it’s helpful to understand where the code originated and what permissions apply. Not all code is treated the same: some may have been written before a project began, some may have been developed during project work, and some may rely on external libraries or datasets. These are handled differently.</p>
-<p>The table below is a simple guide to common IP categories you may encounter. In most cases, sharing is straightforward. The main goal is simply to ensure the code is shared appropriately and with clear attribution.</p>
+<p>The table below is a simple guide to common IP categories you may encounter. In most cases, sharing is straightforward — the main goal is simply to ensure the code is shared appropriately and with clear attribution.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -189,7 +190,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>If you are unsure which category applies, don’t worry, most contributions fall into background IP or developed IP, and sharing is usually straightforward. When in doubt, reach out. We can help.</p>
+<p>If you are unsure which category applies, don’t worry — most contributions fall into background IP or developed IP, and sharing is usually straightforward. When in doubt, reach out. We can help.</p>
 </section>
 <section id="guidelines-for-using-shared-code" class="level1">
 <h1>Guidelines for using shared code</h1>
@@ -326,7 +327,7 @@ Note
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/AAGI-AUS\.github\.io\/AAGIverse-shared-code\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
