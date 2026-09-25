@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Welcome! – AAGI Shared Code</title>
+<title>Shared code for Australian grains research – AAGI Shared Code</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -42,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-73b0ff3878a4e6fc3716dc69a6aaefa3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-55617497126496852ff9f5a59253c640.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6bc8889dfaed3ac47add4336f30a353f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,10 +75,9 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="assets/styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -115,33 +114,22 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#what-is-this" id="toc-what-is-this" class="nav-link active" data-scroll-target="#what-is-this">What is this?</a></li>
-  <li><a href="#who-is-the-database-for" id="toc-who-is-the-database-for" class="nav-link" data-scroll-target="#who-is-the-database-for">Who is the database for?</a></li>
-  <li><a href="#what-kind-of-code-will-you-find" id="toc-what-kind-of-code-will-you-find" class="nav-link" data-scroll-target="#what-kind-of-code-will-you-find">What kind of code will you find?</a></li>
-  <li><a href="#how-can-i-contribute" id="toc-how-can-i-contribute" class="nav-link" data-scroll-target="#how-can-i-contribute">How can I contribute?</a></li>
-  <li><a href="#how-should-i-use-the-code" id="toc-how-should-i-use-the-code" class="nav-link" data-scroll-target="#how-should-i-use-the-code">How should I use the code?</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Welcome!</h1>
+<h1 class="title">Shared code for Australian grains research</h1>
+<p class="subtitle lead">Reusable, field-tested functions from the AAGI network: searchable, attributed and licensed.</p>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta">
 
     
   
@@ -153,6 +141,12 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<form class="home-search" action="database/dtable.html" method="get" role="search">
+<label class="visually-hidden" for="home-q">Search the shared code database</label> <input id="home-q" name="q" type="search" autocomplete="off" placeholder="Search 6 entries. Try “heritability”, “ASReml” or a maintainer’s name"> <button class="btn btn-pill" type="submit">Search</button>
+</form>
+<nav class="home-facets" aria-label="Browse by code keyword">
+<span class="home-facets-label">Browse by keyword</span> <a class="chip-link" href="database/dtable.html?k=data analysis">Data analysis</a><a class="chip-link" href="database/dtable.html?k=data validation">Data validation</a><a class="chip-link" href="database/dtable.html?k=data visualiation">Data visualiation</a><a class="chip-link" href="database/dtable.html?k=design of experiments">Design of experiments</a><a class="chip-link" href="database/dtable.html?k=model diagnostics">Model diagnostics</a><a class="chip-link" href="database/dtable.html?k=model post-processing">Model post-processing</a> <a class="chip-link chip-link-all" href="database/dtable.html">All entries</a>
+</nav>
 <section id="what-is-this" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-this">What is this?</h2>
 <p>This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.</p>
@@ -167,26 +161,23 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="what-kind-of-code-will-you-find">What kind of code will you find?</h2>
 <p>You’ll find a mix of materials, including utility functions for:</p>
 <ul>
-<li><p>data processing and checking</p></li>
-<li><p>data visualisation</p></li>
-<li><p>model diagnostics</p></li>
-<li><p>computing summary statistics</p></li>
-<li><p>format outputs for reporting</p></li>
+<li>data processing and checking</li>
+<li>data visualisation</li>
+<li>model diagnostics</li>
+<li>computing summary statistics</li>
+<li>format outputs for reporting</li>
 </ul>
 <p>Some contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.</p>
-<blockquote class="blockquote">
-<p><a href="./database/dtable.html">Explore the database</a></p>
-</blockquote>
 </section>
 <section id="how-can-i-contribute" class="level2">
 <h2 class="anchored" data-anchor-id="how-can-i-contribute">How can I contribute?</h2>
 <p>Contributing is intentionally lightweight. You can:</p>
 <ul>
-<li><p>Share a function you’ve reused in multiple projects</p></li>
-<li><p>Make improvements by working on bug fixes to existing code</p></li>
-<li><p>Contribute to documentation with examples or data</p></li>
+<li>Share a function you’ve reused in multiple projects</li>
+<li>Make improvements by working on bug fixes to existing code</li>
+<li>Contribute to documentation with examples or data</li>
 </ul>
-<p>Code does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough.</p>
+<p>Code does not need to be perfect or fully documented to be useful. The database team can help with that. Often clear context and basic attribution is more than enough.</p>
 <blockquote class="blockquote">
 <p><a href="./database/usage.html">Learn more on how you can contribute</a></p>
 </blockquote>
@@ -195,9 +186,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="how-should-i-use-the-code">How should I use the code?</h2>
 <p>This resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:</p>
 <ul>
-<li><p>Reuse it directly in your own work</p></li>
-<li><p>Adapt it to suit your project needs</p></li>
-<li><p>Contribute improvements if you wish</p></li>
+<li>Reuse it directly in your own work</li>
+<li>Adapt it to suit your project needs</li>
+<li>Contribute improvements if you wish</li>
 </ul>
 <blockquote class="blockquote">
 <p><a href="./database/usage.html">Learn more how to use shared code responsibly</a></p>
@@ -280,7 +271,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/AAGI-AUS\.github\.io\/AAGIverse-shared-code\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
