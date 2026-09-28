@@ -16,7 +16,7 @@ This project was motivated by our team's desire to:
 
 Desk drawer code refers to functions that have been created and reused for multiple projects. They may not be neccesarily packaged but have stood the test of successive projects. This type of code often resides in personal folders or your one's "desk drawers" making it less accessible to others who might benefit from its use. This project is about bringing that code to one place for the benefit of the wider AAGI community.
 
-### 🧑‍🍳 Attributes of desk-drawer code based on usage
+### Attributes based on usage
 
 Code that is:
 
@@ -25,7 +25,7 @@ Code that is:
 - shared with others because it also solves a common problem
 - reused and improved over successive projects
 
-### 🥚 Attributes of desk-drawer code based on the problems it solves
+### Attributes based on the problems it solves
 
 Code that: 
 
@@ -35,7 +35,7 @@ Code that:
 - Computes summary statistics from regularly used model outputs
 - Formats results nicely e.g. tables in QMD/RMD
 
-### 🧁 Attributes of desk-drawer code based on it's outcome:
+### Attributes based on its outcome
 
 - You don't have to write from scratch every time
 - Makes your code tidy, readable. It's modularised

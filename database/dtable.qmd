@@ -1,11 +1,12 @@
 ---
-title: "Browse the Database"
+title: "Browse the database"
 execute:
   freeze: false
   echo: false
 format:
   html:
     code-fold: false
+    toc: false
 ---
 
 ```{r}
@@ -13,33 +14,177 @@ format:
 library(here)
 library(readr)
 library(dplyr)
-library(DT)
+library(htmltools)
 
-source(here("scripts/00_helpers.R"))
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
+
+esc <- function(x) htmltools::htmlEscape(ifelse(is.na(x), "", x))
+
+# Entries have no name field of their own, so derive one from the repository
+# URL: github.com/owner/repo -> repo, owner.github.io/pkg -> pkg.
+derive_name <- function(url) {
+  if (is.na(url) || !nzchar(url)) return(NA_character_)
+  u <- sub("/+$", "", sub("^https?://", "", url))
+  parts <- strsplit(u, "/")[[1]]
+  host <- parts[1]
+  if (grepl("github\\.io$", host) && length(parts) >= 2) return(parts[2])
+  if (identical(host, "github.com") && length(parts) >= 3) return(parts[3])
+  if (length(parts) >= 2) return(parts[length(parts)])
+  sub("\\..*$", "", host)
+}
+
+split_tags <- function(x) {
+  if (is.na(x) || !nzchar(x)) return(character(0))
+  out <- trimws(unlist(strsplit(x, ",")))
+  out[nzchar(out)]
+}
+
+badge <- function(label, class = "") {
+  if (is.na(label) || !nzchar(label)) return("")
+  sprintf('<span class="badge-meta %s">%s</span>', class, esc(label))
+}
+
+all_keywords <- sort(unique(unlist(lapply(df$`Code keywords`, split_tags))))
+
+build_card <- function(i) {
+  r    <- df[i, ]
+  name <- derive_name(r$`Software website`)
+  ck   <- split_tags(r$`Code keywords`)
+  tk   <- split_tags(r$`Topic keywords`)
+
+  title_html <- if (!is.na(name) && !is.na(r$`Software website`)) {
+    sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>',
+            esc(r$`Software website`), esc(name))
+  } else {
+    esc(name %||% r$`Code type`)
+  }
+
+  haystack <- tolower(paste(
+    name, r$`Code maintainer`, r$Organisation, r$Description,
+    paste(ck, collapse = " "), paste(tk, collapse = " "),
+    r$Language, r$License, r$`Code type`
+  ))
+
+  tags_html <- if (length(tk)) {
+    paste0('<ul class="entry-tags">',
+           paste0(sprintf('<li>%s</li>', esc(tk)), collapse = ""),
+           '</ul>')
+  } else ""
+
+  sprintf(
+    '<article class="entry" data-search="%s" data-keywords="%s">
+       <header class="entry-head">
+         <h3 class="entry-name">%s</h3>
+         <div class="entry-badges">%s%s%s</div>
+       </header>
+       <p class="entry-by">%s <span class="sep">/</span> %s</p>
+       <p class="entry-desc">%s</p>
+       %s
+       <p class="entry-links"><a href="mailto:%s">Contact maintainer</a></p>
+     </article>',
+    esc(haystack),
+    esc(tolower(paste(ck, collapse = "|"))),
+    title_html,
+    badge(r$Language, "is-lang"),
+    badge(r$License, "is-license"),
+    badge(r$`Code type`),
+    esc(r$`Code maintainer`),
+    esc(r$Organisation),
+    esc(r$Description),
+    tags_html,
+    esc(r$Email)
+  )
+}
+
+`%||%` <- function(a, b) if (is.null(a) || is.na(a)) b else a
+
+cards_html <- paste(vapply(seq_len(nrow(df)), build_card, character(1)), collapse = "\n")
+
+chips_html <- paste(
+  sprintf('<button type="button" class="chip" data-key="%s" aria-pressed="false">%s</button>',
+          esc(tolower(all_keywords)), esc(all_keywords)),
+  collapse = ""
+)
 ```
 
-::: {.callout-tip collapse="true"}
-## Interacting with the database
-
-- The **search box** is case insensitive, and will search across all columns and return rows that match the search term(s).
-You can also use regular expressions (regex) to search the table. 
-
-- **Hover** your cursor to view the full **description** for each row! 
-:::
-
-
 ```{r}
-datatable(
-  df,
-  filter = "top",
-  rownames = FALSE,
-  escape = FALSE,
-  options = list(
-    pageLength = 25,
-    scrollX = TRUE,
-    searchHighlight = TRUE,
-    search = list(regex = TRUE, caseInsensitive = TRUE)
-    )
-)
+#| output: asis
+cat(sprintf('
+<div class="db-controls">
+  <label class="visually-hidden" for="db-search">Search the database</label>
+  <input id="db-search" class="db-search" type="search" autocomplete="off"
+         placeholder="Search by package, author, keyword or description…">
+  <p class="db-count-line"><strong id="db-count">%d</strong> of %d entries</p>
+</div>
+
+<div class="db-chips" role="group" aria-label="Filter by code keyword">
+  %s
+  <button type="button" class="chip chip-clear" id="db-clear">Clear filters</button>
+</div>
+
+<div class="db-results">
+%s
+</div>
+
+<p class="db-empty" id="db-empty" hidden>No entries match that search. Try a broader term or clear the filters.</p>
+', nrow(df), nrow(df), chips_html, cards_html))
+```
+
+```{=html}
+<script>
+(function () {
+  const input  = document.getElementById('db-search');
+  const chips  = Array.from(document.querySelectorAll('.chip[data-key]'));
+  const clear  = document.getElementById('db-clear');
+  const cards  = Array.from(document.querySelectorAll('.entry'));
+  const count  = document.getElementById('db-count');
+  const empty  = document.getElementById('db-empty');
+  const active = new Set();
+
+  function apply() {
+    const term = input.value.trim().toLowerCase();
+    let shown = 0;
+    cards.forEach(card => {
+      const hay  = card.dataset.search || '';
+      const keys = (card.dataset.keywords || '').split('|').filter(Boolean);
+      const okText = !term || hay.includes(term);
+      // OR within the facet: any selected keyword is enough to match.
+      const okChip = active.size === 0 || keys.some(k => active.has(k));
+      const show = okText && okChip;
+      card.hidden = !show;
+      if (show) shown++;
+    });
+    count.textContent = shown;
+    empty.hidden = shown !== 0;
+  }
+
+  input.addEventListener('input', apply);
+
+  chips.forEach(chip => chip.addEventListener('click', () => {
+    const key = chip.dataset.key;
+    const on  = active.has(key);
+    if (on) { active.delete(key); } else { active.add(key); }
+    chip.setAttribute('aria-pressed', String(!on));
+    apply();
+  }));
+
+  clear.addEventListener('click', () => {
+    active.clear();
+    chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    input.value = '';
+    apply();
+  });
+
+  // Allow the landing page to deep-link a search or a keyword.
+  const params = new URLSearchParams(location.search);
+  const q = params.get('q');
+  if (q) input.value = q;
+  const k = (params.get('k') || '').toLowerCase();
+  if (k) {
+    const chip = chips.find(c => c.dataset.key === k);
+    if (chip) { active.add(k); chip.setAttribute('aria-pressed', 'true'); }
+  }
+  apply();
+})();
+</script>
 ```

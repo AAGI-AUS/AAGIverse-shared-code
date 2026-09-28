@@ -11,17 +11,20 @@ website:
       - href: database/index.qmd
         text: About
       - href: database/usage.qmd
-        text: Usage and Contributions
+        text: Usage
+      - href: database/contribute.qmd
+        text: Contribute
       - href: database/dtable.qmd
         text: Explore Database
 
 format:
   html:
-    theme: cosmo
+    theme: [cosmo, assets/aagi.scss]
     toc: true
     code-fold: true
-    css: assets/styles.css
-    page-layout: full
+    # page-layout:full was here to give the old wide DataTable room. The
+    # card layout that replaced it wants a constrained, responsive column,
+    # which is Quarto's default article layout.
 
 execute:
   freeze: auto

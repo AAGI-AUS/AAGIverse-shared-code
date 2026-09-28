@@ -13,3 +13,7 @@ README_files/
 
 **/*.quarto_ipynb
 .positai
+
+# Quarto execution cache — nothing here should be frozen, the site
+# rebuilds from live data on every run.
+_freeze/

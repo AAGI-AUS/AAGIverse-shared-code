@@ -1,0 +1,77 @@
+---
+title: "Contribute"
+subtitle: "Help grow the AAGI shared code database with your desk-drawer code."
+---
+
+::: {.cta-panel}
+::: {.cta-heading}
+Have a function you keep reusing? Others probably need it too.
+:::
+
+Submit your desk-drawer code in a short form. We review every submission and work with you on documentation and licensing before anything is added to the database, so it doesn't need to be polished.
+
+::: {.cta-actions}
+[Submit your code](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){.btn .btn-primary .btn-lg .cta-button target="_blank" rel="noopener"}
+[See what happens next](#what-to-expect-once-youve-reached-out-to-us){.cta-secondary}
+:::
+:::
+
+## How to contribute to the database
+
+This is a living resource that we hope will grow and evolve with the AAGI community. We encourage everyone to contribute their desk-drawer code to help build a rich database of shared resources.  We want  a frictionless submission process that minimises barriers to contribute to the community. If you have code that you think would be useful to others, all you need to do is reach out to [our team]() and we will work with you to get your code added to the database.
+
+If you are familar with GitHub and licenses, you can also submit your code directly via the [submission form](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){target="_blank"}. We will review the submission and work with you to ensure that it is properly documented and licensed before adding it to the database.
+
+<!-- TODO: Can we make a contact form here or link to Github issues for submissions? -->
+
+## What to expect once you've reached out to us
+
+We understand everyone has different levels of experience and availability, so we will work with you to make the process as smooth as possible. Once you reach out to us, we will work with you to:
+
+1. **Prepare Your Code**: Ensure that your code is well-documented and includes any necessary instructions for use. This will help others understand how to use your code effectively. We can assist you with this process if needed, so don't worry if you're not sure how to document your code or if you have never shared code before. LLM can be a helpful tool for generating documentation and providing guidance on best practices for sharing code.
+
+2. **Consult your AAGI node's intellectual property (IP)registry**: AAGI collaborates with many different partners and we have to honour various IP obligations. Each node will have a registry that will detail which outputs can be shared with the AAGI network. Generally, any "Developed IP" can be shared. Please check your AAGI node's intellectual property registry to ensure that you have the right to share the code and that it does not contain any proprietary information. Given the nature of desk-drawer code, we suspect it should be the case! If you have any questions about this process or need assistance, please don't hesitate to [reach out to us](). We can help you navigate this step and ensure that your code is shared in compliance with your AAGI's policies.
+
+3. **Choose a License**: Decide on the license under which you want to share your code. This will determine how others can use and modify your code. If you're unsure about which license to choose, you can refer to [Choose a License](https://choosealicense.com/) for guidance. We are also happy to chat about this with you to help you make an informed decision.
+
+4. **Consider code access options**: Our goal is to find a sharing solution that works for you. GitHub provides a platform for sharing open code and collaborating with others and we encouraging using this free service. It's okay if you have never used it before! Together, we can create a repository for your code and set the appropriate license to ensure your code is properly managed and accessible. If you prefer not to use GitHub, there are options for sharing your code while still ensuring it is accessible to the community such as self-managing the files and requiring users to reach outfor access.
+
+## Navigating intellectual property
+
+When contributing code to the AAGI shared code database, it’s helpful to understand where the code originated and what permissions apply. Not all code is treated the same: some may have been written before a project began, some may have been developed during project work, and some may rely on external libraries or datasets. These are handled differently.
+
+The table below is a simple guide to common IP categories you may encounter. In most cases, sharing is straightforward. The main goal is simply to ensure the code is shared appropriately and with clear attribution.
+
+| Term | Definition | Examples | What to do when sharing code |
+|-----|-------------|----------|------------------------------|
+| **Background IP** | Intellectual property that existed **before** the current project or was developed **outside** the scope of the project. It is typically owned by the individual, their employer, or another organisation. | Personal utility functions developed before joining the project; code from a previous project; existing R packages or scripts you already maintained. | Confirm you have the right to share it. If appropriate, include the original license and attribution. If the code belongs to another organisation or project, check their sharing policy before contributing. |
+| **Developed IP** | Intellectual property created **during the course of a project** and within the scope of project activities or funding agreements. Ownership and sharing rights may depend on organisational policies or project contracts. | Data processing scripts written for the project; statistical models developed for an AAGI study; functions created specifically to analyse project datasets. | Check project or organisational policies on sharing. If allowed, share the code under the agreed license and include context (project name, purpose, authors). If unsure, consult the project lead or relevant governance contact before sharing. |
+| **Third-party IP** | Code or software created by **external parties** and reused in the project under their own licenses or terms of use. | CRAN packages; GitHub libraries; scripts obtained from collaborators or external researchers. | Do not redistribute the code unless the license allows it. Instead, reference the source and license, and direct users to the original repository or package. |
+
+If you are unsure which category applies, don’t worry, most contributions fall into background IP or developed IP, and sharing is usually straightforward. When in doubt, reach out. We can help.
+
+## FAQs
+
+### What type of code can be shared?
+
+We talk about the attributes of desk-drawer code in our [About](index.qmd) section, but in general we are looking for code that is in regular use, solves common problems, and has been improved over successive projects. These could be functions or scripts that can be turned into functions that help with data wrangling, checking or visualising data, extracting useful components from model outputs, computing summary statistics, or formatting results.
+
+We also have others projects such as [AAGI Crop Analytics Cookbook]() and the [AAGI Blog]() that are great platforms for sharing code that may not fit the criteria for desk-drawer code but is still useful to the community. If you are unsure, we encourage you to [reach out to us]() and we can discuss how to best share it with the community.
+
+### What programming languages are accepted?
+
+We are open to code in any programming language that is commonly used in the AAGI community. This includes, but is not limited to, R, Python, and Julia. The most important thing is that the code is well-documented and can be easily understood and used by others in the community.
+
+### Do I need to maintain the code after I share it?
+
+The level of maintenance is up to you. We understand that everyone has different levels of experience and availability, so we want to make the process as flexible as possible. You can let others now in a README what type of code maintenance you can provide. This can simply be a message letting users know that the code is shared as-is and may not be actively maintained.
+
+If you are able to maintain the code and keep it up-to-date, you can provide details in your README on how users can provide useful feedback or report bugs such as submitting a GitHub issue or directly contacting you.
+
+### I've made updates to someone else's code, can I share it back to the database?
+
+Yes! We encourage collaboration and sharing improvements to code. If you have made updates to someone else's code, you can share it back to the database by reaching out to us and providing details about the changes you made. We will work with you to get your updated code added to the database and ensure that proper credit is given to the original author(s) as well as yourself for the improvements.
+
+::: {.cta-closing}
+Ready to share? [Submit your code](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){.btn .btn-primary .cta-button target="_blank" rel="noopener"}
+:::

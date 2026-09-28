@@ -1,59 +1,91 @@
 ---
-title: "Welcome!"
+title: "Shared code for Australian grains research"
+subtitle: "Reusable, field-tested functions from the AAGI network: searchable, attributed and licensed."
+toc: false
+execute:
+  echo: false
+  # This page reads live counts and keywords from the data, so it must
+  # re-execute on every build rather than serve a frozen cache.
+  freeze: false
 ---
+
+```{r}
+#| include: false
+library(here)
+library(readr)
+library(htmltools)
+
+df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
+
+kw <- sort(unique(trimws(unlist(strsplit(na.omit(df$`Code keywords`), ",")))))
+kw <- kw[nzchar(kw)]
+
+chips <- paste(sprintf(
+  '<a class="chip-link" href="database/dtable.html?k=%s">%s</a>',
+  utils::URLencode(tolower(kw), reserved = TRUE), htmltools::htmlEscape(kw)
+), collapse = "")
+```
+
+```{r}
+#| output: asis
+cat(sprintf('
+<form class="home-search" action="database/dtable.html" method="get" role="search">
+  <label class="visually-hidden" for="home-q">Search the shared code database</label>
+  <input id="home-q" name="q" type="search" autocomplete="off"
+         placeholder="Search %d entries. Try &ldquo;heritability&rdquo;, &ldquo;ASReml&rdquo; or a maintainer&rsquo;s name">
+  <button class="btn btn-pill" type="submit">Search</button>
+</form>
+
+<nav class="home-facets" aria-label="Browse by code keyword">
+  <span class="home-facets-label">Browse by keyword</span>
+  %s
+  <a class="chip-link chip-link-all" href="database/dtable.html">All entries</a>
+</nav>
+', nrow(df), chips))
+```
 
 ## What is this?
 
 This is a collection of code that has been developed, reused, and refined by the Analytics for Australian Grains Industry (AAGI) network. The kind of code that often lives in personal folders but proves useful again and again in projects.
 
-Code here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community. 
+Code here is shared to support collaboration, consistency, and make our work easier. Not everything is polished or packaged. The aim is by making code available, we can start to improve it as a community.
 
-## Who is the database for? 
+## Who is the database for?
 
 This resource is created with AAGI Biometricians in mind.
 
-It may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration. 
+It may be useful for other use cases in different fields. If this is the case, we encourage you to reach out to the code custodian for more context and collaboration.
 
 ## What kind of code will you find?
 
-You’ll find a mix of materials, including utility functions for:
+You'll find a mix of materials, including utility functions for:
 
 - data processing and checking
-
 - data visualisation
-
-- model diagnostics 
-
+- model diagnostics
 - computing summary statistics
-
 - format outputs for reporting
 
 Some contributions are shared as-is, while others are more formal software packages with their own governance. Each entry clearly states its level of maturity and intended use.
-
-> [Explore the database](database/dtable.qmd)
 
 ## How can I contribute?
 
 Contributing is intentionally lightweight. You can:
 
-- Share a function you’ve reused in multiple projects
-
+- Share a function you've reused in multiple projects
 - Make improvements by working on bug fixes to existing code
-
 - Contribute to documentation with examples or data
 
-Code does not need to be perfect or fully documented to be useful. The database team can help with that. [Insert easy method here] Often clear context and basic attribution is more than enough. 
+Code does not need to be perfect or fully documented to be useful. The database team can help with that. Often clear context and basic attribution is more than enough.
 
-> [Learn more on how you can contribute](database/usage.qmd) 
+> [Learn more on how you can contribute](database/contribute.qmd)
 
-##  How should I use the code?
+## How should I use the code?
 
 This resource is sustained by recognition and collaboration. All code is shared under clear licenses and version control, so you can:
 
 - Reuse it directly in your own work
-
 - Adapt it to suit your project needs
-
 - Contribute improvements if you wish
 
 > [Learn more how to use shared code responsibly](database/usage.qmd)
