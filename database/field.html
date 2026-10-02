@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Trial plan – AAGI Shared Code</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-73b0ff3878a4e6fc3716dc69a6aaefa3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9a330495c191c6b235ff942fcc57dd13.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">AAGI Shared Code</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../database/index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../database/usage.html"> 
+<span class="menu-text">Usage</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../database/contribute.html"> 
+<span class="menu-text">Contribute</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../database/dtable.html"> 
+<span class="menu-text">Explore Database</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../database/field.html" aria-current="page"> 
+<span class="menu-text">Trial plan (prototype)</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-layout-custom page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+<!-- main -->
+
+
+
+
+<!--
+PROTOTYPE. A field-trial take on the catalogue, kept separate from
+dtable.qmd so the two can be compared. Styles are inline for the same
+reason: deleting this file removes the whole experiment.
+
+The page is a full-viewport plan drawn as a line diagram, the way a
+design package or a methods paper would draw a trial. Each package is
+a plot; blocks are organisations; fill is a single green ramp for
+"vigour" (time since last commit). Click a plot for its entry.
+-->
+
+<div class="plan" id="plan">
+  <header class="plan-bar">
+    <div class="plan-head">
+      <div class="plan-title">
+        <h1>Trial plan</h1>
+        <p role="status"><strong id="n-match">6</strong> of 6 plots · 3 blocks · 02 Oct 2026</p>
+      </div>
+      <div class="plan-tools">
+        <label class="visually-hidden" for="pl-search">Search plots</label>
+        <input id="pl-search" class="db-search plan-search" type="search" autocomplete="off" placeholder="Search packages or people…">
+        <button type="button" class="filter-btn" id="pl-filter-btn" aria-expanded="false" aria-controls="pl-filters">
+          <svg class="filter-icon" viewbox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4 8h8M6.5 12h3"></path></svg>
+          <span>Filters</span><span class="filter-badge" id="pl-filter-n" hidden=""></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-panel" id="pl-filters" role="dialog" aria-labelledby="fp-title" hidden="">
+      <div class="fp-head">
+        <h2 class="fp-title" id="fp-title">Filters</h2>
+        <button type="button" class="fp-close" id="pl-filters-close" aria-label="Close filters">×</button>
+      </div>
+      <div class="fp-body">
+        <section class="facet" role="group" aria-labelledby="f-kw"><h3 class="facet-label" id="f-kw">Keyword</h3><div class="facet-chips"><button type="button" class="chip facet-chip" data-group="kw" data-key="data analysis" aria-pressed="false"><span class="chip-label">Data analysis</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="kw" data-key="data validation" aria-pressed="false"><span class="chip-label">Data validation</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="kw" data-key="data visualiation" aria-pressed="false"><span class="chip-label">Data visualiation</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="kw" data-key="design of experiments" aria-pressed="false"><span class="chip-label">Design of experiments</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="kw" data-key="model diagnostics" aria-pressed="false"><span class="chip-label">Model diagnostics</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="kw" data-key="model post-processing" aria-pressed="false"><span class="chip-label">Model post-processing</span><span class="chip-n" aria-hidden="true"></span></button></div></section>
+        <section class="facet" role="group" aria-labelledby="f-st"><h3 class="facet-label" id="f-st">Status</h3><div class="facet-chips"><button type="button" class="chip facet-chip" data-group="status" data-key="active" aria-pressed="false"><svg class="chip-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v3"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></svg><span class="chip-label">Active</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="status" data-key="maintained" aria-pressed="false"><svg class="chip-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v2"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></svg><span class="chip-label">Maintained</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="status" data-key="quiet" aria-pressed="false"><svg class="chip-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v1"><path class="stem" d="M0 0 L0 -0.55"></path><path class="leaf" d="M0 -0.45 Q-0.15 -0.85 -0.5 -0.95"></path><path class="leaf" d="M0 -0.5 Q0.2 -0.95 0.45 -1.05"></path></g></svg><span class="chip-label">Quiet</span><span class="chip-n" aria-hidden="true"></span></button><button type="button" class="chip facet-chip" data-group="status" data-key="dormant" aria-pressed="false"><svg class="chip-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v0"><path class="stubble" d="M-0.12 0 L-0.18 -0.45 M0.12 0 L0.16 -0.4"></path></g></svg><span class="chip-label">Dormant</span><span class="chip-n" aria-hidden="true"></span></button></div></section>
+        <section class="facet" role="group" aria-labelledby="f-av"><h3 class="facet-label" id="f-av">Availability</h3><div class="facet-chips"><button type="button" class="chip facet-chip" data-group="cran" data-key="1" aria-pressed="false"><i class="chip-dot" aria-hidden="true"></i><span class="chip-label">On CRAN</span><span class="chip-n" aria-hidden="true"></span></button></div></section>
+      </div>
+      <div class="fp-foot">
+        <button type="button" class="chip chip-clear" id="pl-clear" hidden="">Clear all</button>
+        <button type="button" class="fp-show" id="pl-show">Show plots</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="plan-stage">
+    <div class="plan-active" id="pl-active" aria-label="Active filters" hidden=""></div>
+    <svg class="plan-svg" id="plan-svg" data-pw="14" data-ph="8.5" data-cg="1" data-rg="2" data-bg="10" data-pad="8" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
+      <g id="world">
+        <rect class="ground" x="0" y="0" width="1" height="1"></rect>
+        <g class="block" data-letter="A"><text class="block-cap" data-name="Adelaide University"><tspan class="block-letter">Block A</tspan></text><g class="block-extras"></g>
+  <g class="plot is-v3" tabindex="0" role="button" data-id="A01" data-search="biomaid julian taylor adelaide university the biomaid package has been specifically built to provide biometricians with flexible functions for interpreting and further modelling of fixed and random effects from complex linear mixed models fitted with software such as asreml-r v4. there are tools for summarising and interpreting effects from factor analytic models, conducting bespoke multiple comparisons, conducting random and fixed regressions of correlated effects, calculating accuracy and generalised heritability, simulating multi-environment multi-treatment data and padding out data from irregular trial layouts. see the github repository for more information. data analysis data validation data visualiation model post-processing multi-environment trials multiple comparisons accuracy simulation random regression factor analytic models fast iclass wald tests r mit package/module/library" data-keywords="data analysis|data validation|data visualiation|model post-processing" data-status="active" data-cran="0">
+    <title>biomAid — Julian Taylor</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(3.80 7.95)"><g class="plant" style="--d:0.05s"><g class="sway" style="--s:0.01s"><g class="g-v3" transform="rotate(-2.9) scale(0.96)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(10.20 7.95)"><g class="plant" style="--d:0.08s"><g class="sway" style="--s:0.07s"><g class="g-v3" transform="rotate(-3.8) scale(0.97)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">A01</text>
+    
+    <text class="plot-name" x="0.6" y="3" font-size="1.60">biomAid</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Julian Taylor</text>
+  </g>
+  <g class="plot is-v3" tabindex="0" role="button" data-id="A02" data-search="biometryassist sam rogers adelaide university the goal of biometryassist is to provide functions to aid in the design and analysis of agronomic-style experiments through easy access to documentation and helper functions, especially while teaching these concepts. data analysis data visualiation model diagnostics experimental design multi-environment trials r mit package/module/library" data-keywords="data analysis|data visualiation|model diagnostics" data-status="active" data-cran="1">
+    <title>biometryassist — Sam Rogers</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(1.51 7.95)"><g class="plant" style="--d:0.07s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(1.9) scale(0.85)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(3.34 7.95)"><g class="plant" style="--d:0.10s"><g class="sway" style="--s:0.03s"><g class="g-v3" transform="rotate(3.2) scale(0.84)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(5.17 7.95)"><g class="plant" style="--d:0.13s"><g class="sway" style="--s:0.09s"><g class="g-v3" transform="rotate(3.9) scale(0.83)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(7.00 7.95)"><g class="plant" style="--d:0.16s"><g class="sway" style="--s:0.13s"><g class="g-v3" transform="rotate(3.9) scale(0.83)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(8.83 7.95)"><g class="plant" style="--d:0.19s"><g class="sway" style="--s:0.15s"><g class="g-v3" transform="rotate(3.2) scale(0.85)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(10.66 7.95)"><g class="plant" style="--d:0.22s"><g class="sway" style="--s:0.14s"><g class="g-v3" transform="rotate(2.0) scale(0.88)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(12.49 7.95)"><g class="plant" style="--d:0.25s"><g class="sway" style="--s:0.11s"><g class="g-v3" transform="rotate(0.4) scale(0.91)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">A02</text>
+    <circle class="plot-cran" cx="13.05" cy="1.0" r="0.38"><title>On CRAN</title></circle>
+    <text class="plot-name" x="0.6" y="3" font-size="1.47">biometryassist</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Sam Rogers</text>
+  </g>
+  <g class="plot is-v3" tabindex="0" role="button" data-id="A03" data-search="speed sam rogers adelaide university the speed package optimises spatial experimental designs by rearranging treatments to improve statistical efficiency while maintaining statistical validity. it uses simulated annealing to: minimise treatment adjacency (reducing neighbour effects) maintain spatial balance across rows and columns respect blocking constraints if specified provide visualisation tools for design evaluation data visualiation design of experiments experimental design r mit package/module/library" data-keywords="data visualiation|design of experiments" data-status="active" data-cran="0">
+    <title>speed — Sam Rogers</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(1.88 7.95)"><g class="plant" style="--d:0.09s"><g class="sway" style="--s:0.08s"><g class="g-v3" transform="rotate(-0.8) scale(0.93)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(4.44 7.95)"><g class="plant" style="--d:0.12s"><g class="sway" style="--s:0.02s"><g class="g-v3" transform="rotate(-2.3) scale(0.95)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(7.00 7.95)"><g class="plant" style="--d:0.15s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(-3.5) scale(0.97)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(9.56 7.95)"><g class="plant" style="--d:0.18s"><g class="sway" style="--s:0.10s"><g class="g-v3" transform="rotate(-4.0) scale(0.97)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(12.12 7.95)"><g class="plant" style="--d:0.21s"><g class="sway" style="--s:0.14s"><g class="g-v3" transform="rotate(-3.8) scale(0.96)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">A03</text>
+    
+    <text class="plot-name" x="0.6" y="3" font-size="1.60">speed</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Sam Rogers</text>
+  </g>
+  <g class="plot is-v3" tabindex="0" role="button" data-id="A04" data-search="wgaim julian taylor adelaide university wgaim (whole genome analysis using integrated modelling) is a unified whole-genome analysis toolkit for plant breeding populations, built entirely around the asreml-r linear mixed modelling engine. it capable of readying genetic marker data for analysis as well as conducting univariate and multi-xx qtl, gwas and genomic prediction analyses. additional to the genomic analyses, it has a suite of visualisations to help intepret the results of the analyses. data analysis data visualiation multivariate multi-environment quantitative trait loci genome wide association analysis genomic prediction line seelction gene-trait analyses r gpl-3 package/module/library" data-keywords="data analysis|data visualiation" data-status="active" data-cran="0">
+    <title>wgAim — Julian Taylor</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(3.80 7.95)"><g class="plant" style="--d:0.11s"><g class="sway" style="--s:0.11s"><g class="g-v3" transform="rotate(-0.5) scale(0.90)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(10.20 7.95)"><g class="plant" style="--d:0.14s"><g class="sway" style="--s:0.06s"><g class="g-v3" transform="rotate(1.2) scale(0.87)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">A04</text>
+    
+    <text class="plot-name" x="0.6" y="3" font-size="1.60">wgAim</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Julian Taylor</text>
+  </g></g>
+<g class="block" data-letter="B"><text class="block-cap" data-name="Australian National University"><tspan class="block-letter">Block B</tspan></text><g class="block-extras"></g>
+  <g class="plot is-v3" tabindex="0" role="button" data-id="B01" data-search="heritable emi tanaka australian national university reporting heritability estimates is an important to quantitative genetics studies and breeding experiments. here we provide functions to calculate various broad-sense heritabilities from 'asreml' and 'lme4' model objects. all methods we have implemented in this package have extensively discussed in the article by schmidt et al. (2019) data analysis multi-environment trials single environment trials r gpl-3 r package" data-keywords="data analysis" data-status="active" data-cran="1">
+    <title>heritable — Emi Tanaka</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(1.88 7.95)"><g class="plant" style="--d:0.10s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(1.9) scale(0.85)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(4.44 7.95)"><g class="plant" style="--d:0.13s"><g class="sway" style="--s:0.03s"><g class="g-v3" transform="rotate(3.2) scale(0.84)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(7.00 7.95)"><g class="plant" style="--d:0.16s"><g class="sway" style="--s:0.09s"><g class="g-v3" transform="rotate(3.9) scale(0.83)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(9.56 7.95)"><g class="plant" style="--d:0.19s"><g class="sway" style="--s:0.13s"><g class="g-v3" transform="rotate(3.9) scale(0.83)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(12.12 7.95)"><g class="plant" style="--d:0.22s"><g class="sway" style="--s:0.15s"><g class="g-v3" transform="rotate(3.2) scale(0.85)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">B01</text>
+    <circle class="plot-cran" cx="13.05" cy="1.0" r="0.38"><title>On CRAN</title></circle>
+    <text class="plot-name" x="0.6" y="3" font-size="1.60">heritable</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Emi Tanaka</text>
+  </g></g>
+<g class="block" data-letter="C"><text class="block-cap" data-name="Curtin University"><tspan class="block-letter">Block C</tspan></text><g class="block-extras"></g>
+  <g class="plot is-v2" tabindex="0" role="button" data-id="C01" data-search="cbadasreml adam sparks curtin university a collection of helper functions for small-plot trial analysis using asreml-r data analysis model diagnostics data analysis asreml small plot trial r gpl-3 r package" data-keywords="data analysis|model diagnostics" data-status="maintained" data-cran="0">
+    <title>CBADASReml — Adam Sparks</title>
+    <rect class="plot-fill" width="14" height="8.5"></rect>
+    <line class="soil" x1="0.5" x2="13.50" y1="7.95" y2="7.95"></line>
+    <g class="crop"><g transform="translate(2.20 7.95)"><g class="plant" style="--d:0.15s"><g class="sway" style="--s:0.08s"><g class="g-v2" transform="rotate(-0.8) scale(0.93)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(5.40 7.95)"><g class="plant" style="--d:0.18s"><g class="sway" style="--s:0.02s"><g class="g-v2" transform="rotate(-2.3) scale(0.95)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(8.60 7.95)"><g class="plant" style="--d:0.21s"><g class="sway" style="--s:0.04s"><g class="g-v2" transform="rotate(-3.5) scale(0.97)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(11.80 7.95)"><g class="plant" style="--d:0.24s"><g class="sway" style="--s:0.10s"><g class="g-v2" transform="rotate(-4.0) scale(0.97)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g></g>
+    <text class="plot-id" x="0.55" y="1.35">C01</text>
+    
+    <text class="plot-name" x="0.6" y="3" font-size="1.60">CBADASReml</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="0.90">Adam Sparks</text>
+  </g></g>
+      </g>
+    </svg>
+
+    <div class="legend" id="legend">
+      <button type="button" class="legend-toggle" aria-expanded="false" aria-controls="legend-items">Key</button>
+      <div class="legend-items" id="legend-items" aria-label="Key">
+        <span><svg class="lg-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v3"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g><line class="soil" x1="-1" x2="1" y1="0" y2="0"></line></svg>Active <small>&lt;3 mo</small></span>
+      <span><svg class="lg-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v2"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g><line class="soil" x1="-1" x2="1" y1="0" y2="0"></line></svg>Maintained <small>&lt;1 yr</small></span>
+      <span><svg class="lg-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v1"><path class="stem" d="M0 0 L0 -0.55"></path><path class="leaf" d="M0 -0.45 Q-0.15 -0.85 -0.5 -0.95"></path><path class="leaf" d="M0 -0.5 Q0.2 -0.95 0.45 -1.05"></path></g><line class="soil" x1="-1" x2="1" y1="0" y2="0"></line></svg>Quiet <small>&lt;2 yr</small></span>
+      <span><svg class="lg-crop" viewbox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v0"><path class="stubble" d="M-0.12 0 L-0.18 -0.45 M0.12 0 L0.16 -0.4"></path></g><line class="soil" x1="-1" x2="1" y1="0" y2="0"></line></svg>Dormant</span>
+        <span><i class="sw is-buffer"></i>Buffer</span>
+        <span><i class="sw is-cran"></i>On CRAN</span>
+        <span class="legend-note">One plant per contributor</span>
+      </div>
+    </div>
+
+    <div class="plan-empty" id="pl-empty" hidden="">
+      <div class="plan-empty-card" role="status">
+        <p class="plan-empty-title">No plots match</p>
+        <p class="plan-empty-hint">Try fewer filters or a broader search.</p>
+        <button type="button" class="chip chip-clear" id="pl-empty-clear">Clear all</button>
+      </div>
+    </div>
+
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button type="button" id="z-out" aria-label="Zoom out">−</button>
+      <button type="button" id="z-fit">Fit</button>
+      <button type="button" id="z-in" aria-label="Zoom in">+</button>
+    </div>
+
+    <aside class="entry" id="entry" aria-label="Plot entry" aria-hidden="true">
+      <button type="button" class="e-close" id="e-close" aria-label="Close">×</button>
+      <div class="e-body" id="e-body"></div>
+    </aside>
+  </div>
+
+  <div hidden="" id="e-templates">
+  <template data-for="A01">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(7.10 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.01s"><g class="g-v3" transform="rotate(-2.9) scale(1.07)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(18.90 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.07s"><g class="g-v3" transform="rotate(-3.8) scale(1.08)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot A01 · Block A · <span class="e-pos"></span></p>
+    <h2 class="e-name">biomAid</h2>
+    <p class="e-by">Julian Taylor · Adelaide University</p>
+    <p class="e-status">Active<span> · last commit yesterday</span></p>
+    <p class="e-desc">The biomAid package has been specifically built to provide biometricians with flexible functions for interpreting and further modelling of fixed and random effects from complex linear mixed models fitted with software such as ASReml-R V4. There are tools for summarising and interpreting effects from factor analytic models, conducting bespoke multiple comparisons, conducting random and fixed regressions of correlated effects, calculating accuracy and generalised heritability, simulating multi-environment multi-treatment data and padding out data from irregular trial layouts. See the GitHub repository for more information.</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>MIT</dd></div><div class="e-row"><dt>Type</dt><dd>Package/Module/Library</dd></div><div class="e-row"><dt>CRAN</dt><dd>—</dd></div><div class="e-row"><dt>First commit</dt><dd>Apr 2026</dd></div><div class="e-row"><dt>Last commit</dt><dd>01 Oct 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>1</dd></div><div class="e-row"><dt>Contributors</dt><dd>2</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>—</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>—</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data analysis<span class="dot">·</span>Data validation<span class="dot">·</span>Data visualiation<span class="dot">·</span>Model post-processing</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">Multi-environment trials<span class="dot">·</span>Multiple comparisons<span class="dot">·</span>accuracy<span class="dot">·</span>simulation<span class="dot">·</span>random regression<span class="dot">·</span>factor analytic models<span class="dot">·</span>FAST<span class="dot">·</span>iClass<span class="dot">·</span>wald tests</p>
+    <p class="e-links"><a href="https://github.com/DrJ001/biomAid" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:julian.taylor@adelaide.edu.au">Email maintainer</a></p>
+  </template>
+
+  <template data-for="A02">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(2.89 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(1.9) scale(0.95)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(6.26 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.03s"><g class="g-v3" transform="rotate(3.2) scale(0.93)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(9.63 3.90)"><g class="plant" style="--d:0.09s"><g class="sway" style="--s:0.09s"><g class="g-v3" transform="rotate(3.9) scale(0.92)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(13.00 3.90)"><g class="plant" style="--d:0.12s"><g class="sway" style="--s:0.13s"><g class="g-v3" transform="rotate(3.9) scale(0.93)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(16.37 3.90)"><g class="plant" style="--d:0.15s"><g class="sway" style="--s:0.15s"><g class="g-v3" transform="rotate(3.2) scale(0.94)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(19.74 3.90)"><g class="plant" style="--d:0.18s"><g class="sway" style="--s:0.14s"><g class="g-v3" transform="rotate(2.0) scale(0.97)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(23.11 3.90)"><g class="plant" style="--d:0.21s"><g class="sway" style="--s:0.11s"><g class="g-v3" transform="rotate(0.4) scale(1.01)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot A02 · Block A · <span class="e-pos"></span></p>
+    <h2 class="e-name">biometryassist</h2>
+    <p class="e-by">Sam Rogers · Adelaide University</p>
+    <p class="e-status">Active<span> · last commit 29 days ago</span></p>
+    <p class="e-desc">The goal of biometryassist is to provide functions to aid in the Design and Analysis of Agronomic-style experiments through easy access to documentation and helper functions, especially while teaching these concepts.</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>MIT</dd></div><div class="e-row"><dt>Type</dt><dd>Package/Module/Library</dd></div><div class="e-row"><dt>CRAN</dt><dd>biometryassist</dd></div><div class="e-row"><dt>First commit</dt><dd>Jan 2022</dd></div><div class="e-row"><dt>Last commit</dt><dd>03 Sep 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>12</dd></div><div class="e-row"><dt>Contributors</dt><dd>7</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>641</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>26,525</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data analysis<span class="dot">·</span>Data visualiation<span class="dot">·</span>Model diagnostics</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">Experimental design<span class="dot">·</span>Multi-environment trials</p>
+    <p class="e-links"><a href="https://biometryhub.github.io/biometryassist/" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:sam.rogers@adelaide.edu.au">Email maintainer</a></p>
+  </template>
+
+  <template data-for="A03">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(3.56 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.08s"><g class="g-v3" transform="rotate(-0.8) scale(1.03)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(8.28 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.02s"><g class="g-v3" transform="rotate(-2.3) scale(1.06)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(13.00 3.90)"><g class="plant" style="--d:0.09s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(-3.5) scale(1.08)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(17.72 3.90)"><g class="plant" style="--d:0.12s"><g class="sway" style="--s:0.10s"><g class="g-v3" transform="rotate(-4.0) scale(1.08)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(22.44 3.90)"><g class="plant" style="--d:0.15s"><g class="sway" style="--s:0.14s"><g class="g-v3" transform="rotate(-3.8) scale(1.07)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot A03 · Block A · <span class="e-pos"></span></p>
+    <h2 class="e-name">speed</h2>
+    <p class="e-by">Sam Rogers · Adelaide University</p>
+    <p class="e-status">Active<span> · last commit 29 days ago</span></p>
+    <p class="e-desc">The speed package optimises spatial experimental designs by rearranging treatments to improve statistical efficiency while maintaining statistical validity. It uses simulated annealing to: Minimise treatment adjacency (reducing neighbour effects) Maintain spatial balance across rows and columns Respect blocking constraints if specified Provide visualisation tools for design evaluation</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>MIT</dd></div><div class="e-row"><dt>Type</dt><dd>Package/Module/Library</dd></div><div class="e-row"><dt>CRAN</dt><dd>—</dd></div><div class="e-row"><dt>First commit</dt><dd>Apr 2025</dd></div><div class="e-row"><dt>Last commit</dt><dd>03 Sep 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>5</dd></div><div class="e-row"><dt>Contributors</dt><dd>5</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>—</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>—</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data visualiation<span class="dot">·</span>Design of experiments</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">Experimental design</p>
+    <p class="e-links"><a href="https://github.com/biometryhub/speed/" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:sam.rogers@adelaide.edu.au">Email maintainer</a></p>
+  </template>
+
+  <template data-for="A04">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(7.10 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.11s"><g class="g-v3" transform="rotate(-0.5) scale(0.99)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(18.90 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.06s"><g class="g-v3" transform="rotate(1.2) scale(0.96)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot A04 · Block A · <span class="e-pos"></span></p>
+    <h2 class="e-name">wgAim</h2>
+    <p class="e-by">Julian Taylor · Adelaide University</p>
+    <p class="e-status">Active<span> · last commit 58 days ago</span></p>
+    <p class="e-desc">wgAim (whole genome Analysis using integrated modelling) is a unified whole-genome analysis toolkit for plant breeding populations, built entirely around the ASReml-R linear mixed modelling engine. It capable of readying genetic marker data for analysis as well as conducting univariate and multi-xx QTL, GWAS and genomic prediction analyses. Additional to the genomic analyses, it has a suite of visualisations to help intepret the results of the analyses.</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>GPL-3</dd></div><div class="e-row"><dt>Type</dt><dd>Package/Module/Library</dd></div><div class="e-row"><dt>CRAN</dt><dd>—</dd></div><div class="e-row"><dt>First commit</dt><dd>Oct 2019</dd></div><div class="e-row"><dt>Last commit</dt><dd>05 Aug 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>1</dd></div><div class="e-row"><dt>Contributors</dt><dd>2</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>—</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>—</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data analysis<span class="dot">·</span>Data visualiation</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">multivariate<span class="dot">·</span>multi-environment<span class="dot">·</span>quantitative trait loci<span class="dot">·</span>genome wide association analysis<span class="dot">·</span>genomic prediction<span class="dot">·</span>line seelction<span class="dot">·</span>gene-trait analyses</p>
+    <p class="e-links"><a href="https://github.com/DrJ001/wgAim" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:julian.taylor@adelaide.edu.au">Email maintainer</a></p>
+  </template>
+
+  <template data-for="B01">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(3.56 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.04s"><g class="g-v3" transform="rotate(1.9) scale(0.95)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(8.28 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.03s"><g class="g-v3" transform="rotate(3.2) scale(0.93)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(13.00 3.90)"><g class="plant" style="--d:0.09s"><g class="sway" style="--s:0.09s"><g class="g-v3" transform="rotate(3.9) scale(0.92)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(17.72 3.90)"><g class="plant" style="--d:0.12s"><g class="sway" style="--s:0.13s"><g class="g-v3" transform="rotate(3.9) scale(0.93)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g><g transform="translate(22.44 3.90)"><g class="plant" style="--d:0.15s"><g class="sway" style="--s:0.15s"><g class="g-v3" transform="rotate(3.2) scale(0.94)"><path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"></path><path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"></path><path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"></path><ellipse class="grain" cx="-0.11" cy="-2.25" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.25)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.42" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.42)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.59" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.59)"></ellipse><ellipse class="grain" cx="0.11" cy="-2.76" rx="0.11" ry="0.19" transform="rotate(22 0.11 -2.76)"></ellipse><ellipse class="grain" cx="-0.11" cy="-2.93" rx="0.11" ry="0.19" transform="rotate(-22 -0.11 -2.93)"></ellipse><path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot B01 · Block B · <span class="e-pos"></span></p>
+    <h2 class="e-name">heritable</h2>
+    <p class="e-by">Emi Tanaka · Australian National University</p>
+    <p class="e-status">Active<span> · last commit 35 days ago</span></p>
+    <p class="e-desc">Reporting heritability estimates is an important to quantitative genetics studies and breeding experiments. Here we provide functions to calculate various broad-sense heritabilities from 'asreml' and 'lme4' model objects. All methods we have implemented in this package have extensively discussed in the article by Schmidt et al. (2019)</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>GPL-3</dd></div><div class="e-row"><dt>Type</dt><dd>R package</dd></div><div class="e-row"><dt>CRAN</dt><dd>heritable</dd></div><div class="e-row"><dt>First commit</dt><dd>Sep 2025</dd></div><div class="e-row"><dt>Last commit</dt><dd>28 Aug 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>7</dd></div><div class="e-row"><dt>Contributors</dt><dd>5</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>445</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>4,052</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data analysis</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">Multi-environment trials<span class="dot">·</span>Single environment trials</p>
+    <p class="e-links"><a href="https://anu-aagi.github.io/heritable/" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:emi.tanaka@anu.edu.au">Email maintainer</a></p>
+  </template>
+
+  <template data-for="C01">
+    <svg class="e-crop" viewbox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"></line><g transform="translate(4.15 3.90)"><g class="plant" style="--d:0.03s"><g class="sway" style="--s:0.08s"><g class="g-v2" transform="rotate(-0.8) scale(1.03)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(10.05 3.90)"><g class="plant" style="--d:0.06s"><g class="sway" style="--s:0.02s"><g class="g-v2" transform="rotate(-2.3) scale(1.06)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(15.95 3.90)"><g class="plant" style="--d:0.09s"><g class="sway" style="--s:0.04s"><g class="g-v2" transform="rotate(-3.5) scale(1.08)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g><g transform="translate(21.85 3.90)"><g class="plant" style="--d:0.12s"><g class="sway" style="--s:0.10s"><g class="g-v2" transform="rotate(-4.0) scale(1.08)"><path class="stem" d="M0 0 Q0.05 -1 0 -2"></path><path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"></path><path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"></path><path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"></path></g></g></g></g></svg>
+    <p class="e-kicker">Plot C01 · Block C · <span class="e-pos"></span></p>
+    <h2 class="e-name">CBADASReml</h2>
+    <p class="e-by">Adam Sparks · Curtin University</p>
+    <p class="e-status">Maintained<span> · last commit 4 months ago</span></p>
+    <p class="e-desc">A collection of helper functions for small-plot trial analysis using ASReml-R</p>
+    <dl class="e-list"><div class="e-row"><dt>Language</dt><dd>R</dd></div><div class="e-row"><dt>Licence</dt><dd>GPL-3</dd></div><div class="e-row"><dt>Type</dt><dd>R package</dd></div><div class="e-row"><dt>CRAN</dt><dd>—</dd></div><div class="e-row"><dt>First commit</dt><dd>Mar 2025</dd></div><div class="e-row"><dt>Last commit</dt><dd>28 May 2026</dd></div><div class="e-row"><dt>GitHub stars</dt><dd>1</dd></div><div class="e-row"><dt>Contributors</dt><dd>4</dd></div><div class="e-row" title="cranlogs, last 30 days"><dt>CRAN downloads, last month</dt><dd>—</dd></div><div class="e-row" title="cranlogs, since Oct 2012"><dt>CRAN downloads, all time</dt><dd>—</dd></div></dl>
+    <h3 class="e-h">Code keywords</h3><p class="e-tags">Data analysis<span class="dot">·</span>Model diagnostics</p>
+    <h3 class="e-h">Topics</h3><p class="e-tags">Data analysis<span class="dot">·</span>ASREML<span class="dot">·</span>Small plot trial</p>
+    <p class="e-links"><a href="https://github.com/AAGI-AUS/CBADASReml" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:adam.sparks@curtin.edu.au">Email maintainer</a></p>
+  </template></div>
+</div>
+
+<style>
+body:has(#plan) { overflow: hidden; }
+body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+
+.plan {
+  --green: #00573c; --green-deep: #003d2a; --sage: #8cc0ae; --mint: #e4efe9;
+  --ink: #1c1c1c; --muted: #5d6560; --rule: #dde2de; --surface: #f7f9f8;
+  /* plot tints by activity; the crops carry the colour */
+  --v3: #eef6f1; --v2: #f3f8f5; --v1: #f8fbf9; --v0: #fbfaf7;
+  /* crop inks by growth stage */
+  --c3: #1f6b45; --c3-ear: #4f8a3c; --c2: #4f9a6c; --c1: #8cc0ae; --c0: #bcae92;
+  --soil: #ddd3c1;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --head: "Poppins", sans-serif;
+  display: flex; flex-direction: column;
+  height: calc(100dvh - var(--nav-h, 58px));
+  background: #fff; color: var(--ink);
+  font-family: "Source Sans 3", sans-serif;
+}
+
+/* ---- top bar ---- */
+.plan-bar { position: relative; padding: .9rem 2rem; border-bottom: 1px solid var(--rule); }
+.plan-head { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.plan-title h1 { margin: 0; font: 600 1.35rem var(--head); letter-spacing: -.01em; }
+.plan-title p { margin: .1rem 0 0; font-size: .85rem; color: var(--muted); }
+.plan-title p strong { font-family: var(--mono); font-weight: 500; color: var(--ink); }
+/* .db-search and .chip come from assets/aagi.scss; only layout tweaks here */
+.plan-tools { display: flex; align-items: center; gap: .6rem; flex: 0 1 32rem; min-width: 0; }
+.plan-search { flex: 1 1 auto; min-width: 0; font-size: .95rem; padding: .5rem 1rem; }
+
+/* Filters button: same pill language as the search box */
+.filter-btn {
+  display: inline-flex; align-items: center; gap: .45rem; flex: none;
+  height: 2.5rem; padding: 0 1rem;
+  font: inherit; font-size: .92rem; color: var(--ink); white-space: nowrap;
+  background: #fff; border: 1.5px solid var(--rule); border-radius: 999px; cursor: pointer;
+  transition: border-color .14s, background .14s, box-shadow .14s;
+}
+.filter-btn:hover { border-color: var(--sage); background: var(--surface); }
+.filter-btn:focus-visible, .filter-btn[aria-expanded="true"] {
+  outline: none; border-color: var(--sage); background: var(--surface); box-shadow: 0 0 0 3px rgba(140,192,174,.38);
+}
+.filter-btn.is-active { border-color: var(--green); color: var(--green); font-weight: 600; }
+.filter-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.filter-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 1.3rem; height: 1.3rem; padding: 0 .35rem;
+  border-radius: 999px; background: var(--green); color: #fff; font: 600 .72rem var(--mono);
+}
+.filter-badge[hidden] { display: none; }
+
+/* Filters panel: drops from the button over the map */
+.filter-panel {
+  position: absolute; top: calc(100% - .4rem); right: 2rem; z-index: 6;
+  display: flex; flex-direction: column; width: min(30rem, calc(100vw - 2rem)); max-height: min(70vh, 34rem);
+  background: #fff; border: 1px solid var(--rule); border-radius: .6rem; box-shadow: 0 14px 40px rgba(28,28,28,.12);
+}
+.filter-panel[hidden] { display: none; }
+.fp-head { display: flex; align-items: center; justify-content: space-between; padding: .7rem .7rem .2rem 1.15rem; }
+.fp-title { margin: 0; font: 600 .98rem var(--head); }
+/* Quarto underlines every h2; these are labels, not section headings */
+.fp-title, .e-name { border-bottom: 0; padding-bottom: 0; }
+.fp-close {
+  width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; background: none;
+  font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer;
+}
+.fp-close:hover { background: var(--surface); color: var(--ink); }
+.fp-body { overflow-y: auto; padding: .35rem 1.15rem .4rem; }
+.facet { margin: 0 0 1rem; }
+.facet-label { margin: 0 0 .45rem; font: 600 .66rem var(--head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.facet-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.fp-foot { display: flex; align-items: center; gap: .75rem; padding: .7rem 1.15rem; border-top: 1px solid var(--rule); }
+.fp-foot .chip-clear { margin: 0; }
+.fp-foot .chip-clear[hidden] { display: none; }
+.fp-show {
+  margin-left: auto; padding: .5rem 1.15rem; border: 0; border-radius: 999px;
+  background: var(--green); color: #fff; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+}
+.fp-show:hover { background: var(--green-deep); }
+.fp-show:disabled { background: #b9c3be; cursor: default; }
+.fp-show:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(140,192,174,.6); }
+
+/* active filters, floating over the top of the map */
+.plan-active {
+  position: absolute; top: .75rem; left: 1rem; right: 1rem; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; pointer-events: none;
+}
+.plan-active[hidden] { display: none; }
+.plan-active > * { pointer-events: auto; }
+.chip.active-pill {
+  display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; padding: .22rem .55rem .22rem .75rem;
+  background: var(--mint); border-color: var(--sage); color: var(--green-deep);
+}
+.chip.active-pill:hover { background: #d6e8de; border-color: var(--green); }
+.active-pill .x { font-size: 1rem; line-height: 1; opacity: .65; }
+.active-clear {
+  padding: .2rem .4rem; border: 0; background: rgba(255,255,255,.85); border-radius: .25rem;
+  font: inherit; font-size: .8rem; color: var(--muted); text-decoration: underline; cursor: pointer;
+}
+.active-clear:hover { color: var(--ink); }
+
+.facet-chip { display: inline-flex; align-items: center; gap: .35rem; }
+.chip-n { font-family: var(--mono); font-size: .72rem; color: var(--muted); min-width: .6rem; text-align: center; }
+.facet-chip[aria-pressed="true"] .chip-n { color: rgba(255,255,255,.75); }
+.facet-chip:disabled { opacity: .4; cursor: default; }
+.facet-chip:disabled:hover { border-color: var(--rule); background: #fff; }
+.chip-crop { width: .7rem; height: 1.15rem; margin: -.2rem 0 -.1rem -.15rem; overflow: visible; }
+.facet-chip[aria-pressed="true"] .chip-crop :is(.stem, .leaf, .awn, .stubble) { stroke: #fff; }
+.facet-chip[aria-pressed="true"] .chip-crop .grain { fill: #fff; }
+.chip-dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); }
+.facet-chip[aria-pressed="true"] .chip-dot { background: #fff; }
+
+/* empty state, centred over the map */
+.plan-empty {
+  position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.plan-empty[hidden] { display: none; }
+.plan-empty-card {
+  pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  padding: 1.25rem 1.75rem; text-align: center;
+  background: rgba(255,255,255,.96); border: 1px solid var(--rule); border-radius: .5rem;
+  box-shadow: 0 6px 24px rgba(28,28,28,.06);
+}
+.plan-empty-title { margin: 0; font: 600 1.05rem var(--head); color: var(--ink); }
+.plan-empty-hint { margin: 0 0 .5rem; font-size: .9rem; color: var(--muted); }
+.plan-empty .chip-clear { margin: 0; background: #fff; }
+
+/* ---- stage ---- */
+.plan-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; user-select: none; }
+.plan-svg { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.plan-svg.is-dragging { cursor: grabbing; }
+.ground { fill: #fff; }
+
+.block-cap { font: 1.25px "Source Sans 3", sans-serif; fill: var(--ink); }
+.block-letter { font-family: var(--mono); font-weight: 500; fill: var(--muted); letter-spacing: .06px; }
+.axis-no { font: .95px var(--mono); fill: #9aa39e; }
+
+.plot { cursor: pointer; outline: none; }
+.plot-fill { stroke: #6b736e; stroke-width: .08; transition: fill-opacity .2s, stroke-width .12s, stroke .12s; }
+.plot.is-v3 .plot-fill { fill: var(--v3); } .plot.is-v2 .plot-fill { fill: var(--v2); }
+.plot.is-v1 .plot-fill { fill: var(--v1); } .plot.is-v0 .plot-fill { fill: var(--v0); }
+.plot.is-buffer { fill: none; stroke: #c4cbc7; stroke-width: .1; stroke-dasharray: .5 .4; }
+.plot:hover .plot-fill, .plot:focus-visible .plot-fill { stroke: var(--green); stroke-width: .2; }
+.plot.is-selected .plot-fill { stroke: var(--green); stroke-width: .35; }
+.plot-id { font: .9px var(--mono); fill: var(--muted); }
+.plot-name { font-family: var(--mono); font-weight: 500; fill: var(--ink); }
+.plot-by { font-family: "Source Sans 3", sans-serif; fill: var(--muted); }
+.plot-cran { fill: var(--green); }
+.plot.is-out .plot-fill { fill-opacity: .3; stroke: #c4cbc7; }
+.plot.is-out text, .plot.is-out circle, .plot.is-out .crop { opacity: .2; }
+
+/* ---- crops ---- */
+.soil { stroke: var(--soil); stroke-width: .08; stroke-linecap: round; }
+.stem, .leaf, .awn, .stubble { fill: none; stroke-linecap: round; }
+.stem { stroke-width: .1; } .leaf { stroke-width: .09; } .awn { stroke-width: .045; } .stubble { stroke-width: .1; }
+.g-v3 .stem, .g-v3 .leaf { stroke: var(--c3); }
+.g-v3 .grain { fill: var(--c3-ear); } .g-v3 .awn { stroke: var(--c3-ear); }
+.g-v2 .stem, .g-v2 .leaf { stroke: var(--c2); }
+.g-v1 .stem, .g-v1 .leaf { stroke: var(--c1); }
+.g-v0 .stubble { stroke: var(--c0); }
+.plant, .sway { transform-box: fill-box; transform-origin: 50% 100%; }
+.plant { animation: grow .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
+.plot:hover .sway, .plot.is-selected .sway { animation: sway 2.2s ease-in-out infinite alternate; animation-delay: calc(-1 * var(--s, 0s)); }
+@keyframes grow { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .plant, .sway { animation: none !important; } }
+.plot.is-out { cursor: default; }
+
+/* ---- overlays ---- */
+.legend { position: absolute; left: 2rem; bottom: 1.1rem; z-index: 2; }
+.legend-toggle { display: none; }
+.legend-items {
+  display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: center;
+  font-size: .78rem; color: var(--muted);
+  padding: .3rem .6rem; background: rgba(255,255,255,.92);
+}
+.legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.legend small { opacity: .75; }
+.sw { width: .75rem; height: .75rem; display: inline-block; border: 1px solid var(--ink); flex: none; }
+.lg-crop { width: 1.1rem; height: 1.9rem; overflow: visible; }
+.legend-note { font-style: italic; }
+.sw.is-buffer { border: 1px dashed #9aa39e; }
+.sw.is-cran { border: 0; width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); margin-inline: .15rem; }
+
+.zoom { position: absolute; right: 2rem; bottom: 1rem; z-index: 2; display: flex; border: 1px solid var(--rule); background: #fff; }
+.zoom button { font: 500 .9rem var(--mono); width: 2.2rem; height: 2rem; border: 0; background: none; color: var(--ink); cursor: pointer; }
+.zoom button + button { border-left: 1px solid var(--rule); }
+.zoom button:hover { background: var(--surface); }
+#z-fit { font: .72rem "Source Sans 3", sans-serif; width: auto; padding: 0 .7rem; letter-spacing: .04em; text-transform: uppercase; }
+
+/* ---- entry panel ---- */
+.entry {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 3; width: min(26rem, 100%);
+  background: #fff; border-left: 1px solid var(--rule);
+  transform: translateX(100%); transition: transform .26s cubic-bezier(.2,.7,.2,1);
+  overflow-y: auto; user-select: text;
+}
+.entry.is-open { transform: none; box-shadow: -12px 0 30px rgba(28,28,28,.06); }
+.e-close { position: absolute; top: .7rem; right: .8rem; width: 1.9rem; height: 1.9rem; border: 0; background: none; font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer; }
+.e-close:hover { color: var(--ink); }
+.e-body { padding: 1.5rem 1.75rem 2rem; }
+.e-crop { display: block; width: 100%; height: auto; margin: .2rem 0 1rem; overflow: visible; }
+.e-kicker { margin: 0 0 .5rem; font: .72rem var(--mono); color: var(--muted); letter-spacing: .04em; }
+.e-name { margin: 0 0 .15rem; font: 500 1.6rem var(--mono); letter-spacing: -.01em; }
+.e-by { margin: 0 0 .6rem; color: var(--muted); font-size: .92rem; }
+.e-status { display: flex; align-items: center; gap: .3rem; margin: 0 0 1rem; font-size: .88rem; font-weight: 600; }
+.e-status span { font-weight: 400; color: var(--muted); }
+.e-desc { line-height: 1.55; margin: 0 0 1.1rem; font-size: .95rem; }
+.e-list { margin: 0 0 1.2rem; border-top: 1px solid var(--ink); }
+.e-row { display: flex; justify-content: space-between; gap: 1rem; padding: .36rem 0; border-bottom: 1px solid var(--rule); }
+.e-row dt { font-weight: 400; color: var(--muted); font-size: .84rem; }
+.e-row dd { margin: 0; font-family: var(--mono); font-size: .86rem; text-align: right; }
+.e-h { margin: .9rem 0 .2rem; font: 600 .66rem var(--head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.e-tags { margin: 0; font-size: .88rem; line-height: 1.6; }
+.e-tags .dot { color: var(--sage); padding: 0 .45rem; }
+.e-links { margin: 1.4rem 0 0; display: flex; gap: 1.5rem; font-size: .9rem; }
+.e-links a { color: var(--green); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--sage); }
+.e-links a:hover { border-bottom-color: var(--green); }
+
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- small screens --------------------------------------------------------
+   Compact chrome for phones in either orientation; keep the two queries in
+   step with STACK and SHORT in the script. */
+@media (max-width: 700px), (max-height: 520px) {
+  .plan-bar { padding: .6rem 1rem .5rem; }
+  .plan-title h1 { font-size: 1.15rem; }
+  .plan-title p { font-size: .8rem; }
+  .plan-search { font-size: 1rem; }   /* 16px+ stops iOS zooming the page on focus */
+  .filter-panel { right: 1rem; }
+  .plan-active { left: .75rem; right: .75rem; top: .6rem; }
+
+  /* key folds into a button so it doesn't cover the field */
+  .legend { left: .75rem; bottom: .75rem; }
+  .legend-toggle {
+    display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .95rem;
+    font: inherit; font-size: .85rem; color: var(--ink);
+    background: #fff; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer;
+  }
+  .legend-toggle[aria-expanded="true"] { border-color: var(--sage); background: var(--surface); }
+  .legend-items {
+    display: none; position: absolute; left: 0; bottom: calc(100% + .5rem);
+    flex-direction: column; align-items: flex-start; gap: .35rem; width: max-content;
+    max-height: calc(100vh - 10rem); overflow-y: auto;
+    padding: .7rem .9rem; font-size: .82rem;
+    background: #fff; border: 1px solid var(--rule); border-radius: .5rem; box-shadow: 0 6px 24px rgba(28,28,28,.08);
+  }
+  .legend.is-open .legend-items { display: flex; }
+
+  .zoom { right: .75rem; bottom: .75rem; border-radius: 999px; overflow: hidden; }
+  .zoom button { width: 2.6rem; height: 2.5rem; }
+  .e-close { width: 2.75rem; height: 2.75rem; top: .35rem; right: .35rem; z-index: 2; }
+}
+
+/* phone portrait: search under the title, entry as a bottom sheet */
+@media (max-width: 700px) {
+  .plan-head { flex-direction: column; align-items: stretch; gap: .55rem; }
+  .plan-tools { flex: 1 1 auto; }
+  /* full-width dropdown under the header on phones */
+  .filter-panel { left: .75rem; right: .75rem; width: auto; top: calc(100% - .25rem); max-height: calc(100dvh - var(--nav-h, 58px) - 9rem); }
+  .fp-show { padding: .65rem 1.4rem; }
+  /* the plot stays visible in the strip above the sheet */
+  .entry {
+    top: auto; left: 0; width: 100%; height: min(66%, 36rem);
+    border-left: 0; border-top: 1px solid var(--rule); border-radius: .9rem .9rem 0 0;
+    transform: translateY(100%);
+  }
+  .entry.is-open { box-shadow: 0 -12px 30px rgba(28,28,28,.08); }
+  .entry::before {
+    content: ""; display: block; position: sticky; top: 0; height: 1.1rem; z-index: 1;
+    background: linear-gradient(#fff 70%, transparent);
+  }
+  .entry::after {
+    content: ""; position: absolute; top: .45rem; left: 50%; width: 2.5rem; height: .25rem;
+    margin-left: -1.25rem; border-radius: 999px; background: var(--rule);
+  }
+  .e-body { padding: .4rem 1.25rem 2rem; }
+  .e-name { font-size: 1.35rem; }
+  .e-crop { margin-bottom: .75rem; }
+}
+
+/* phone landscape: every pixel of height goes to the field */
+@media (max-height: 520px) and (min-width: 701px) {
+  .plan-bar { padding: .45rem 1rem .4rem; }
+  .plan-title { display: flex; align-items: baseline; gap: .7rem; }
+  .plan-title p { margin: 0; }
+  .plan-search { padding: .35rem .9rem; }
+  .filter-btn { height: 2.2rem; }
+  .filter-panel { max-height: calc(100dvh - var(--nav-h, 58px) - 4rem); }
+  .entry { width: min(24rem, 50%); }
+  .e-body { padding: 1rem 1.25rem 1.5rem; }
+}
+</style>
+
+<script>
+(function () {
+  const plan  = document.getElementById('plan');
+  const stage = plan.querySelector('.plan-stage');
+  const svg   = document.getElementById('plan-svg');
+  const world = document.getElementById('world');
+  const ground = svg.querySelector('.ground');
+  const blocks = Array.from(svg.querySelectorAll('.block'));
+  const D = svg.dataset;
+  const PW = +D.pw, PH = +D.ph, CG = +D.cg, RG = +D.rg, BG = +D.bg, PAD = +D.pad;
+  const NS = 'http://www.w3.org/2000/svg';
+  // Keep in step with the small-screen @media rules.
+  const STACK = matchMedia('(max-width: 700px)');   // phone portrait
+  const SHORT = matchMedia('(max-height: 520px)');  // phone landscape
+  const currentMode = () => STACK.matches ? 'stack' : SHORT.matches ? 'row' : 'grid';
+  let FW = 1, FH = 1, layoutMode = null;
+
+  const svgEl = (tag, attrs, text) => {
+    const e = document.createElementNS(NS, tag);
+    for (const a in attrs) e.setAttribute(a, attrs[a]);
+    if (text != null) e.textContent = text;
+    return e;
+  };
+
+  // ---- layout -------------------------------------------------------------
+  //   grid  (desktop/tablet): blocks side by side, each roughly square; the
+  //         whole plan fits on screen.
+  //   stack (phone portrait): blocks stacked, one plot per range; fits the
+  //         width and you scroll down through it.
+  //   row   (phone landscape): every block a single range, side by side;
+  //         fits the height and you scroll across it.
+  function layoutPlan(mode) {
+    const narrow = mode === 'stack';
+    // Stacked, the plan is zoomed to the screen width, so the usual margin
+    // above it would become a large blank band; start close to the top.
+    let x0 = PAD, y0 = narrow ? 1.5 : PAD, maxR = 0, maxB = 0;
+    const capY = 3.4;  // room above a block for its caption
+    blocks.forEach(b => {
+      const ps = Array.from(b.querySelectorAll('.plot[data-id]'));
+      const n = ps.length;
+      const ncol = mode === 'stack' ? 1 : mode === 'row' ? n : Math.max(1, Math.ceil(Math.sqrt(n * PH / PW)));
+      const nrow = Math.ceil(n / ncol);
+      const w = ncol * PW + (ncol - 1) * CG, h = nrow * PH + (nrow - 1) * RG;
+
+      // Caption: letter and organisation on one line when wide; on phones the
+      // organisation wraps onto lines under the letter to fit the plot width.
+      const cap = b.querySelector('.block-cap');
+      cap.querySelectorAll('.block-name').forEach(t => t.remove());
+      const name = cap.dataset.name;
+      let lines = [name];
+      if (narrow) {
+        lines = []; let line = '';
+        const maxChars = Math.floor(PW / 0.62);
+        name.split(/\s+/).forEach(word => {
+          if (line && (line + ' ' + word).length > maxChars) { lines.push(line); line = word; }
+          else line = line ? line + ' ' + word : word;
+        });
+        if (line) lines.push(line);
+      }
+      lines.forEach((ln, i) => cap.appendChild(svgEl('tspan', narrow
+        ? { class: 'block-name', x: 0, dy: i === 0 ? 1.55 : 1.45 }
+        : { class: 'block-name', dx: 1.6 }, ln)));
+      const capH = narrow ? 2.4 + lines.length * 1.5 : capY;
+
+      const bx = narrow ? PAD : x0;
+      const by = narrow ? y0 + capH : PAD + capY;
+      cap.setAttribute('x', bx); cap.setAttribute('y', by - capH + 1.1);
+      cap.querySelectorAll('tspan.block-name[x]').forEach(t => t.setAttribute('x', bx));
+      const capW = cap.getComputedTextLength ? (narrow ? Math.min(cap.getComputedTextLength(), PW) : cap.getComputedTextLength()) : 0;
+
+      ps.forEach((p, i) => {
+        const r = Math.floor(i / ncol), c = i % ncol;
+        const x = bx + c * (PW + CG), y = by + r * (PH + RG);
+        p.setAttribute('transform', `translate(${x} ${y})`);
+        Object.assign(p.dataset, { cx: x + PW / 2, cy: y + PH / 2, row: r + 1, col: c + 1 });
+      });
+
+      // Buffers and range/column numbers depend on the layout, so rebuild them.
+      const extras = b.querySelector('.block-extras');
+      extras.replaceChildren();
+      for (let i = n; i < ncol * nrow; i++) {
+        const r = Math.floor(i / ncol), c = i % ncol;
+        extras.appendChild(svgEl('rect', { class: 'plot is-buffer', x: bx + c * (PW + CG), y: by + r * (PH + RG), width: PW, height: PH }));
+      }
+      for (let r = 0; r < nrow; r++)
+        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx - 1, y: by + r * (PH + RG) + PH / 2 + 0.45, 'text-anchor': 'end' }, r + 1));
+      for (let c = 0; c < ncol; c++)
+        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx + c * (PW + CG) + PW / 2, y: by + h + 2.2, 'text-anchor': 'middle' }, c + 1));
+
+      maxR = Math.max(maxR, bx + Math.max(w, capW));
+      maxB = Math.max(maxB, by + h + 3);
+      if (narrow) y0 = by + h + 3 + BG * 0.6;
+      else x0 += Math.max(w + BG, capW + 4);
+    });
+    FW = maxR + PAD; FH = maxB + PAD;
+    ground.setAttribute('width', FW); ground.setAttribute('height', FH);
+  }
+
+  // ---- pan / zoom ---------------------------------------------------------
+  let k = 1, tx = 0, ty = 0, anim = null;
+  const render = () => world.setAttribute('transform', `translate(${tx} ${ty}) scale(${k})`);
+  // grid: fit the whole plan. stack: fit the width, start at the top.
+  // row: fit the height, start at the left.
+  function fitParams() {
+    const W = svg.clientWidth, H = svg.clientHeight;
+    if (layoutMode === 'stack') {
+      const pad = 12, kk = (W - pad * 2) / FW;
+      return { k: kk, tx: (W - FW * kk) / 2, ty: FH * kk <= H - pad * 2 ? (H - FH * kk) / 2 : pad };
+    }
+    if (layoutMode === 'row') {
+      const pad = 8, kk = (H - pad * 2) / FH;
+      return { k: kk, ty: (H - FH * kk) / 2, tx: FW * kk <= W - pad * 2 ? (W - FW * kk) / 2 : pad };
+    }
+    const pad = 48, kk = Math.min((W - pad * 2) / FW, (H - pad * 2) / FH);
+    return { k: kk, tx: (W - FW * kk) / 2, ty: (H - FH * kk) / 2 };
+  }
+  const clampK = v => Math.max(fitParams().k * 0.6, Math.min(v, 60));
+  function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
+  function animateTo(t, ms) {
+    stopAnim();
+    const f = { k, tx, ty }, t0 = performance.now(), ease = x => 1 - Math.pow(1 - x, 3);
+    (function step(now) {
+      const p = ease(Math.min(1, (now - t0) / ms));
+      k = f.k + (t.k - f.k) * p; tx = f.tx + (t.tx - f.tx) * p; ty = f.ty + (t.ty - f.ty) * p;
+      render(); anim = p < 1 ? requestAnimationFrame(step) : null;
+    })(t0);
+  }
+  function fit(animate = true) {
+    const p = fitParams();
+    animate ? animateTo(p, 320) : (stopAnim(), ({ k, tx, ty } = p), render());
+  }
+  function zoomAt(f, cx, cy) {
+    stopAnim();
+    const nk = clampK(k * f);
+    tx = cx - (cx - tx) * (nk / k); ty = cy - (cy - ty) * (nk / k); k = nk; render();
+  }
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = svg.getBoundingClientRect();
+    zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+
+  // One pointer pans (or taps); two pointers pinch-zoom around their midpoint.
+  const pts = new Map();
+  let drag = null, pinch = null;
+  const local = (x, y) => { const r = svg.getBoundingClientRect(); return [x - r.left, y - r.top]; };
+  svg.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    stopAnim();
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+    if (pts.size === 1) {
+      // Remember the plot now: once the pointer is captured, later events
+      // are retargeted to the svg and the plot is no longer e.target.
+      drag = { x: e.clientX, y: e.clientY, tx, ty, moved: false, plot: e.target.closest('.plot[data-id]') };
+    } else if (pts.size === 2) {
+      drag = null;  // a second finger makes this a pinch, never a tap
+      const [a, b] = [...pts.values()];
+      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+      pinch = { d0: Math.hypot(b.x - a.x, b.y - a.y) || 1, k0: k, tx0: tx, ty0: ty, mx0: mx, my0: my };
+    }
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && pts.size >= 2) {
+      const [a, b] = [...pts.values()];
+      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+      const nk = clampK(pinch.k0 * Math.hypot(b.x - a.x, b.y - a.y) / pinch.d0);
+      // keep the point that started under the fingers under the fingers
+      tx = mx - (pinch.mx0 - pinch.tx0) * (nk / pinch.k0);
+      ty = my - (pinch.my0 - pinch.ty0) * (nk / pinch.k0);
+      k = nk; render();
+      return;
+    }
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.hypot(dx, dy) > 4) { drag.moved = true; svg.classList.add('is-dragging'); }
+    if (drag.moved) { tx = drag.tx + dx; ty = drag.ty + dy; render(); }
+  });
+  function endPointer(e) {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) pinch = null; return; }  // lifting after a pinch is not a tap
+    if (!drag || pts.size) return;
+    const { moved, plot } = drag; drag = null; svg.classList.remove('is-dragging');
+    if (moved || e.type === 'pointercancel') return;
+    // Fall back to a hit test at the release point, which is immune to
+    // pointer-capture retargeting.
+    const g = plot || document.elementFromPoint(e.clientX, e.clientY)?.closest('.plot[data-id]');
+    if (g && !g.classList.contains('is-out')) open(g); else close();
+  }
+  svg.addEventListener('pointerup', endPointer);
+  svg.addEventListener('pointercancel', endPointer);
+
+  const mid = () => [svg.clientWidth / 2, svg.clientHeight / 2];
+  document.getElementById('z-in').onclick  = () => zoomAt(1.5, ...mid());
+  document.getElementById('z-out').onclick = () => zoomAt(1 / 1.5, ...mid());
+  document.getElementById('z-fit').onclick = () => { close(); fit(); };
+
+  // ---- key (collapsible on phones) ----------------------------------------
+  const legend = document.getElementById('legend');
+  const legendBtn = legend.querySelector('.legend-toggle');
+  legendBtn.addEventListener('click', () => {
+    const open = !legend.classList.contains('is-open');
+    legend.classList.toggle('is-open', open);
+    legendBtn.setAttribute('aria-expanded', String(open));
+  });
+
+  // ---- entry panel ----
+  const panel = document.getElementById('entry');
+  const body  = document.getElementById('e-body');
+  const plots = Array.from(svg.querySelectorAll('.plot[data-id]'));
+  let selected = null;
+
+  function open(g) {
+    plots.forEach(p => p.classList.toggle('is-selected', p === g));
+    selected = g;
+    body.replaceChildren(document.querySelector(`template[data-for="${g.dataset.id}"]`).content.cloneNode(true));
+    body.querySelector('.e-pos').textContent = `range ${g.dataset.row}, column ${g.dataset.col}`;
+    panel.classList.add('is-open'); panel.setAttribute('aria-hidden', 'false');
+    legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
+    body.parentElement.scrollTop = 0;
+    animateTo(frame(g), 380);
+  }
+  // Where to put the view so plot g sits centred in the space the panel
+  // leaves free: to its left on wide screens, above the sheet on phones.
+  function frame(g) {
+    const W = svg.clientWidth, H = svg.clientHeight;
+    const sheet = STACK.matches;
+    const fw = sheet ? W : W - Math.min(panel.offsetWidth, W);
+    const fh = sheet ? H - Math.min(panel.offsetHeight, H) : H;
+    // Wide: about a third of the free space, so neighbours stay in view.
+    // Phone: as large as the free strip above the sheet comfortably allows.
+    const nk = sheet ? Math.min(fw * 0.8 / PW, fh * 0.75 / PH, 40)
+                     : Math.max(k, Math.min(fw * 0.3 / PW, fh * 0.3 / PH, 30));
+    return { k: nk, tx: fw / 2 - g.dataset.cx * nk, ty: fh / 2 - g.dataset.cy * nk };
+  }
+  function close() {
+    if (!selected) return;
+    selected.classList.remove('is-selected'); selected = null;
+    panel.classList.remove('is-open'); panel.setAttribute('aria-hidden', 'true');
+  }
+  document.getElementById('e-close').onclick = close;
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') close();
+    if ((e.key === 'Enter' || e.key === ' ') && document.activeElement?.classList.contains('plot')) {
+      e.preventDefault(); open(document.activeElement);
+    }
+  });
+
+  // ---- search + faceted filters ----
+  // Within a group, chips are OR (any selected keyword); across groups and
+  // search, AND. Each chip shows how many plots you'd see if you added it.
+  const input   = document.getElementById('pl-search');
+  const chips   = Array.from(document.querySelectorAll('.facet-chip'));
+  const clearEl = document.getElementById('pl-clear');
+  const emptyEl = document.getElementById('pl-empty');
+  const nMatch  = document.getElementById('n-match');
+  const active  = { kw: new Set(), status: new Set(), cran: new Set() };
+  const facts = new Map(plots.map(p => [p, {
+    search: p.dataset.search,
+    kw: (p.dataset.keywords || '').split('|').filter(Boolean),
+    status: [p.dataset.status],
+    cran: p.dataset.cran === '1' ? ['1'] : []
+  }]));
+
+  function matches(p, term, skip) {
+    const f = facts.get(p);
+    if (term && !f.search.includes(term)) return false;
+    for (const g of Object.keys(active)) {
+      if (g === skip || active[g].size === 0) continue;
+      if (!f[g].some(v => active[g].has(v))) return false;
+    }
+    return true;
+  }
+
+  const fBtn    = document.getElementById('pl-filter-btn');
+  const fPanel  = document.getElementById('pl-filters');
+  const fBadge  = document.getElementById('pl-filter-n');
+  const fShow   = document.getElementById('pl-show');
+  const activeEl = document.getElementById('pl-active');
+
+  function apply() {
+    const term = input.value.trim().toLowerCase();
+    let n = 0;
+    plots.forEach(p => {
+      const ok = matches(p, term);
+      p.classList.toggle('is-out', !ok);
+      p.setAttribute('tabindex', ok ? '0' : '-1');
+      if (ok) n++;
+    });
+    nMatch.textContent = n;
+
+    chips.forEach(c => {
+      const g = c.dataset.group, k = c.dataset.key;
+      const count = plots.filter(p => matches(p, term, g) && facts.get(p)[g].includes(k)).length;
+      const on = active[g].has(k);
+      c.querySelector('.chip-n').textContent = count;
+      c.disabled = count === 0 && !on;
+      c.setAttribute('aria-label', `${c.querySelector('.chip-label').textContent}, ${count} plot${count === 1 ? '' : 's'}`);
+    });
+
+    const nOn = Object.values(active).reduce((a, s) => a + s.size, 0);
+    const filtering = !!term || nOn > 0;
+    clearEl.hidden = !filtering;
+    fBadge.hidden = nOn === 0;
+    fBadge.textContent = nOn;
+    fBtn.classList.toggle('is-active', nOn > 0);
+    fBtn.setAttribute('aria-label', nOn ? `Filters, ${nOn} active` : 'Filters');
+    fShow.textContent = n === 0 ? 'No matches' : `Show ${n} plot${n === 1 ? '' : 's'}`;
+    fShow.disabled = n === 0;
+    renderActive();
+    emptyEl.hidden = n !== 0;
+    if (selected && selected.classList.contains('is-out')) close();
+    syncUrl(term);
+  }
+
+  // Keep the filter state in the URL so a filtered view can be shared.
+  // (Not ?q=: Quarto's site search claims and strips that parameter.)
+  function syncUrl(term) {
+    const u = new URL(location.href);
+    ['search', 'k', 'status', 'cran'].forEach(x => u.searchParams.delete(x));
+    if (term) u.searchParams.set('search', term);
+    if (active.kw.size) u.searchParams.set('k', [...active.kw].join(','));
+    if (active.status.size) u.searchParams.set('status', [...active.status].join(','));
+    if (active.cran.size) u.searchParams.set('cran', '1');
+    history.replaceState(null, '', u);
+  }
+
+  // Removable pills for whatever is switched on, so the filters stay
+  // visible while the panel is closed.
+  function renderActive() {
+    const on = chips.filter(c => c.getAttribute('aria-pressed') === 'true');
+    activeEl.replaceChildren();
+    on.forEach(c => {
+      const label = c.querySelector('.chip-label').textContent;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip active-pill';
+      b.setAttribute('aria-label', `Remove filter: ${label}`);
+      b.append(label);
+      const x = document.createElement('span'); x.className = 'x'; x.setAttribute('aria-hidden', 'true'); x.textContent = '×';
+      b.append(x);
+      b.addEventListener('click', () => { setChip(c, false); apply(); });
+      activeEl.append(b);
+    });
+    if (on.length > 1) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'active-clear'; b.textContent = 'Clear all';
+      b.addEventListener('click', clearAll);
+      activeEl.append(b);
+    }
+    activeEl.hidden = on.length === 0;
+  }
+
+  function setFilters(open, returnFocus = true) {
+    fPanel.hidden = !open;
+    fBtn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
+      (fPanel.querySelector('.facet-chip:not(:disabled)') || fPanel.querySelector('.fp-close')).focus({ preventScroll: true });
+    } else if (returnFocus) fBtn.focus({ preventScroll: true });
+  }
+  fBtn.addEventListener('click', () => setFilters(fPanel.hidden));
+  document.getElementById('pl-filters-close').addEventListener('click', () => setFilters(false));
+  fShow.addEventListener('click', () => setFilters(false));
+  // Click or tap anywhere else closes it (without stealing focus back).
+  document.addEventListener('pointerdown', e => {
+    if (!fPanel.hidden && !fPanel.contains(e.target) && !fBtn.contains(e.target)) setFilters(false, false);
+  }, true);
+  // Escape closes the panel first, before anything else on the page reacts.
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !fPanel.hidden) { e.stopPropagation(); setFilters(false); }
+  }, true);
+
+  function setChip(c, on) {
+    active[c.dataset.group][on ? 'add' : 'delete'](c.dataset.key);
+    c.setAttribute('aria-pressed', String(on));
+  }
+  function clearAll() {
+    chips.forEach(c => setChip(c, false));
+    input.value = '';
+    apply();
+  }
+
+  input.addEventListener('input', apply);
+  input.addEventListener('keydown', e => { if (e.key === 'Escape' && input.value) { e.stopPropagation(); input.value = ''; apply(); } });
+  chips.forEach(c => c.addEventListener('click', () => {
+    setChip(c, c.getAttribute('aria-pressed') !== 'true'); apply();
+  }));
+  clearEl.addEventListener('click', clearAll);
+  document.getElementById('pl-empty-clear').addEventListener('click', clearAll);
+
+  // Restore state from the URL. ?k= matches the database page's deep links.
+  const params = new URLSearchParams(location.search);
+  input.value = params.get('search') || params.get('q') || '';
+  const want = { kw: params.get('k'), status: params.get('status'), cran: params.get('cran') };
+  chips.forEach(c => {
+    const list = (want[c.dataset.group] || '').toLowerCase().split(',').map(x => x.trim());
+    if (list.includes(c.dataset.key)) setChip(c, true);
+  });
+
+  apply();
+
+  function sizeToNav() {
+    const nav = document.querySelector('#quarto-header') || document.querySelector('.navbar');
+    plan.style.setProperty('--nav-h', (nav ? nav.getBoundingClientRect().bottom : 0) + 'px');
+  }
+  // Re-lay out only when crossing the phone breakpoint; otherwise just keep
+  // the view sensible for the new size.
+  function relayout() {
+    sizeToNav();
+    const mode = currentMode();
+    if (mode !== layoutMode) { layoutMode = mode; layoutPlan(mode); }
+    if (selected) {
+      const pos = body.querySelector('.e-pos');
+      if (pos) pos.textContent = `range ${selected.dataset.row}, column ${selected.dataset.col}`;
+      stopAnim(); ({ k, tx, ty } = frame(selected)); render();
+    }
+    else fit(false);
+  }
+  relayout();
+  let pending = null;
+  const ro = new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(relayout); });
+  ro.observe(stage);
+  const header = document.querySelector('#quarto-header');
+  if (header) ro.observe(header);
+  if (document.fonts) document.fonts.ready.then(() => { layoutMode = null; relayout(); });
+})();
+</script>
+
+
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/AAGI-AUS\.github\.io\/AAGIverse-shared-code\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
