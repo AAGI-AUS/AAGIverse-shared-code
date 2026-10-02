@@ -81,38 +81,23 @@ blocks <- blocks[order(-vapply(blocks, nrow, integer(1)), names(blocks))]
 all_keywords <- sort(unique(unlist(lapply(df$`Code keywords`, split_tags))))
 
 # ---- Geometry (plan units) -------------------------------------------------
-# Blocks side by side; within a block, plots fill ranges with as many
-# columns as makes the block roughly square. Short blocks are padded with
-# buffer plots so every block is a clean rectangle.
+# Sizes only. The page script lays the blocks out to suit the screen: side
+# by side with roughly square blocks on wide screens, stacked in a single
+# column on phones. Short blocks get buffer plots so each is a rectangle.
 PW <- 14; PH <- 8.5        # plot footprint, laid out landscape
 CG <- 1; RG <- 2           # column gap; alley between ranges
 BG <- 10                   # minimum gap between blocks
 PAD <- 8
 
-# Approximate text width so a block's caption never runs into the next block.
-caption_w <- function(s) 0.55 * nchar(s) * 1.25
-
-layout <- list(); x0 <- PAD
-for (bi in seq_along(blocks)) {
-  b <- blocks[[bi]]; n <- nrow(b)
-  # Plots are wider than tall, so fewer columns keep the block square.
-  ncol <- max(1, ceiling(sqrt(n * PH / PW)))
-  nrow_ <- ceiling(n / ncol)
-  L <- LETTERS[bi]
-  w <- ncol * PW + (ncol - 1) * CG
-  cells <- lapply(seq_len(ncol * nrow_), function(i) {
-    r <- (i - 1) %/% ncol; cc <- (i - 1) %% ncol
-    list(x = x0 + cc * (PW + CG), y = PAD + r * (PH + RG),
-         row = r + 1, col = cc + 1, idx = i,
-         plot = if (i <= n) b[i, ] else NULL, id = sprintf("%s%02d", L, i))
-  })
-  layout[[bi]] <- list(name = names(blocks)[bi], letter = L, x = x0, w = w,
-                       h = nrow_ * PH + (nrow_ - 1) * RG, ncol = ncol, nrow = nrow_, cells = cells)
-  x0 <- x0 + max(w + BG, caption_w(sprintf("Block %s   %s", L, names(blocks)[bi])) + 4)
-}
-last_b  <- layout[[length(layout)]]
-field_w <- max(x0 - BG, last_b$x + last_b$w) + PAD
-field_h <- max(vapply(layout, function(b) b$h, numeric(1))) + 2 * PAD
+# Plot IDs are fixed here (block letter + order within the block) so they
+# stay the same whatever the screen layout.
+plots_tbl <- bind_rows(lapply(seq_along(blocks), function(bi) {
+  b <- blocks[[bi]]
+  b$letter <- LETTERS[bi]
+  b$idx    <- seq_len(nrow(b))
+  b$id     <- sprintf("%s%02d", LETTERS[bi], b$idx)
+  b
+}))
 
 # ---- SVG ---------------------------------------------------------------------
 svg_text <- function(x, y, s, cls, extra = "") sprintf('<text class="%s" x="%.2f" y="%.2f"%s>%s</text>', cls, x, y, extra, esc(s))
@@ -160,11 +145,7 @@ crop_row <- function(lvl, n, x0, x1, y, seed = 1, scale = 1, delay0 = 0) {
   }, character(1)), collapse = "")
 }
 
-plot_svg <- function(cell) {
-  r <- cell$plot
-  if (is.null(r)) {
-    return(sprintf('<rect class="plot is-buffer" x="%.2f" y="%.2f" width="%g" height="%g"/>', cell$x, cell$y, PW, PH))
-  }
+plot_svg <- function(r) {
   v  <- vigour(r$last_commit_date)
   ck <- split_tags(r$`Code keywords`); tk <- split_tags(r$`Topic keywords`)
   haystack <- tolower(paste(r$name, r$`Code maintainer`, r$Organisation, r$Description,
@@ -175,11 +156,10 @@ plot_svg <- function(cell) {
   by_size   <- min(0.9, (PW - 1.2) / (0.5 * max(1, nchar(r$`Code maintainer` %||% ""))))
   n_plants  <- if (is.na(r$contributors)) 3 else r$contributors
   base_y    <- PH - 0.55
-  seed      <- sum(utf8ToInt(cell$id))
+  seed      <- sum(utf8ToInt(r$id))
   sprintf('
   <g class="plot is-v%d" tabindex="0" role="button" data-id="%s" data-search="%s" data-keywords="%s"
-     data-status="%s" data-cran="%d"
-     data-cx="%.2f" data-cy="%.2f" transform="translate(%.2f %.2f)">
+     data-status="%s" data-cran="%d">
     <title>%s — %s</title>
     <rect class="plot-fill" width="%g" height="%g"/>
     <line class="soil" x1="0.5" x2="%.2f" y1="%.2f" y2="%.2f"/>
@@ -189,46 +169,42 @@ plot_svg <- function(cell) {
     <text class="plot-name" x="0.6" y="3" font-size="%.2f">%s</text>
     <text class="plot-by" x="0.6" y="4.15" font-size="%.2f">%s</text>
   </g>',
-    v$lvl, cell$id, esc(haystack), esc(tolower(paste(ck, collapse = "|"))),
+    v$lvl, r$id, esc(haystack), esc(tolower(paste(ck, collapse = "|"))),
     tolower(v$label), as.integer(!is.na(r$cran_package)),
-    cell$x + PW / 2, cell$y + PH / 2, cell$x, cell$y,
     esc(r$name), esc(r$`Code maintainer`),
     PW, PH,
     PW - 0.5, base_y, base_y,
     crop_row(v$lvl, n_plants, 0.6, PW - 0.6, base_y, seed = seed, scale = 0.9,
-             delay0 = 0.05 * (match(substr(cell$id, 1, 1), LETTERS) - 1) + 0.02 * cell$idx),
-    svg_text(0.55, 1.35, cell$id, "plot-id"),
+             delay0 = 0.05 * (match(r$letter, LETTERS) - 1) + 0.02 * r$idx),
+    svg_text(0.55, 1.35, r$id, "plot-id"),
     if (!is.na(r$cran_package)) sprintf('<circle class="plot-cran" cx="%.2f" cy="1.0" r="0.38"><title>On CRAN</title></circle>', PW - 0.95) else "",
     name_size, esc(r$name),
     by_size, esc(r$`Code maintainer`))
 }
 
-block_svg <- function(b) {
-  y0 <- PAD
+block_svg <- function(bi) {
+  b <- plots_tbl[plots_tbl$letter == LETTERS[bi], ]
   paste0(
-    '<g class="block">',
-    sprintf('<text class="block-cap" x="%.2f" y="%.2f"><tspan class="block-letter">Block %s</tspan><tspan dx="1.6">%s</tspan></text>',
-            b$x, y0 - 2.2, b$letter, esc(b$name)),
-    paste0(vapply(seq_len(b$nrow), function(r) svg_text(b$x - 1, y0 + (r - 1) * (PH + RG) + PH / 2 + 0.45,
-                                                         sprintf("%d", r), "axis-no", ' text-anchor="end"'), character(1)), collapse = ""),
-    paste0(vapply(seq_len(b$ncol), function(cc) svg_text(b$x + (cc - 1) * (PW + CG) + PW / 2, y0 + b$h + 2.2,
-                                                          sprintf("%d", cc), "axis-no", ' text-anchor="middle"'), character(1)), collapse = ""),
-    paste0(vapply(b$cells, plot_svg, character(1)), collapse = ""),
+    sprintf('<g class="block" data-letter="%s">', LETTERS[bi]),
+    sprintf('<text class="block-cap" data-name="%s"><tspan class="block-letter">Block %s</tspan></text>',
+            esc(names(blocks)[bi]), LETTERS[bi]),
+    '<g class="block-extras"></g>',
+    paste0(vapply(seq_len(nrow(b)), function(i) plot_svg(b[i, ]), character(1)), collapse = ""),
     '</g>')
 }
-field_svg <- paste0(vapply(layout, block_svg, character(1)), collapse = "\n")
+field_svg <- paste0(vapply(seq_along(blocks), block_svg, character(1)), collapse = "\n")
 
 # ---- Entry panel content, one template per plot -----------------------------
 row <- function(k, v, hint = NULL) sprintf('<div class="e-row"%s><dt>%s</dt><dd>%s</dd></div>',
                                             if (is.null(hint)) "" else sprintf(' title="%s"', esc(hint)), esc(k), v)
-detail_html <- function(cell) {
-  r <- cell$plot; v <- vigour(r$last_commit_date)
+detail_html <- function(r) {
+  v <- vigour(r$last_commit_date)
   ck <- split_tags(r$`Code keywords`); tk <- split_tags(r$`Topic keywords`)
   tags <- function(x) if (length(x)) paste0('<p class="e-tags">', paste0(esc(x), collapse = '<span class="dot">·</span>'), '</p>') else '<p class="e-tags">—</p>'
   sprintf('
   <template data-for="%s">
     <svg class="e-crop" viewBox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"/>%s</svg>
-    <p class="e-kicker">Plot %s · Block %s · range %d, column %d</p>
+    <p class="e-kicker">Plot %s · Block %s · <span class="e-pos"></span></p>
     <h2 class="e-name">%s</h2>
     <p class="e-by">%s · %s</p>
     <p class="e-status">%s%s</p>
@@ -238,10 +214,10 @@ detail_html <- function(cell) {
     <h3 class="e-h">Topics</h3>%s
     <p class="e-links"><a href="%s" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:%s">Email maintainer</a></p>
   </template>',
-    cell$id,
+    r$id,
     crop_row(v$lvl, if (is.na(r$contributors)) 3 else r$contributors, 1.2, 24.8, 3.9,
-             seed = sum(utf8ToInt(cell$id)), scale = 1),
-    cell$id, substr(cell$id, 1, 1), cell$row, cell$col,
+             seed = sum(utf8ToInt(r$id)), scale = 1),
+    r$id, r$letter,
     esc(r$name %||% r$`Code type`), esc(r$`Code maintainer`), esc(r$Organisation),
     v$label, if (nzchar(v$ago)) sprintf('<span> · last commit %s</span>', v$ago) else "",
     esc(r$Description),
@@ -256,7 +232,7 @@ detail_html <- function(cell) {
     tags(ck), tags(tk),
     esc(r$`Software website`), esc(r$Email))
 }
-templates <- paste0(unlist(lapply(layout, function(b) lapply(Filter(function(c) !is.null(c$plot), b$cells), detail_html))), collapse = "\n")
+templates <- paste0(vapply(seq_len(nrow(plots_tbl)), function(i) detail_html(plots_tbl[i, ]), character(1)), collapse = "\n")
 
 legend_html <- paste0(vapply(list(
     list(3, "Active", "&lt;3 mo"), list(2, "Maintained", "&lt;1 yr"),
@@ -290,31 +266,51 @@ cat(sprintf('
         <h1>Trial plan</h1>
         <p role="status"><strong id="n-match">%d</strong> of %d plots · %d blocks · %s</p>
       </div>
-      <label class="visually-hidden" for="pl-search">Search plots</label>
-      <input id="pl-search" class="db-search plan-search" type="search" autocomplete="off"
-             placeholder="Search by package, maintainer or description…">
+      <div class="plan-tools">
+        <label class="visually-hidden" for="pl-search">Search plots</label>
+        <input id="pl-search" class="db-search plan-search" type="search" autocomplete="off"
+               placeholder="Search packages or people…">
+        <button type="button" class="filter-btn" id="pl-filter-btn" aria-expanded="false" aria-controls="pl-filters">
+          <svg class="filter-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4 8h8M6.5 12h3"/></svg>
+          <span>Filters</span><span class="filter-badge" id="pl-filter-n" hidden></span>
+        </button>
+      </div>
     </div>
-    <div class="plan-facets">
-      <div class="facet" role="group" aria-labelledby="f-kw"><span class="facet-label" id="f-kw">Keyword</span>%s</div>
-      <div class="facet" role="group" aria-labelledby="f-st"><span class="facet-label" id="f-st">Status</span>%s</div>
-      <div class="facet" role="group" aria-label="Availability">%s</div>
-      <button type="button" class="chip chip-clear" id="pl-clear" hidden>Clear all</button>
+
+    <div class="filter-panel" id="pl-filters" role="dialog" aria-labelledby="fp-title" hidden>
+      <div class="fp-head">
+        <h2 class="fp-title" id="fp-title">Filters</h2>
+        <button type="button" class="fp-close" id="pl-filters-close" aria-label="Close filters">×</button>
+      </div>
+      <div class="fp-body">
+        <section class="facet" role="group" aria-labelledby="f-kw"><h3 class="facet-label" id="f-kw">Keyword</h3><div class="facet-chips">%s</div></section>
+        <section class="facet" role="group" aria-labelledby="f-st"><h3 class="facet-label" id="f-st">Status</h3><div class="facet-chips">%s</div></section>
+        <section class="facet" role="group" aria-labelledby="f-av"><h3 class="facet-label" id="f-av">Availability</h3><div class="facet-chips">%s</div></section>
+      </div>
+      <div class="fp-foot">
+        <button type="button" class="chip chip-clear" id="pl-clear" hidden>Clear all</button>
+        <button type="button" class="fp-show" id="pl-show">Show plots</button>
+      </div>
     </div>
   </header>
 
   <div class="plan-stage">
-    <svg class="plan-svg" id="plan-svg" data-pw="%g" data-ph="%g" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
+    <div class="plan-active" id="pl-active" aria-label="Active filters" hidden></div>
+    <svg class="plan-svg" id="plan-svg" data-pw="%g" data-ph="%g" data-cg="%g" data-rg="%g" data-bg="%g" data-pad="%g" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
       <g id="world">
-        <rect class="ground" x="0" y="0" width="%.2f" height="%.2f"/>
+        <rect class="ground" x="0" y="0" width="1" height="1"/>
         %s
       </g>
     </svg>
 
-    <div class="legend" aria-label="Key">
-      %s
-      <span><i class="sw is-buffer"></i>Buffer</span>
-      <span><i class="sw is-cran"></i>On CRAN</span>
-      <span class="legend-note">One plant per contributor</span>
+    <div class="legend" id="legend">
+      <button type="button" class="legend-toggle" aria-expanded="false" aria-controls="legend-items">Key</button>
+      <div class="legend-items" id="legend-items" aria-label="Key">
+        %s
+        <span><i class="sw is-buffer"></i>Buffer</span>
+        <span><i class="sw is-cran"></i>On CRAN</span>
+        <span class="legend-note">One plant per contributor</span>
+      </div>
     </div>
 
     <div class="plan-empty" id="pl-empty" hidden>
@@ -341,7 +337,7 @@ cat(sprintf('
 </div>
 ',
   nrow(df), nrow(df), length(blocks), format(today, "%d %b %Y"),
-  kw_chips, status_chips, cran_chip, PW, PH, field_w, field_h, field_svg, legend_html, templates))
+  kw_chips, status_chips, cran_chip, PW, PH, CG, RG, BG, PAD, field_svg, legend_html, templates))
 cat('\n```\n')
 ```
 
@@ -367,17 +363,84 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 }
 
 /* ---- top bar ---- */
-.plan-bar { padding: 1rem 2rem .8rem; border-bottom: 1px solid var(--rule); }
+.plan-bar { position: relative; padding: .9rem 2rem; border-bottom: 1px solid var(--rule); }
 .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .plan-title h1 { margin: 0; font: 600 1.35rem var(--head); letter-spacing: -.01em; }
 .plan-title p { margin: .1rem 0 0; font-size: .85rem; color: var(--muted); }
 .plan-title p strong { font-family: var(--mono); font-weight: 500; color: var(--ink); }
 /* .db-search and .chip come from assets/aagi.scss; only layout tweaks here */
-.plan-search { flex: 0 1 26rem; font-size: .95rem; padding: .5rem 1rem; }
+.plan-tools { display: flex; align-items: center; gap: .6rem; flex: 0 1 32rem; min-width: 0; }
+.plan-search { flex: 1 1 auto; min-width: 0; font-size: .95rem; padding: .5rem 1rem; }
 
-.plan-facets { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.75rem; margin-top: .8rem; }
-.facet { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
-.facet-label { font-size: .85rem; color: var(--muted); margin-right: .2rem; }
+/* Filters button: same pill language as the search box */
+.filter-btn {
+  display: inline-flex; align-items: center; gap: .45rem; flex: none;
+  height: 2.5rem; padding: 0 1rem;
+  font: inherit; font-size: .92rem; color: var(--ink); white-space: nowrap;
+  background: #fff; border: 1.5px solid var(--rule); border-radius: 999px; cursor: pointer;
+  transition: border-color .14s, background .14s, box-shadow .14s;
+}
+.filter-btn:hover { border-color: var(--sage); background: var(--surface); }
+.filter-btn:focus-visible, .filter-btn[aria-expanded="true"] {
+  outline: none; border-color: var(--sage); background: var(--surface); box-shadow: 0 0 0 3px rgba(140,192,174,.38);
+}
+.filter-btn.is-active { border-color: var(--green); color: var(--green); font-weight: 600; }
+.filter-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.filter-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 1.3rem; height: 1.3rem; padding: 0 .35rem;
+  border-radius: 999px; background: var(--green); color: #fff; font: 600 .72rem var(--mono);
+}
+.filter-badge[hidden] { display: none; }
+
+/* Filters panel: drops from the button over the map */
+.filter-panel {
+  position: absolute; top: calc(100% - .4rem); right: 2rem; z-index: 6;
+  display: flex; flex-direction: column; width: min(30rem, calc(100vw - 2rem)); max-height: min(70vh, 34rem);
+  background: #fff; border: 1px solid var(--rule); border-radius: .6rem; box-shadow: 0 14px 40px rgba(28,28,28,.12);
+}
+.filter-panel[hidden] { display: none; }
+.fp-head { display: flex; align-items: center; justify-content: space-between; padding: .7rem .7rem .2rem 1.15rem; }
+.fp-title { margin: 0; font: 600 .98rem var(--head); }
+/* Quarto underlines every h2; these are labels, not section headings */
+.fp-title, .e-name { border-bottom: 0; padding-bottom: 0; }
+.fp-close {
+  width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; background: none;
+  font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer;
+}
+.fp-close:hover { background: var(--surface); color: var(--ink); }
+.fp-body { overflow-y: auto; padding: .35rem 1.15rem .4rem; }
+.facet { margin: 0 0 1rem; }
+.facet-label { margin: 0 0 .45rem; font: 600 .66rem var(--head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.facet-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.fp-foot { display: flex; align-items: center; gap: .75rem; padding: .7rem 1.15rem; border-top: 1px solid var(--rule); }
+.fp-foot .chip-clear { margin: 0; }
+.fp-foot .chip-clear[hidden] { display: none; }
+.fp-show {
+  margin-left: auto; padding: .5rem 1.15rem; border: 0; border-radius: 999px;
+  background: var(--green); color: #fff; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+}
+.fp-show:hover { background: var(--green-deep); }
+.fp-show:disabled { background: #b9c3be; cursor: default; }
+.fp-show:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(140,192,174,.6); }
+
+/* active filters, floating over the top of the map */
+.plan-active {
+  position: absolute; top: .75rem; left: 1rem; right: 1rem; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; pointer-events: none;
+}
+.plan-active[hidden] { display: none; }
+.plan-active > * { pointer-events: auto; }
+.chip.active-pill {
+  display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; padding: .22rem .55rem .22rem .75rem;
+  background: var(--mint); border-color: var(--sage); color: var(--green-deep);
+}
+.chip.active-pill:hover { background: #d6e8de; border-color: var(--green); }
+.active-pill .x { font-size: 1rem; line-height: 1; opacity: .65; }
+.active-clear {
+  padding: .2rem .4rem; border: 0; background: rgba(255,255,255,.85); border-radius: .25rem;
+  font: inherit; font-size: .8rem; color: var(--muted); text-decoration: underline; cursor: pointer;
+}
+.active-clear:hover { color: var(--ink); }
 
 .facet-chip { display: inline-flex; align-items: center; gap: .35rem; }
 .chip-n { font-family: var(--mono); font-size: .72rem; color: var(--muted); min-width: .6rem; text-align: center; }
@@ -389,7 +452,6 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .facet-chip[aria-pressed="true"] .chip-crop .grain { fill: #fff; }
 .chip-dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); }
 .facet-chip[aria-pressed="true"] .chip-dot { background: #fff; }
-.plan-facets .chip-clear[hidden] { display: none; }
 
 /* empty state, centred over the map */
 .plan-empty {
@@ -449,8 +511,10 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .plot.is-out { cursor: default; }
 
 /* ---- overlays ---- */
-.legend {
-  position: absolute; left: 2rem; bottom: 1.1rem; display: flex; gap: 1.1rem; flex-wrap: wrap;
+.legend { position: absolute; left: 2rem; bottom: 1.1rem; z-index: 2; }
+.legend-toggle { display: none; }
+.legend-items {
+  display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: center;
   font-size: .78rem; color: var(--muted);
   padding: .3rem .6rem; background: rgba(255,255,255,.92);
 }
@@ -462,7 +526,7 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .sw.is-buffer { border: 1px dashed #9aa39e; }
 .sw.is-cran { border: 0; width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); margin-inline: .15rem; }
 
-.zoom { position: absolute; right: 2rem; bottom: 1rem; display: flex; border: 1px solid var(--rule); background: #fff; }
+.zoom { position: absolute; right: 2rem; bottom: 1rem; z-index: 2; display: flex; border: 1px solid var(--rule); background: #fff; }
 .zoom button { font: 500 .9rem var(--mono); width: 2.2rem; height: 2rem; border: 0; background: none; color: var(--ink); cursor: pointer; }
 .zoom button + button { border-left: 1px solid var(--rule); }
 .zoom button:hover { background: var(--surface); }
@@ -470,7 +534,7 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 
 /* ---- entry panel ---- */
 .entry {
-  position: absolute; top: 0; right: 0; bottom: 0; width: min(26rem, 100%);
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 3; width: min(26rem, 100%);
   background: #fff; border-left: 1px solid var(--rule);
   transform: translateX(100%); transition: transform .26s cubic-bezier(.2,.7,.2,1);
   overflow-y: auto; user-select: text;
@@ -499,57 +563,213 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-@media (max-width: 760px) {
-  .plan-bar { padding: .8rem 1rem .6rem; }
-  .plan-head { flex-direction: column; align-items: stretch; gap: .6rem; }
-  .plan-search { flex: 1 1 auto; }
-  /* one scrollable strip of chips rather than hiding them */
-  .plan-facets { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: .6rem -1rem 0; padding: 0 1rem .1rem; }
-  .plan-facets::-webkit-scrollbar { display: none; }
-  .facet { flex-wrap: nowrap; }
-  .facet .chip { white-space: nowrap; }
-  .legend { left: 1rem; right: 1rem; gap: .6rem; font-size: .7rem; }
-  .zoom { display: none; }
+/* ---- small screens --------------------------------------------------------
+   Compact chrome for phones in either orientation; keep the two queries in
+   step with STACK and SHORT in the script. */
+@media (max-width: 700px), (max-height: 520px) {
+  .plan-bar { padding: .6rem 1rem .5rem; }
+  .plan-title h1 { font-size: 1.15rem; }
+  .plan-title p { font-size: .8rem; }
+  .plan-search { font-size: 1rem; }   /* 16px+ stops iOS zooming the page on focus */
+  .filter-panel { right: 1rem; }
+  .plan-active { left: .75rem; right: .75rem; top: .6rem; }
+
+  /* key folds into a button so it doesn't cover the field */
+  .legend { left: .75rem; bottom: .75rem; }
+  .legend-toggle {
+    display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .95rem;
+    font: inherit; font-size: .85rem; color: var(--ink);
+    background: #fff; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer;
+  }
+  .legend-toggle[aria-expanded="true"] { border-color: var(--sage); background: var(--surface); }
+  .legend-items {
+    display: none; position: absolute; left: 0; bottom: calc(100% + .5rem);
+    flex-direction: column; align-items: flex-start; gap: .35rem; width: max-content;
+    max-height: calc(100vh - 10rem); overflow-y: auto;
+    padding: .7rem .9rem; font-size: .82rem;
+    background: #fff; border: 1px solid var(--rule); border-radius: .5rem; box-shadow: 0 6px 24px rgba(28,28,28,.08);
+  }
+  .legend.is-open .legend-items { display: flex; }
+
+  .zoom { right: .75rem; bottom: .75rem; border-radius: 999px; overflow: hidden; }
+  .zoom button { width: 2.6rem; height: 2.5rem; }
+  .e-close { width: 2.75rem; height: 2.75rem; top: .35rem; right: .35rem; z-index: 2; }
+}
+
+/* phone portrait: search under the title, entry as a bottom sheet */
+@media (max-width: 700px) {
+  .plan-head { flex-direction: column; align-items: stretch; gap: .55rem; }
+  .plan-tools { flex: 1 1 auto; }
+  /* full-width dropdown under the header on phones */
+  .filter-panel { left: .75rem; right: .75rem; width: auto; top: calc(100% - .25rem); max-height: calc(100dvh - var(--nav-h, 58px) - 9rem); }
+  .fp-show { padding: .65rem 1.4rem; }
+  /* the plot stays visible in the strip above the sheet */
+  .entry {
+    top: auto; left: 0; width: 100%; height: min(66%, 36rem);
+    border-left: 0; border-top: 1px solid var(--rule); border-radius: .9rem .9rem 0 0;
+    transform: translateY(100%);
+  }
+  .entry.is-open { box-shadow: 0 -12px 30px rgba(28,28,28,.08); }
+  .entry::before {
+    content: ""; display: block; position: sticky; top: 0; height: 1.1rem; z-index: 1;
+    background: linear-gradient(#fff 70%, transparent);
+  }
+  .entry::after {
+    content: ""; position: absolute; top: .45rem; left: 50%; width: 2.5rem; height: .25rem;
+    margin-left: -1.25rem; border-radius: 999px; background: var(--rule);
+  }
+  .e-body { padding: .4rem 1.25rem 2rem; }
+  .e-name { font-size: 1.35rem; }
+  .e-crop { margin-bottom: .75rem; }
+}
+
+/* phone landscape: every pixel of height goes to the field */
+@media (max-height: 520px) and (min-width: 701px) {
+  .plan-bar { padding: .45rem 1rem .4rem; }
+  .plan-title { display: flex; align-items: baseline; gap: .7rem; }
+  .plan-title p { margin: 0; }
+  .plan-search { padding: .35rem .9rem; }
+  .filter-btn { height: 2.2rem; }
+  .filter-panel { max-height: calc(100dvh - var(--nav-h, 58px) - 4rem); }
+  .entry { width: min(24rem, 50%); }
+  .e-body { padding: 1rem 1.25rem 1.5rem; }
 }
 </style>
 
 <script>
 (function () {
   const plan  = document.getElementById('plan');
+  const stage = plan.querySelector('.plan-stage');
   const svg   = document.getElementById('plan-svg');
   const world = document.getElementById('world');
   const ground = svg.querySelector('.ground');
-  const FW = +ground.getAttribute('width'), FH = +ground.getAttribute('height');
+  const blocks = Array.from(svg.querySelectorAll('.block'));
+  const D = svg.dataset;
+  const PW = +D.pw, PH = +D.ph, CG = +D.cg, RG = +D.rg, BG = +D.bg, PAD = +D.pad;
+  const NS = 'http://www.w3.org/2000/svg';
+  // Keep in step with the small-screen @media rules.
+  const STACK = matchMedia('(max-width: 700px)');   // phone portrait
+  const SHORT = matchMedia('(max-height: 520px)');  // phone landscape
+  const currentMode = () => STACK.matches ? 'stack' : SHORT.matches ? 'row' : 'grid';
+  let FW = 1, FH = 1, layoutMode = null;
 
-  function sizeToNav() {
-    const nav = document.querySelector('.navbar');
-    plan.style.setProperty('--nav-h', (nav ? nav.getBoundingClientRect().bottom : 0) + 'px');
+  const svgEl = (tag, attrs, text) => {
+    const e = document.createElementNS(NS, tag);
+    for (const a in attrs) e.setAttribute(a, attrs[a]);
+    if (text != null) e.textContent = text;
+    return e;
+  };
+
+  // ---- layout -------------------------------------------------------------
+  //   grid  (desktop/tablet): blocks side by side, each roughly square; the
+  //         whole plan fits on screen.
+  //   stack (phone portrait): blocks stacked, one plot per range; fits the
+  //         width and you scroll down through it.
+  //   row   (phone landscape): every block a single range, side by side;
+  //         fits the height and you scroll across it.
+  function layoutPlan(mode) {
+    const narrow = mode === 'stack';
+    // Stacked, the plan is zoomed to the screen width, so the usual margin
+    // above it would become a large blank band; start close to the top.
+    let x0 = PAD, y0 = narrow ? 1.5 : PAD, maxR = 0, maxB = 0;
+    const capY = 3.4;  // room above a block for its caption
+    blocks.forEach(b => {
+      const ps = Array.from(b.querySelectorAll('.plot[data-id]'));
+      const n = ps.length;
+      const ncol = mode === 'stack' ? 1 : mode === 'row' ? n : Math.max(1, Math.ceil(Math.sqrt(n * PH / PW)));
+      const nrow = Math.ceil(n / ncol);
+      const w = ncol * PW + (ncol - 1) * CG, h = nrow * PH + (nrow - 1) * RG;
+
+      // Caption: letter and organisation on one line when wide; on phones the
+      // organisation wraps onto lines under the letter to fit the plot width.
+      const cap = b.querySelector('.block-cap');
+      cap.querySelectorAll('.block-name').forEach(t => t.remove());
+      const name = cap.dataset.name;
+      let lines = [name];
+      if (narrow) {
+        lines = []; let line = '';
+        const maxChars = Math.floor(PW / 0.62);
+        name.split(/\s+/).forEach(word => {
+          if (line && (line + ' ' + word).length > maxChars) { lines.push(line); line = word; }
+          else line = line ? line + ' ' + word : word;
+        });
+        if (line) lines.push(line);
+      }
+      lines.forEach((ln, i) => cap.appendChild(svgEl('tspan', narrow
+        ? { class: 'block-name', x: 0, dy: i === 0 ? 1.55 : 1.45 }
+        : { class: 'block-name', dx: 1.6 }, ln)));
+      const capH = narrow ? 2.4 + lines.length * 1.5 : capY;
+
+      const bx = narrow ? PAD : x0;
+      const by = narrow ? y0 + capH : PAD + capY;
+      cap.setAttribute('x', bx); cap.setAttribute('y', by - capH + 1.1);
+      cap.querySelectorAll('tspan.block-name[x]').forEach(t => t.setAttribute('x', bx));
+      const capW = cap.getComputedTextLength ? (narrow ? Math.min(cap.getComputedTextLength(), PW) : cap.getComputedTextLength()) : 0;
+
+      ps.forEach((p, i) => {
+        const r = Math.floor(i / ncol), c = i % ncol;
+        const x = bx + c * (PW + CG), y = by + r * (PH + RG);
+        p.setAttribute('transform', `translate(${x} ${y})`);
+        Object.assign(p.dataset, { cx: x + PW / 2, cy: y + PH / 2, row: r + 1, col: c + 1 });
+      });
+
+      // Buffers and range/column numbers depend on the layout, so rebuild them.
+      const extras = b.querySelector('.block-extras');
+      extras.replaceChildren();
+      for (let i = n; i < ncol * nrow; i++) {
+        const r = Math.floor(i / ncol), c = i % ncol;
+        extras.appendChild(svgEl('rect', { class: 'plot is-buffer', x: bx + c * (PW + CG), y: by + r * (PH + RG), width: PW, height: PH }));
+      }
+      for (let r = 0; r < nrow; r++)
+        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx - 1, y: by + r * (PH + RG) + PH / 2 + 0.45, 'text-anchor': 'end' }, r + 1));
+      for (let c = 0; c < ncol; c++)
+        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx + c * (PW + CG) + PW / 2, y: by + h + 2.2, 'text-anchor': 'middle' }, c + 1));
+
+      maxR = Math.max(maxR, bx + Math.max(w, capW));
+      maxB = Math.max(maxB, by + h + 3);
+      if (narrow) y0 = by + h + 3 + BG * 0.6;
+      else x0 += Math.max(w + BG, capW + 4);
+    });
+    FW = maxR + PAD; FH = maxB + PAD;
+    ground.setAttribute('width', FW); ground.setAttribute('height', FH);
   }
-  sizeToNav(); addEventListener('resize', () => { sizeToNav(); fit(false); });
 
-  // ---- pan / zoom ----
+  // ---- pan / zoom ---------------------------------------------------------
   let k = 1, tx = 0, ty = 0, anim = null;
   const render = () => world.setAttribute('transform', `translate(${tx} ${ty}) scale(${k})`);
-  function fitParams(pad) {
+  // grid: fit the whole plan. stack: fit the width, start at the top.
+  // row: fit the height, start at the left.
+  function fitParams() {
     const W = svg.clientWidth, H = svg.clientHeight;
-    const kk = Math.min((W - pad * 2) / FW, (H - pad * 2) / FH);
+    if (layoutMode === 'stack') {
+      const pad = 12, kk = (W - pad * 2) / FW;
+      return { k: kk, tx: (W - FW * kk) / 2, ty: FH * kk <= H - pad * 2 ? (H - FH * kk) / 2 : pad };
+    }
+    if (layoutMode === 'row') {
+      const pad = 8, kk = (H - pad * 2) / FH;
+      return { k: kk, ty: (H - FH * kk) / 2, tx: FW * kk <= W - pad * 2 ? (W - FW * kk) / 2 : pad };
+    }
+    const pad = 48, kk = Math.min((W - pad * 2) / FW, (H - pad * 2) / FH);
     return { k: kk, tx: (W - FW * kk) / 2, ty: (H - FH * kk) / 2 };
   }
+  const clampK = v => Math.max(fitParams().k * 0.6, Math.min(v, 60));
+  function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
   function animateTo(t, ms) {
-    if (anim) cancelAnimationFrame(anim);
+    stopAnim();
     const f = { k, tx, ty }, t0 = performance.now(), ease = x => 1 - Math.pow(1 - x, 3);
     (function step(now) {
       const p = ease(Math.min(1, (now - t0) / ms));
       k = f.k + (t.k - f.k) * p; tx = f.tx + (t.tx - f.tx) * p; ty = f.ty + (t.ty - f.ty) * p;
-      render(); if (p < 1) anim = requestAnimationFrame(step);
+      render(); anim = p < 1 ? requestAnimationFrame(step) : null;
     })(t0);
   }
   function fit(animate = true) {
-    const p = fitParams(48);
-    animate ? animateTo(p, 320) : (({k, tx, ty} = p), render());
+    const p = fitParams();
+    animate ? animateTo(p, 320) : (stopAnim(), ({ k, tx, ty } = p), render());
   }
   function zoomAt(f, cx, cy) {
-    const nk = Math.max(fitParams(48).k * 0.6, Math.min(k * f, 60));
+    stopAnim();
+    const nk = clampK(k * f);
     tx = cx - (cx - tx) * (nk / k); ty = cy - (cy - ty) * (nk / k); k = nk; render();
   }
   svg.addEventListener('wheel', e => {
@@ -558,34 +778,72 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
     zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - r.left, e.clientY - r.top);
   }, { passive: false });
 
-  let drag = null;
+  // One pointer pans (or taps); two pointers pinch-zoom around their midpoint.
+  const pts = new Map();
+  let drag = null, pinch = null;
+  const local = (x, y) => { const r = svg.getBoundingClientRect(); return [x - r.left, y - r.top]; };
   svg.addEventListener('pointerdown', e => {
-    if (e.button !== 0) return;
-    // Remember the plot now: once the pointer is captured, later events
-    // are retargeted to the svg and the plot is no longer e.target.
-    drag = { x: e.clientX, y: e.clientY, tx, ty, moved: false,
-             plot: e.target.closest('.plot[data-id]') };
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    stopAnim();
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+    if (pts.size === 1) {
+      // Remember the plot now: once the pointer is captured, later events
+      // are retargeted to the svg and the plot is no longer e.target.
+      drag = { x: e.clientX, y: e.clientY, tx, ty, moved: false, plot: e.target.closest('.plot[data-id]') };
+    } else if (pts.size === 2) {
+      drag = null;  // a second finger makes this a pinch, never a tap
+      const [a, b] = [...pts.values()];
+      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+      pinch = { d0: Math.hypot(b.x - a.x, b.y - a.y) || 1, k0: k, tx0: tx, ty0: ty, mx0: mx, my0: my };
+    }
   });
   svg.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && pts.size >= 2) {
+      const [a, b] = [...pts.values()];
+      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+      const nk = clampK(pinch.k0 * Math.hypot(b.x - a.x, b.y - a.y) / pinch.d0);
+      // keep the point that started under the fingers under the fingers
+      tx = mx - (pinch.mx0 - pinch.tx0) * (nk / pinch.k0);
+      ty = my - (pinch.my0 - pinch.ty0) * (nk / pinch.k0);
+      k = nk; render();
+      return;
+    }
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (Math.hypot(dx, dy) > 3) { drag.moved = true; svg.classList.add('is-dragging'); }
-    tx = drag.tx + dx; ty = drag.ty + dy; render();
+    if (Math.hypot(dx, dy) > 4) { drag.moved = true; svg.classList.add('is-dragging'); }
+    if (drag.moved) { tx = drag.tx + dx; ty = drag.ty + dy; render(); }
   });
-  svg.addEventListener('pointerup', e => {
-    if (!drag) return;
+  function endPointer(e) {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) pinch = null; return; }  // lifting after a pinch is not a tap
+    if (!drag || pts.size) return;
     const { moved, plot } = drag; drag = null; svg.classList.remove('is-dragging');
-    if (moved) return;
+    if (moved || e.type === 'pointercancel') return;
     // Fall back to a hit test at the release point, which is immune to
     // pointer-capture retargeting.
     const g = plot || document.elementFromPoint(e.clientX, e.clientY)?.closest('.plot[data-id]');
     if (g && !g.classList.contains('is-out')) open(g); else close();
-  });
-  const mid = () => { const r = svg.getBoundingClientRect(); return [r.width / 2, r.height / 2]; };
+  }
+  svg.addEventListener('pointerup', endPointer);
+  svg.addEventListener('pointercancel', endPointer);
+
+  const mid = () => [svg.clientWidth / 2, svg.clientHeight / 2];
   document.getElementById('z-in').onclick  = () => zoomAt(1.5, ...mid());
   document.getElementById('z-out').onclick = () => zoomAt(1 / 1.5, ...mid());
   document.getElementById('z-fit').onclick = () => { close(); fit(); };
+
+  // ---- key (collapsible on phones) ----------------------------------------
+  const legend = document.getElementById('legend');
+  const legendBtn = legend.querySelector('.legend-toggle');
+  legendBtn.addEventListener('click', () => {
+    const open = !legend.classList.contains('is-open');
+    legend.classList.toggle('is-open', open);
+    legendBtn.setAttribute('aria-expanded', String(open));
+  });
 
   // ---- entry panel ----
   const panel = document.getElementById('entry');
@@ -597,15 +855,24 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
     plots.forEach(p => p.classList.toggle('is-selected', p === g));
     selected = g;
     body.replaceChildren(document.querySelector(`template[data-for="${g.dataset.id}"]`).content.cloneNode(true));
+    body.querySelector('.e-pos').textContent = `range ${g.dataset.row}, column ${g.dataset.col}`;
     panel.classList.add('is-open'); panel.setAttribute('aria-hidden', 'false');
-    // Centre the plot in the space left of the panel, zooming in a little if we're far out.
+    legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
+    body.parentElement.scrollTop = 0;
+    animateTo(frame(g), 380);
+  }
+  // Where to put the view so plot g sits centred in the space the panel
+  // leaves free: to its left on wide screens, above the sheet on phones.
+  function frame(g) {
     const W = svg.clientWidth, H = svg.clientHeight;
-    const pw = Math.min(panel.getBoundingClientRect().width, W);
-    // Zoom so the plot takes about a third of the free width (or height,
-    // whichever binds), leaving its neighbours in view for context.
-    const PW = +svg.dataset.pw, PH = +svg.dataset.ph;
-    const nk = Math.max(k, Math.min(((W - pw) * 0.3) / PW, (H * 0.3) / PH, 30));
-    animateTo({ k: nk, tx: (W - pw) / 2 - g.dataset.cx * nk, ty: H / 2 - g.dataset.cy * nk }, 380);
+    const sheet = STACK.matches;
+    const fw = sheet ? W : W - Math.min(panel.offsetWidth, W);
+    const fh = sheet ? H - Math.min(panel.offsetHeight, H) : H;
+    // Wide: about a third of the free space, so neighbours stay in view.
+    // Phone: as large as the free strip above the sheet comfortably allows.
+    const nk = sheet ? Math.min(fw * 0.8 / PW, fh * 0.75 / PH, 40)
+                     : Math.max(k, Math.min(fw * 0.3 / PW, fh * 0.3 / PH, 30));
+    return { k: nk, tx: fw / 2 - g.dataset.cx * nk, ty: fh / 2 - g.dataset.cy * nk };
   }
   function close() {
     if (!selected) return;
@@ -646,6 +913,12 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
     return true;
   }
 
+  const fBtn    = document.getElementById('pl-filter-btn');
+  const fPanel  = document.getElementById('pl-filters');
+  const fBadge  = document.getElementById('pl-filter-n');
+  const fShow   = document.getElementById('pl-show');
+  const activeEl = document.getElementById('pl-active');
+
   function apply() {
     const term = input.value.trim().toLowerCase();
     let n = 0;
@@ -666,8 +939,16 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
       c.setAttribute('aria-label', `${c.querySelector('.chip-label').textContent}, ${count} plot${count === 1 ? '' : 's'}`);
     });
 
-    const filtering = !!term || Object.values(active).some(s => s.size);
+    const nOn = Object.values(active).reduce((a, s) => a + s.size, 0);
+    const filtering = !!term || nOn > 0;
     clearEl.hidden = !filtering;
+    fBadge.hidden = nOn === 0;
+    fBadge.textContent = nOn;
+    fBtn.classList.toggle('is-active', nOn > 0);
+    fBtn.setAttribute('aria-label', nOn ? `Filters, ${nOn} active` : 'Filters');
+    fShow.textContent = n === 0 ? 'No matches' : `Show ${n} plot${n === 1 ? '' : 's'}`;
+    fShow.disabled = n === 0;
+    renderActive();
     emptyEl.hidden = n !== 0;
     if (selected && selected.classList.contains('is-out')) close();
     syncUrl(term);
@@ -684,6 +965,51 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
     if (active.cran.size) u.searchParams.set('cran', '1');
     history.replaceState(null, '', u);
   }
+
+  // Removable pills for whatever is switched on, so the filters stay
+  // visible while the panel is closed.
+  function renderActive() {
+    const on = chips.filter(c => c.getAttribute('aria-pressed') === 'true');
+    activeEl.replaceChildren();
+    on.forEach(c => {
+      const label = c.querySelector('.chip-label').textContent;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip active-pill';
+      b.setAttribute('aria-label', `Remove filter: ${label}`);
+      b.append(label);
+      const x = document.createElement('span'); x.className = 'x'; x.setAttribute('aria-hidden', 'true'); x.textContent = '×';
+      b.append(x);
+      b.addEventListener('click', () => { setChip(c, false); apply(); });
+      activeEl.append(b);
+    });
+    if (on.length > 1) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'active-clear'; b.textContent = 'Clear all';
+      b.addEventListener('click', clearAll);
+      activeEl.append(b);
+    }
+    activeEl.hidden = on.length === 0;
+  }
+
+  function setFilters(open, returnFocus = true) {
+    fPanel.hidden = !open;
+    fBtn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
+      (fPanel.querySelector('.facet-chip:not(:disabled)') || fPanel.querySelector('.fp-close')).focus({ preventScroll: true });
+    } else if (returnFocus) fBtn.focus({ preventScroll: true });
+  }
+  fBtn.addEventListener('click', () => setFilters(fPanel.hidden));
+  document.getElementById('pl-filters-close').addEventListener('click', () => setFilters(false));
+  fShow.addEventListener('click', () => setFilters(false));
+  // Click or tap anywhere else closes it (without stealing focus back).
+  document.addEventListener('pointerdown', e => {
+    if (!fPanel.hidden && !fPanel.contains(e.target) && !fBtn.contains(e.target)) setFilters(false, false);
+  }, true);
+  // Escape closes the panel first, before anything else on the page reacts.
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !fPanel.hidden) { e.stopPropagation(); setFilters(false); }
+  }, true);
 
   function setChip(c, on) {
     active[c.dataset.group][on ? 'add' : 'delete'](c.dataset.key);
@@ -713,7 +1039,31 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
   });
 
   apply();
-  fit(false);
+
+  function sizeToNav() {
+    const nav = document.querySelector('#quarto-header') || document.querySelector('.navbar');
+    plan.style.setProperty('--nav-h', (nav ? nav.getBoundingClientRect().bottom : 0) + 'px');
+  }
+  // Re-lay out only when crossing the phone breakpoint; otherwise just keep
+  // the view sensible for the new size.
+  function relayout() {
+    sizeToNav();
+    const mode = currentMode();
+    if (mode !== layoutMode) { layoutMode = mode; layoutPlan(mode); }
+    if (selected) {
+      const pos = body.querySelector('.e-pos');
+      if (pos) pos.textContent = `range ${selected.dataset.row}, column ${selected.dataset.col}`;
+      stopAnim(); ({ k, tx, ty } = frame(selected)); render();
+    }
+    else fit(false);
+  }
+  relayout();
+  let pending = null;
+  const ro = new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(relayout); });
+  ro.observe(stage);
+  const header = document.querySelector('#quarto-header');
+  if (header) ro.observe(header);
+  if (document.fonts) document.fonts.ready.then(() => { layoutMode = null; relayout(); });
 })();
 </script>
 ```
