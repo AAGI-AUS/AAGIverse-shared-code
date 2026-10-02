@@ -31,3 +31,21 @@ tooltip_span <- function(full, preview){
 }
 
 
+
+
+# Entries have no name field of their own, so owner/repo are derived from the
+# software website: github.com/owner/repo and owner.github.io/repo both map to
+# owner/repo. Returns NULL for anything that isn't GitHub-hosted.
+parse_github_repo <- function(url) {
+  if (is.na(url) || !nzchar(url)) return(NULL)
+  u <- sub("/+$", "", sub("^https?://", "", url))
+  parts <- strsplit(u, "/")[[1]]
+  host <- tolower(parts[1])
+  if (grepl("\\.github\\.io$", host) && length(parts) >= 2) {
+    return(list(owner = sub("\\.github\\.io$", "", host), repo = parts[2]))
+  }
+  if (host == "github.com" && length(parts) >= 3) {
+    return(list(owner = parts[2], repo = sub("\\.git$", "", parts[3])))
+  }
+  NULL
+}

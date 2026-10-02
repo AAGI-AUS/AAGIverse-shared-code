@@ -19,6 +19,8 @@ $ink:          #1c1c1c;   // body text
 $muted:        #5d6560;   // secondary text
 $rule:         #dde2de;   // hairline borders
 $surface:      #f7f9f8;   // subtle panel fill
+$amber:        #b7791f;   // "maintained" status
+$stone:        #9aa19d;   // "dormant" status
 
 // ─────────────────────────────────────────────────────────────
 // Bootstrap / Quarto overrides
@@ -205,6 +207,63 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 // Database controls
 // ─────────────────────────────────────────────────────────────
 
+.db-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
+
+  > div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0.8rem 1rem;
+    border-radius: $border-radius-lg;
+    background: linear-gradient(135deg, $green-dark, $green-deep);
+    color: #fff;
+  }
+
+  dd {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  dt {
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $sage;
+  }
+}
+
+.db-sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: $muted;
+
+  label { margin: 0; }
+
+  select {
+    font-size: 0.88rem;
+    padding: 0.35rem 0.6rem;
+    border: 1.5px solid $rule;
+    border-radius: $border-radius;
+    background: #fff;
+    color: $ink;
+
+    &:focus {
+      outline: none;
+      border-color: $sage;
+      box-shadow: 0 0 0 3px rgba(140, 192, 174, 0.38);
+    }
+  }
+}
+
 .db-controls {
   display: flex;
   align-items: center;
@@ -303,6 +362,114 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
   &:hover {
     border-color: $sage;
     box-shadow: 0 4px 14px rgba(0, 87, 60, 0.07);
+  }
+}
+
+// Left edge colour encodes how recently the package was updated.
+.entry {
+  border-left: 4px solid $stone;
+  &.is-active     { border-left-color: $green-dark; }
+  &.is-maintained { border-left-color: $amber; }
+  &.is-dormant    { border-left-color: $stone; }
+  &.is-unknown    { border-left-color: $rule; }
+}
+
+.status {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: $muted;
+
+  &::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: $stone;
+  }
+
+  .status-ago { font-weight: 400; color: $muted; margin-left: -0.25rem; }
+
+  &.is-active { color: $green-dark; &::before { background: $green-dark; box-shadow: 0 0 0 3px rgba(0, 87, 60, 0.18); } }
+  &.is-maintained { color: $amber; &::before { background: $amber; } }
+}
+
+.badge-meta.is-cran {
+  background: $green-dark;
+  border-color: $green-dark;
+  color: #fff;
+}
+
+.entry-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 0.9rem 0;
+
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    min-width: 6.5rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: $border-radius;
+    background: $surface;
+    border: 1px solid $rule;
+
+    &.is-primary {
+      background: $mint;
+      border-color: darken($mint, 6%);
+    }
+  }
+
+  dd {
+    margin: 0;
+    font-family: $font-family-monospace;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: $ink;
+  }
+
+  .is-primary dd { font-size: 1.3rem; color: $green-dark; }
+
+  dt {
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: $muted;
+  }
+}
+
+.lifespan {
+  margin: 0 0 0.9rem 0;
+  max-width: 76ch;
+
+  .lifespan-track {
+    position: relative;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: $surface;
+    border: 1px solid $rule;
+  }
+
+  .lifespan-bar {
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, $sage, $green-dark);
+  }
+
+  .lifespan-dates {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    color: $muted;
   }
 }
 

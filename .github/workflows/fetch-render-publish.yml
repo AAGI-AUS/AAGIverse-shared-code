@@ -49,6 +49,12 @@ jobs:
       - name: Clean and validate data
         run: Rscript scripts/02_clean_validate.R
 
+      # GitHub + CRAN metrics for each package (stars, commits, downloads...)
+      - name: Fetch package metrics
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: Rscript scripts/03_fetch_metrics.R
+
       # Render site (DT reads data/processed/submissions_cleaned.csv)
       - name: Render site
         run: quarto render

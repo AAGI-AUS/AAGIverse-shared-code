@@ -18,6 +18,19 @@ library(htmltools)
 
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
 
+# Metrics come from scripts/03_fetch_metrics.R, keyed on the software website.
+# Entries without a row (or with NA fields) simply omit that metric.
+metrics_path <- here("data/processed/package_metrics.csv")
+if (file.exists(metrics_path)) {
+  df <- left_join(df, read_csv(metrics_path, show_col_types = FALSE),
+                  by = "Software website")
+}
+for (col in c("github_stars", "github_followers", "first_commit_date",
+              "last_commit_date", "contributors", "cran_downloads_last_month",
+              "cran_downloads_total")) {
+  if (!col %in% names(df)) df[[col]] <- NA
+}
+
 esc <- function(x) htmltools::htmlEscape(ifelse(is.na(x), "", x))
 
 # Entries have no name field of their own, so derive one from the repository
@@ -46,6 +59,57 @@ badge <- function(label, class = "") {
 
 all_keywords <- sort(unique(unlist(lapply(df$`Code keywords`, split_tags))))
 
+num <- function(x) if (is.na(x)) NA_real_ else as.numeric(x)
+fmt_n <- function(x) format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
+
+today       <- Sys.Date()
+first_all   <- suppressWarnings(min(as.Date(df$first_commit_date), na.rm = TRUE))
+span_days   <- as.numeric(today - first_all)
+
+# How recently a package has been touched drives the card's accent colour.
+activity <- function(last) {
+  if (is.na(last)) return(list(cls = "unknown", label = "", ago = ""))
+  d <- as.numeric(today - as.Date(last))
+  ago <- if (d < 1) "today" else if (d < 2) "yesterday" else if (d < 60) sprintf("%d days ago", d)
+         else if (d < 700) sprintf("%d months ago", round(d / 30.4)) else sprintf("%d years ago", round(d / 365))
+  list(cls   = if (d <= 90) "active" else if (d <= 365) "maintained" else "dormant",
+       label = if (d <= 90) "Active" else if (d <= 365) "Maintained" else "Dormant",
+       ago   = ago)
+}
+
+stat <- function(label, value, title = NULL, primary = FALSE) {
+  if (is.na(value)) return("")
+  sprintf('<div class="stat%s"%s><dd>%s</dd><dt>%s</dt></div>',
+          if (primary) " is-primary" else "",
+          if (is.null(title)) "" else sprintf(' title="%s"', esc(title)),
+          fmt_n(value), esc(label))
+}
+
+# A bar placed on a shared time axis, so a package's age and recency can be
+# compared across the whole catalogue at a glance.
+lifespan_html <- function(r) {
+  if (is.na(r$first_commit_date) || is.na(r$last_commit_date) || span_days <= 0) return("")
+  f <- as.Date(r$first_commit_date); l <- as.Date(r$last_commit_date)
+  left  <- as.numeric(f - first_all) / span_days * 100
+  width <- max(as.numeric(l - f) / span_days * 100, 1.5)
+  sprintf('<div class="lifespan" title="First commit %s, last commit %s">
+             <div class="lifespan-track"><span class="lifespan-bar" style="left:%.1f%%;width:%.1f%%"></span></div>
+             <div class="lifespan-dates"><span>Started %s</span><span>Last commit %s</span></div>
+           </div>', f, l, left, width, format(f, "%b %Y"), format(l, "%d %b %Y"))
+}
+
+stats_html <- function(r) {
+  items <- paste0(
+    stat("GitHub stars", r$github_stars, primary = TRUE),
+    stat("CRAN downloads / month", r$cran_downloads_last_month, "CRAN downloads in the last 30 days (cranlogs)", primary = TRUE),
+    stat("CRAN downloads total", r$cran_downloads_total, "Total CRAN downloads since 2012-10-01 (cranlogs)"),
+    stat("Contributors", r$contributors),
+    stat("Owner followers", r$github_followers, "Followers of the owning GitHub user/organisation")
+  )
+  if (!nzchar(items)) return("")
+  sprintf('<dl class="entry-stats">%s</dl>', items)
+}
+
 build_card <- function(i) {
   r    <- df[i, ]
   name <- derive_name(r$`Software website`)
@@ -71,34 +135,68 @@ build_card <- function(i) {
            '</ul>')
   } else ""
 
+  act <- activity(r$last_commit_date)
+  status_html <- if (nzchar(act$label)) {
+    sprintf('<span class="status is-%s" title="Last commit %s">%s <span class="status-ago">· %s</span></span>',
+            act$cls, esc(r$last_commit_date), act$label, act$ago)
+  } else ""
+  cran_badge <- if (!is.na(r$cran_package)) badge("On CRAN", "is-cran") else ""
+
   sprintf(
-    '<article class="entry" data-search="%s" data-keywords="%s">
+    '<article class="entry is-%s" data-search="%s" data-keywords="%s"
+              data-name="%s" data-stars="%s" data-downloads="%s" data-updated="%s">
        <header class="entry-head">
          <h3 class="entry-name">%s</h3>
-         <div class="entry-badges">%s%s%s</div>
+         <div class="entry-badges">%s%s%s%s</div>
+         %s
        </header>
        <p class="entry-by">%s <span class="sep">/</span> %s</p>
        <p class="entry-desc">%s</p>
        %s
+       %s
+       %s
        <p class="entry-links"><a href="mailto:%s">Contact maintainer</a></p>
      </article>',
+    act$cls,
     esc(haystack),
     esc(tolower(paste(ck, collapse = "|"))),
+    esc(tolower(name)),
+    num(r$github_stars) %|na|% -1,
+    num(r$cran_downloads_total) %|na|% -1,
+    if (is.na(r$last_commit_date)) 0 else as.numeric(as.Date(r$last_commit_date)),
     title_html,
     badge(r$Language, "is-lang"),
     badge(r$License, "is-license"),
     badge(r$`Code type`),
+    cran_badge,
+    status_html,
     esc(r$`Code maintainer`),
     esc(r$Organisation),
     esc(r$Description),
+    stats_html(r),
+    lifespan_html(r),
     tags_html,
     esc(r$Email)
   )
 }
 
+`%|na|%` <- function(a, b) if (is.na(a)) b else a
+
 `%||%` <- function(a, b) if (is.null(a) || is.na(a)) b else a
 
 cards_html <- paste(vapply(seq_len(nrow(df)), build_card, character(1)), collapse = "\n")
+
+sum_na <- function(x) sum(as.numeric(x), na.rm = TRUE)
+summary_html <- sprintf(
+  '<dl class="db-summary">
+     <div><dd>%s</dd><dt>Packages</dt></div>
+     <div><dd>%s</dd><dt>Maintainers</dt></div>
+     <div><dd>%s</dd><dt>GitHub stars</dt></div>
+     <div><dd>%s</dd><dt>CRAN downloads</dt></div>
+   </dl>',
+  nrow(df), n_distinct(df$`Code maintainer`, na.rm = TRUE),
+  fmt_n(sum_na(df$github_stars)), fmt_n(sum_na(df$cran_downloads_total))
+)
 
 chips_html <- paste(
   sprintf('<button type="button" class="chip" data-key="%s" aria-pressed="false">%s</button>',
@@ -109,11 +207,23 @@ chips_html <- paste(
 
 ```{r}
 #| output: asis
+# A raw fence stops pandoc reading the indented HTML below as markdown code.
+cat('```{=html}\n')
 cat(sprintf('
+%s
 <div class="db-controls">
   <label class="visually-hidden" for="db-search">Search the database</label>
   <input id="db-search" class="db-search" type="search" autocomplete="off"
          placeholder="Search by package, author, keyword or description…">
+  <div class="db-sort">
+    <label for="db-sort">Sort by</label>
+    <select id="db-sort">
+      <option value="updated" selected>Recently updated</option>
+      <option value="name">Name</option>
+      <option value="stars">GitHub stars</option>
+      <option value="downloads">CRAN downloads</option>
+    </select>
+  </div>
   <p class="db-count-line"><strong id="db-count">%d</strong> of %d entries</p>
 </div>
 
@@ -127,7 +237,8 @@ cat(sprintf('
 </div>
 
 <p class="db-empty" id="db-empty" hidden>No entries match that search. Try a broader term or clear the filters.</p>
-', nrow(df), nrow(df), chips_html, cards_html))
+', summary_html, nrow(df), nrow(df), chips_html, cards_html))
+cat('\n```\n')
 ```
 
 ```{=html}
@@ -140,6 +251,19 @@ cat(sprintf('
   const count  = document.getElementById('db-count');
   const empty  = document.getElementById('db-empty');
   const active = new Set();
+  const sortSel = document.getElementById('db-sort');
+  const list    = document.querySelector('.db-results');
+
+  // Numeric sorts run high-to-low; name runs A-Z. Entries with no value
+  // (stored as -1 / 0) naturally sink to the bottom.
+  function sortCards() {
+    const key = sortSel.value;
+    cards.sort((a, b) => key === 'name'
+      ? a.dataset.name.localeCompare(b.dataset.name)
+      : (Number(b.dataset[key]) - Number(a.dataset[key])) || a.dataset.name.localeCompare(b.dataset.name));
+    cards.forEach(c => list.appendChild(c));
+  }
+  sortSel.addEventListener('change', sortCards);
 
   function apply() {
     const term = input.value.trim().toLowerCase();
@@ -184,6 +308,7 @@ cat(sprintf('
     const chip = chips.find(c => c.dataset.key === k);
     if (chip) { active.add(k); chip.setAttribute('aria-pressed', 'true'); }
   }
+  sortCards();
   apply();
 })();
 </script>
