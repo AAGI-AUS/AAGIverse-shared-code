@@ -16,6 +16,8 @@ website:
         text: Contribute
       - href: database/dtable.qmd
         text: Explore Database
+      - href: database/field.qmd
+        text: Trial plan (prototype)
 
 format:
   html:
