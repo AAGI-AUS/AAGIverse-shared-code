@@ -84,7 +84,7 @@ all_keywords <- sort(unique(unlist(lapply(df$`Code keywords`, split_tags))))
 # Blocks side by side; within a block, plots fill ranges with as many
 # columns as makes the block roughly square. Short blocks are padded with
 # buffer plots so every block is a clean rectangle.
-PW <- 14; PH <- 6          # plot footprint, laid out landscape
+PW <- 14; PH <- 8.5        # plot footprint, laid out landscape
 CG <- 1; RG <- 2           # column gap; alley between ranges
 BG <- 10                   # minimum gap between blocks
 PAD <- 8
@@ -103,7 +103,7 @@ for (bi in seq_along(blocks)) {
   cells <- lapply(seq_len(ncol * nrow_), function(i) {
     r <- (i - 1) %/% ncol; cc <- (i - 1) %% ncol
     list(x = x0 + cc * (PW + CG), y = PAD + r * (PH + RG),
-         row = r + 1, col = cc + 1,
+         row = r + 1, col = cc + 1, idx = i,
          plot = if (i <= n) b[i, ] else NULL, id = sprintf("%s%02d", L, i))
   })
   layout[[bi]] <- list(name = names(blocks)[bi], letter = L, x = x0, w = w,
@@ -117,10 +117,53 @@ field_h <- max(vapply(layout, function(b) b$h, numeric(1))) + 2 * PAD
 # ---- SVG ---------------------------------------------------------------------
 svg_text <- function(x, y, s, cls, extra = "") sprintf('<text class="%s" x="%.2f" y="%.2f"%s>%s</text>', cls, x, y, extra, esc(s))
 
+# ---- Crop glyphs ------------------------------------------------------------
+# Each plot is sown with one plant per contributor, drawn at the growth
+# stage that matches its activity: in ear (active), leafy (maintained),
+# seedling (quiet) or stubble (dormant). Glyphs are drawn at the origin,
+# growing up the negative y axis, in plan units.
+glyph <- function(lvl) switch(as.character(lvl),
+  "3" = paste0(
+    '<path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"/>',
+    '<path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"/>',
+    '<path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"/>',
+    paste0(vapply(0:4, function(j) sprintf(
+      '<ellipse class="grain" cx="%.2f" cy="%.2f" rx="0.11" ry="0.19" transform="rotate(%d %.2f %.2f)"/>',
+      if (j %% 2) 0.11 else -0.11, -2.25 - j * 0.17, if (j %% 2) 22 else -22,
+      if (j %% 2) 0.11 else -0.11, -2.25 - j * 0.17), character(1)), collapse = ""),
+    '<path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"/>'),
+  "2" = paste0(
+    '<path class="stem" d="M0 0 Q0.05 -1 0 -2"/>',
+    '<path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"/>',
+    '<path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"/>',
+    '<path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"/>'),
+  "1" = paste0(
+    '<path class="stem" d="M0 0 L0 -0.55"/>',
+    '<path class="leaf" d="M0 -0.45 Q-0.15 -0.85 -0.5 -0.95"/>',
+    '<path class="leaf" d="M0 -0.5 Q0.2 -0.95 0.45 -1.05"/>'),
+  '<path class="stubble" d="M-0.12 0 L-0.18 -0.45 M0.12 0 L0.16 -0.4"/>')
+
+# Deterministic wobble so the stand looks hand-sown but is identical on
+# every render.
+wobble <- function(i, seed) sin(i * 12.9898 + seed * 78.233)
+
+# A row of plants across [x0, x1] on a baseline at y. `delay0` staggers the
+# grow-in animation across the field.
+crop_row <- function(lvl, n, x0, x1, y, seed = 1, scale = 1, delay0 = 0) {
+  n  <- max(1, min(n, 14))
+  xs <- x0 + (x1 - x0) * (seq_len(n) - 0.5) / n
+  paste0(vapply(seq_len(n), function(i) {
+    h    <- scale * (1 + 0.08 * wobble(i, seed))
+    lean <- 4 * wobble(i + 7, seed)
+    sprintf('<g transform="translate(%.2f %.2f)"><g class="plant" style="--d:%.2fs"><g class="sway" style="--s:%.2fs"><g class="g-v%d" transform="rotate(%.1f) scale(%.2f)">%s</g></g></g></g>',
+            xs[i], y, delay0 + i * 0.03, 0.15 * abs(wobble(i, seed + 3)), lvl, lean, h, glyph(lvl))
+  }, character(1)), collapse = "")
+}
+
 plot_svg <- function(cell) {
   r <- cell$plot
   if (is.null(r)) {
-    return(sprintf('<rect class="plot is-buffer" x="%.2f" y="%.2f" width="%d" height="%d"/>', cell$x, cell$y, PW, PH))
+    return(sprintf('<rect class="plot is-buffer" x="%.2f" y="%.2f" width="%g" height="%g"/>', cell$x, cell$y, PW, PH))
   }
   v  <- vigour(r$last_commit_date)
   ck <- split_tags(r$`Code keywords`); tk <- split_tags(r$`Topic keywords`)
@@ -130,24 +173,34 @@ plot_svg <- function(cell) {
   # Shrink long names so they always fit across the plot.
   name_size <- min(1.6, (PW - 1.2) / (0.62 * max(1, nchar(r$name %||% ""))))
   by_size   <- min(0.9, (PW - 1.2) / (0.5 * max(1, nchar(r$`Code maintainer` %||% ""))))
+  n_plants  <- if (is.na(r$contributors)) 3 else r$contributors
+  base_y    <- PH - 0.55
+  seed      <- sum(utf8ToInt(cell$id))
   sprintf('
   <g class="plot is-v%d" tabindex="0" role="button" data-id="%s" data-search="%s" data-keywords="%s"
+     data-status="%s" data-cran="%d"
      data-cx="%.2f" data-cy="%.2f" transform="translate(%.2f %.2f)">
     <title>%s — %s</title>
-    <rect class="plot-fill" width="%d" height="%d"/>
+    <rect class="plot-fill" width="%g" height="%g"/>
+    <line class="soil" x1="0.5" x2="%.2f" y1="%.2f" y2="%.2f"/>
+    <g class="crop">%s</g>
     %s
     %s
-    <text class="plot-name" x="0.6" y="%.2f" font-size="%.2f">%s</text>
-    <text class="plot-by" x="0.6" y="%.2f" font-size="%.2f">%s</text>
+    <text class="plot-name" x="0.6" y="3" font-size="%.2f">%s</text>
+    <text class="plot-by" x="0.6" y="4.15" font-size="%.2f">%s</text>
   </g>',
     v$lvl, cell$id, esc(haystack), esc(tolower(paste(ck, collapse = "|"))),
+    tolower(v$label), as.integer(!is.na(r$cran_package)),
     cell$x + PW / 2, cell$y + PH / 2, cell$x, cell$y,
     esc(r$name), esc(r$`Code maintainer`),
     PW, PH,
+    PW - 0.5, base_y, base_y,
+    crop_row(v$lvl, n_plants, 0.6, PW - 0.6, base_y, seed = seed, scale = 0.9,
+             delay0 = 0.05 * (match(substr(cell$id, 1, 1), LETTERS) - 1) + 0.02 * cell$idx),
     svg_text(0.55, 1.35, cell$id, "plot-id"),
     if (!is.na(r$cran_package)) sprintf('<circle class="plot-cran" cx="%.2f" cy="1.0" r="0.38"><title>On CRAN</title></circle>', PW - 0.95) else "",
-    PH - 2.0, name_size, esc(r$name),
-    PH - 0.75, by_size, esc(r$`Code maintainer`))
+    name_size, esc(r$name),
+    by_size, esc(r$`Code maintainer`))
 }
 
 block_svg <- function(b) {
@@ -174,19 +227,23 @@ detail_html <- function(cell) {
   tags <- function(x) if (length(x)) paste0('<p class="e-tags">', paste0(esc(x), collapse = '<span class="dot">·</span>'), '</p>') else '<p class="e-tags">—</p>'
   sprintf('
   <template data-for="%s">
+    <svg class="e-crop" viewBox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"/>%s</svg>
     <p class="e-kicker">Plot %s · Block %s · range %d, column %d</p>
     <h2 class="e-name">%s</h2>
     <p class="e-by">%s · %s</p>
-    <p class="e-status"><i class="sw is-v%d"></i>%s%s</p>
+    <p class="e-status">%s%s</p>
     <p class="e-desc">%s</p>
     <dl class="e-list">%s%s%s%s%s%s%s%s%s%s</dl>
     <h3 class="e-h">Code keywords</h3>%s
     <h3 class="e-h">Topics</h3>%s
     <p class="e-links"><a href="%s" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:%s">Email maintainer</a></p>
   </template>',
-    cell$id, cell$id, substr(cell$id, 1, 1), cell$row, cell$col,
+    cell$id,
+    crop_row(v$lvl, if (is.na(r$contributors)) 3 else r$contributors, 1.2, 24.8, 3.9,
+             seed = sum(utf8ToInt(cell$id)), scale = 1),
+    cell$id, substr(cell$id, 1, 1), cell$row, cell$col,
     esc(r$name %||% r$`Code type`), esc(r$`Code maintainer`), esc(r$Organisation),
-    v$lvl, v$label, if (nzchar(v$ago)) sprintf('<span> · last commit %s</span>', v$ago) else "",
+    v$label, if (nzchar(v$ago)) sprintf('<span> · last commit %s</span>', v$ago) else "",
     esc(r$Description),
     row("Language", esc(r$Language)), row("Licence", esc(r$License)), row("Type", esc(r$`Code type`)),
     row("CRAN", if (is.na(r$cran_package)) "—" else esc(r$cran_package)),
@@ -201,9 +258,25 @@ detail_html <- function(cell) {
 }
 templates <- paste0(unlist(lapply(layout, function(b) lapply(Filter(function(c) !is.null(c$plot), b$cells), detail_html))), collapse = "\n")
 
-filters_html <- paste(
-  sprintf('<button type="button" class="filter" data-key="%s" aria-pressed="false">%s</button>',
-          esc(tolower(all_keywords)), esc(all_keywords)), collapse = "")
+legend_html <- paste0(vapply(list(
+    list(3, "Active", "&lt;3 mo"), list(2, "Maintained", "&lt;1 yr"),
+    list(1, "Quiet", "&lt;2 yr"), list(0, "Dormant", "")),
+  function(x) sprintf('<span><svg class="lg-crop" viewBox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v%d">%s</g><line class="soil" x1="-1" x2="1" y1="0" y2="0"/></svg>%s%s</span>',
+                      x[[1]], glyph(x[[1]]), x[[2]], if (nzchar(x[[3]])) sprintf(' <small>%s</small>', x[[3]]) else ""),
+  character(1)), collapse = "\n      ")
+
+# Facet chips reuse the site's .chip style (see assets/aagi.scss) so the
+# filters read the same as on the database page. Each carries a live count.
+chip <- function(group, key, label, icon = "") sprintf(
+  '<button type="button" class="chip facet-chip" data-group="%s" data-key="%s" aria-pressed="false">%s<span class="chip-label">%s</span><span class="chip-n" aria-hidden="true"></span></button>',
+  group, esc(key), icon, esc(label))
+
+kw_chips <- paste(vapply(all_keywords, function(k) chip("kw", tolower(k), k), character(1)), collapse = "")
+status_chips <- paste(vapply(list(c(3, "Active"), c(2, "Maintained"), c(1, "Quiet"), c(0, "Dormant")), function(x)
+  chip("status", tolower(x[2]), x[2],
+       sprintf('<svg class="chip-crop" viewBox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v%s">%s</g></svg>', x[1], glyph(x[1]))),
+  character(1)), collapse = "")
+cran_chip <- chip("cran", "1", "On CRAN", '<i class="chip-dot" aria-hidden="true"></i>')
 ```
 
 ```{r}
@@ -212,19 +285,25 @@ cat('```{=html}\n')
 cat(sprintf('
 <div class="plan" id="plan">
   <header class="plan-bar">
-    <div class="plan-title">
-      <h1>Trial plan</h1>
-      <p><span id="n-match">%d</span> of %d plots · %d blocks · %s</p>
-    </div>
-    <div class="plan-filters">
+    <div class="plan-head">
+      <div class="plan-title">
+        <h1>Trial plan</h1>
+        <p role="status"><strong id="n-match">%d</strong> of %d plots · %d blocks · %s</p>
+      </div>
       <label class="visually-hidden" for="pl-search">Search plots</label>
-      <input id="pl-search" type="search" autocomplete="off" placeholder="Search">
-      <div class="filters" role="group" aria-label="Filter by code keyword">%s</div>
+      <input id="pl-search" class="db-search plan-search" type="search" autocomplete="off"
+             placeholder="Search by package, maintainer or description…">
+    </div>
+    <div class="plan-facets">
+      <div class="facet" role="group" aria-labelledby="f-kw"><span class="facet-label" id="f-kw">Keyword</span>%s</div>
+      <div class="facet" role="group" aria-labelledby="f-st"><span class="facet-label" id="f-st">Status</span>%s</div>
+      <div class="facet" role="group" aria-label="Availability">%s</div>
+      <button type="button" class="chip chip-clear" id="pl-clear" hidden>Clear all</button>
     </div>
   </header>
 
   <div class="plan-stage">
-    <svg class="plan-svg" id="plan-svg" data-pw="%d" data-ph="%d" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
+    <svg class="plan-svg" id="plan-svg" data-pw="%g" data-ph="%g" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
       <g id="world">
         <rect class="ground" x="0" y="0" width="%.2f" height="%.2f"/>
         %s
@@ -232,12 +311,18 @@ cat(sprintf('
     </svg>
 
     <div class="legend" aria-label="Key">
-      <span><i class="sw is-v3"></i>Active <small>&lt;3 mo</small></span>
-      <span><i class="sw is-v2"></i>Maintained <small>&lt;1 yr</small></span>
-      <span><i class="sw is-v1"></i>Quiet <small>&lt;2 yr</small></span>
-      <span><i class="sw is-v0"></i>Dormant</span>
+      %s
       <span><i class="sw is-buffer"></i>Buffer</span>
       <span><i class="sw is-cran"></i>On CRAN</span>
+      <span class="legend-note">One plant per contributor</span>
+    </div>
+
+    <div class="plan-empty" id="pl-empty" hidden>
+      <div class="plan-empty-card" role="status">
+        <p class="plan-empty-title">No plots match</p>
+        <p class="plan-empty-hint">Try fewer filters or a broader search.</p>
+        <button type="button" class="chip chip-clear" id="pl-empty-clear">Clear all</button>
+      </div>
     </div>
 
     <div class="zoom" role="group" aria-label="Zoom">
@@ -256,7 +341,7 @@ cat(sprintf('
 </div>
 ',
   nrow(df), nrow(df), length(blocks), format(today, "%d %b %Y"),
-  filters_html, PW, PH, field_w, field_h, field_svg, templates))
+  kw_chips, status_chips, cran_chip, PW, PH, field_w, field_h, field_svg, legend_html, templates))
 cat('\n```\n')
 ```
 
@@ -268,7 +353,11 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .plan {
   --green: #00573c; --green-deep: #003d2a; --sage: #8cc0ae; --mint: #e4efe9;
   --ink: #1c1c1c; --muted: #5d6560; --rule: #dde2de; --surface: #f7f9f8;
-  --v3: #00573c; --v2: #8cc0ae; --v1: #d6e5dc; --v0: #f1f3f2;
+  /* plot tints by activity; the crops carry the colour */
+  --v3: #eef6f1; --v2: #f3f8f5; --v1: #f8fbf9; --v0: #fbfaf7;
+  /* crop inks by growth stage */
+  --c3: #1f6b45; --c3-ear: #4f8a3c; --c2: #4f9a6c; --c1: #8cc0ae; --c0: #bcae92;
+  --soil: #ddd3c1;
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   --head: "Poppins", sans-serif;
   display: flex; flex-direction: column;
@@ -278,26 +367,45 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 }
 
 /* ---- top bar ---- */
-.plan-bar {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem;
-  padding: 1.1rem 2rem .9rem; border-bottom: 1px solid var(--rule);
-}
+.plan-bar { padding: 1rem 2rem .8rem; border-bottom: 1px solid var(--rule); }
+.plan-head { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .plan-title h1 { margin: 0; font: 600 1.35rem var(--head); letter-spacing: -.01em; }
 .plan-title p { margin: .1rem 0 0; font-size: .85rem; color: var(--muted); }
-.plan-title p span { font-family: var(--mono); color: var(--ink); }
-.plan-filters { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; justify-content: flex-end; }
-#pl-search {
-  font: inherit; font-size: .92rem; width: 14rem; padding: .3rem 0;
-  border: 0; border-bottom: 1px solid var(--ink); background: transparent; color: var(--ink);
+.plan-title p strong { font-family: var(--mono); font-weight: 500; color: var(--ink); }
+/* .db-search and .chip come from assets/aagi.scss; only layout tweaks here */
+.plan-search { flex: 0 1 26rem; font-size: .95rem; padding: .5rem 1rem; }
+
+.plan-facets { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.75rem; margin-top: .8rem; }
+.facet { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.facet-label { font-size: .85rem; color: var(--muted); margin-right: .2rem; }
+
+.facet-chip { display: inline-flex; align-items: center; gap: .35rem; }
+.chip-n { font-family: var(--mono); font-size: .72rem; color: var(--muted); min-width: .6rem; text-align: center; }
+.facet-chip[aria-pressed="true"] .chip-n { color: rgba(255,255,255,.75); }
+.facet-chip:disabled { opacity: .4; cursor: default; }
+.facet-chip:disabled:hover { border-color: var(--rule); background: #fff; }
+.chip-crop { width: .7rem; height: 1.15rem; margin: -.2rem 0 -.1rem -.15rem; overflow: visible; }
+.facet-chip[aria-pressed="true"] .chip-crop :is(.stem, .leaf, .awn, .stubble) { stroke: #fff; }
+.facet-chip[aria-pressed="true"] .chip-crop .grain { fill: #fff; }
+.chip-dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); }
+.facet-chip[aria-pressed="true"] .chip-dot { background: #fff; }
+.plan-facets .chip-clear[hidden] { display: none; }
+
+/* empty state, centred over the map */
+.plan-empty {
+  position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
 }
-#pl-search:focus { outline: none; border-bottom: 2px solid var(--green); margin-bottom: -1px; }
-.filters { display: flex; flex-wrap: wrap; gap: 0 1rem; }
-.filter {
-  font: inherit; font-size: .85rem; padding: .25rem 0; border: 0; border-bottom: 2px solid transparent;
-  background: none; color: var(--muted); cursor: pointer;
+.plan-empty[hidden] { display: none; }
+.plan-empty-card {
+  pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  padding: 1.25rem 1.75rem; text-align: center;
+  background: rgba(255,255,255,.96); border: 1px solid var(--rule); border-radius: .5rem;
+  box-shadow: 0 6px 24px rgba(28,28,28,.06);
 }
-.filter:hover { color: var(--ink); }
-.filter[aria-pressed="true"] { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+.plan-empty-title { margin: 0; font: 600 1.05rem var(--head); color: var(--ink); }
+.plan-empty-hint { margin: 0 0 .5rem; font-size: .9rem; color: var(--muted); }
+.plan-empty .chip-clear { margin: 0; background: #fff; }
 
 /* ---- stage ---- */
 .plan-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; user-select: none; }
@@ -310,21 +418,34 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .axis-no { font: .95px var(--mono); fill: #9aa39e; }
 
 .plot { cursor: pointer; outline: none; }
-.plot-fill { stroke: var(--ink); stroke-width: .1; transition: fill-opacity .2s, stroke-width .12s; }
+.plot-fill { stroke: #6b736e; stroke-width: .08; transition: fill-opacity .2s, stroke-width .12s, stroke .12s; }
 .plot.is-v3 .plot-fill { fill: var(--v3); } .plot.is-v2 .plot-fill { fill: var(--v2); }
 .plot.is-v1 .plot-fill { fill: var(--v1); } .plot.is-v0 .plot-fill { fill: var(--v0); }
 .plot.is-buffer { fill: none; stroke: #c4cbc7; stroke-width: .1; stroke-dasharray: .5 .4; }
-.plot:hover .plot-fill, .plot:focus-visible .plot-fill { stroke-width: .3; }
-.plot.is-selected .plot-fill { stroke-width: .45; }
+.plot:hover .plot-fill, .plot:focus-visible .plot-fill { stroke: var(--green); stroke-width: .2; }
+.plot.is-selected .plot-fill { stroke: var(--green); stroke-width: .35; }
 .plot-id { font: .9px var(--mono); fill: var(--muted); }
 .plot-name { font-family: var(--mono); font-weight: 500; fill: var(--ink); }
 .plot-by { font-family: "Source Sans 3", sans-serif; fill: var(--muted); }
-.plot.is-v3 .plot-id, .plot.is-v3 .plot-name { fill: #fff; }
-.plot.is-v3 .plot-id, .plot.is-v3 .plot-by { fill: rgba(255,255,255,.75); }
-.plot-cran { fill: var(--ink); }
-.plot.is-v3 .plot-cran { fill: #fff; }
-.plot.is-out .plot-fill { fill-opacity: .15; stroke: #c4cbc7; }
-.plot.is-out text, .plot.is-out circle { opacity: .25; }
+.plot-cran { fill: var(--green); }
+.plot.is-out .plot-fill { fill-opacity: .3; stroke: #c4cbc7; }
+.plot.is-out text, .plot.is-out circle, .plot.is-out .crop { opacity: .2; }
+
+/* ---- crops ---- */
+.soil { stroke: var(--soil); stroke-width: .08; stroke-linecap: round; }
+.stem, .leaf, .awn, .stubble { fill: none; stroke-linecap: round; }
+.stem { stroke-width: .1; } .leaf { stroke-width: .09; } .awn { stroke-width: .045; } .stubble { stroke-width: .1; }
+.g-v3 .stem, .g-v3 .leaf { stroke: var(--c3); }
+.g-v3 .grain { fill: var(--c3-ear); } .g-v3 .awn { stroke: var(--c3-ear); }
+.g-v2 .stem, .g-v2 .leaf { stroke: var(--c2); }
+.g-v1 .stem, .g-v1 .leaf { stroke: var(--c1); }
+.g-v0 .stubble { stroke: var(--c0); }
+.plant, .sway { transform-box: fill-box; transform-origin: 50% 100%; }
+.plant { animation: grow .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
+.plot:hover .sway, .plot.is-selected .sway { animation: sway 2.2s ease-in-out infinite alternate; animation-delay: calc(-1 * var(--s, 0s)); }
+@keyframes grow { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .plant, .sway { animation: none !important; } }
 .plot.is-out { cursor: default; }
 
 /* ---- overlays ---- */
@@ -336,10 +457,10 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .legend span { display: inline-flex; align-items: center; gap: .4rem; }
 .legend small { opacity: .75; }
 .sw { width: .75rem; height: .75rem; display: inline-block; border: 1px solid var(--ink); flex: none; }
-.sw.is-v3 { background: var(--v3); } .sw.is-v2 { background: var(--v2); }
-.sw.is-v1 { background: var(--v1); } .sw.is-v0 { background: var(--v0); }
+.lg-crop { width: 1.1rem; height: 1.9rem; overflow: visible; }
+.legend-note { font-style: italic; }
 .sw.is-buffer { border: 1px dashed #9aa39e; }
-.sw.is-cran { border: 0; width: .45rem; height: .45rem; border-radius: 50%; background: var(--ink); margin-inline: .15rem; }
+.sw.is-cran { border: 0; width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); margin-inline: .15rem; }
 
 .zoom { position: absolute; right: 2rem; bottom: 1rem; display: flex; border: 1px solid var(--rule); background: #fff; }
 .zoom button { font: 500 .9rem var(--mono); width: 2.2rem; height: 2rem; border: 0; background: none; color: var(--ink); cursor: pointer; }
@@ -358,10 +479,11 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .e-close { position: absolute; top: .7rem; right: .8rem; width: 1.9rem; height: 1.9rem; border: 0; background: none; font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer; }
 .e-close:hover { color: var(--ink); }
 .e-body { padding: 1.5rem 1.75rem 2rem; }
+.e-crop { display: block; width: 100%; height: auto; margin: .2rem 0 1rem; overflow: visible; }
 .e-kicker { margin: 0 0 .5rem; font: .72rem var(--mono); color: var(--muted); letter-spacing: .04em; }
 .e-name { margin: 0 0 .15rem; font: 500 1.6rem var(--mono); letter-spacing: -.01em; }
 .e-by { margin: 0 0 .6rem; color: var(--muted); font-size: .92rem; }
-.e-status { display: flex; align-items: center; gap: .45rem; margin: 0 0 1rem; font-size: .88rem; font-weight: 600; }
+.e-status { display: flex; align-items: center; gap: .3rem; margin: 0 0 1rem; font-size: .88rem; font-weight: 600; }
 .e-status span { font-weight: 400; color: var(--muted); }
 .e-desc { line-height: 1.55; margin: 0 0 1.1rem; font-size: .95rem; }
 .e-list { margin: 0 0 1.2rem; border-top: 1px solid var(--ink); }
@@ -378,8 +500,14 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (max-width: 760px) {
-  .plan-bar { padding: .8rem 1rem; gap: .75rem; flex-direction: column; align-items: stretch; }
-  .filters { display: none; }
+  .plan-bar { padding: .8rem 1rem .6rem; }
+  .plan-head { flex-direction: column; align-items: stretch; gap: .6rem; }
+  .plan-search { flex: 1 1 auto; }
+  /* one scrollable strip of chips rather than hiding them */
+  .plan-facets { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: .6rem -1rem 0; padding: 0 1rem .1rem; }
+  .plan-facets::-webkit-scrollbar { display: none; }
+  .facet { flex-wrap: nowrap; }
+  .facet .chip { white-space: nowrap; }
   .legend { left: 1rem; right: 1rem; gap: .6rem; font-size: .7rem; }
   .zoom { display: none; }
 }
@@ -492,32 +620,97 @@ body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; m
     }
   });
 
-  // ---- search + filters ----
-  const input = document.getElementById('pl-search');
-  const filters = Array.from(document.querySelectorAll('.filter[data-key]'));
-  const active = new Set();
-  const nMatch = document.getElementById('n-match');
+  // ---- search + faceted filters ----
+  // Within a group, chips are OR (any selected keyword); across groups and
+  // search, AND. Each chip shows how many plots you'd see if you added it.
+  const input   = document.getElementById('pl-search');
+  const chips   = Array.from(document.querySelectorAll('.facet-chip'));
+  const clearEl = document.getElementById('pl-clear');
+  const emptyEl = document.getElementById('pl-empty');
+  const nMatch  = document.getElementById('n-match');
+  const active  = { kw: new Set(), status: new Set(), cran: new Set() };
+  const facts = new Map(plots.map(p => [p, {
+    search: p.dataset.search,
+    kw: (p.dataset.keywords || '').split('|').filter(Boolean),
+    status: [p.dataset.status],
+    cran: p.dataset.cran === '1' ? ['1'] : []
+  }]));
+
+  function matches(p, term, skip) {
+    const f = facts.get(p);
+    if (term && !f.search.includes(term)) return false;
+    for (const g of Object.keys(active)) {
+      if (g === skip || active[g].size === 0) continue;
+      if (!f[g].some(v => active[g].has(v))) return false;
+    }
+    return true;
+  }
+
   function apply() {
     const term = input.value.trim().toLowerCase();
     let n = 0;
     plots.forEach(p => {
-      const keys = (p.dataset.keywords || '').split('|').filter(Boolean);
-      const ok = (!term || p.dataset.search.includes(term)) && (active.size === 0 || keys.some(x => active.has(x)));
+      const ok = matches(p, term);
       p.classList.toggle('is-out', !ok);
       p.setAttribute('tabindex', ok ? '0' : '-1');
       if (ok) n++;
     });
     nMatch.textContent = n;
+
+    chips.forEach(c => {
+      const g = c.dataset.group, k = c.dataset.key;
+      const count = plots.filter(p => matches(p, term, g) && facts.get(p)[g].includes(k)).length;
+      const on = active[g].has(k);
+      c.querySelector('.chip-n').textContent = count;
+      c.disabled = count === 0 && !on;
+      c.setAttribute('aria-label', `${c.querySelector('.chip-label').textContent}, ${count} plot${count === 1 ? '' : 's'}`);
+    });
+
+    const filtering = !!term || Object.values(active).some(s => s.size);
+    clearEl.hidden = !filtering;
+    emptyEl.hidden = n !== 0;
     if (selected && selected.classList.contains('is-out')) close();
+    syncUrl(term);
   }
+
+  // Keep the filter state in the URL so a filtered view can be shared.
+  // (Not ?q=: Quarto's site search claims and strips that parameter.)
+  function syncUrl(term) {
+    const u = new URL(location.href);
+    ['search', 'k', 'status', 'cran'].forEach(x => u.searchParams.delete(x));
+    if (term) u.searchParams.set('search', term);
+    if (active.kw.size) u.searchParams.set('k', [...active.kw].join(','));
+    if (active.status.size) u.searchParams.set('status', [...active.status].join(','));
+    if (active.cran.size) u.searchParams.set('cran', '1');
+    history.replaceState(null, '', u);
+  }
+
+  function setChip(c, on) {
+    active[c.dataset.group][on ? 'add' : 'delete'](c.dataset.key);
+    c.setAttribute('aria-pressed', String(on));
+  }
+  function clearAll() {
+    chips.forEach(c => setChip(c, false));
+    input.value = '';
+    apply();
+  }
+
   input.addEventListener('input', apply);
-  filters.forEach(f => f.addEventListener('click', () => {
-    const key = f.dataset.key, on = active.has(key);
-    on ? active.delete(key) : active.add(key);
-    f.setAttribute('aria-pressed', String(!on)); apply();
+  input.addEventListener('keydown', e => { if (e.key === 'Escape' && input.value) { e.stopPropagation(); input.value = ''; apply(); } });
+  chips.forEach(c => c.addEventListener('click', () => {
+    setChip(c, c.getAttribute('aria-pressed') !== 'true'); apply();
   }));
+  clearEl.addEventListener('click', clearAll);
+  document.getElementById('pl-empty-clear').addEventListener('click', clearAll);
+
+  // Restore state from the URL. ?k= matches the database page's deep links.
   const params = new URLSearchParams(location.search);
-  if (params.get('q')) input.value = params.get('q');
+  input.value = params.get('search') || params.get('q') || '';
+  const want = { kw: params.get('k'), status: params.get('status'), cran: params.get('cran') };
+  chips.forEach(c => {
+    const list = (want[c.dataset.group] || '').toLowerCase().split(',').map(x => x.trim());
+    if (list.includes(c.dataset.key)) setChip(c, true);
+  });
 
   apply();
   fit(false);
