@@ -47,6 +47,24 @@ Code that:
 ::: {.team-grid}
 
 ::: {.team-card}
+![](../assets/team/gusti-rais.jpg){.team-photo alt="Gusti Rais headshot"}
+<p class="team-name">Gusti Rais</p>
+<p class="team-role">Project Lead</p>
+:::
+
+::: {.team-card}
+[![](../assets/team/emi-tanaka.png){.team-photo alt="Emi Tanaka headshot"}](https://github.com/emitanaka){target="_blank" rel="noopener"}
+<p class="team-name">Emi Tanaka</p>
+<p class="team-role">Project Lead</p>
+:::
+
+::: {.team-card}
+![](../assets/team/julian-taylor.png){.team-photo alt="Julian Taylor headshot"}
+<p class="team-name">Julian Taylor</p>
+<p class="team-role">Project Lead</p>
+:::
+
+::: {.team-card}
 ![](../assets/team/vivi-arief.png){.team-photo alt="Vivi Arief headshot"}
 <p class="team-name">Vivi Arief</p>
 <p class="team-role">Consult</p>
@@ -71,28 +89,21 @@ Code that:
 :::
 
 ::: {.team-card}
-![](../assets/team/julian-taylor.png){.team-photo alt="Julian Taylor headshot"}
-<p class="team-name">Julian Taylor</p>
-<p class="team-role">Project Lead</p>
-:::
-
-::: {.team-card}
-[![](../assets/team/emi-tanaka.png){.team-photo alt="Emi Tanaka headshot"}](https://github.com/emitanaka){target="_blank" rel="noopener"}
-<p class="team-name">Emi Tanaka</p>
-<p class="team-role">Project Lead</p>
-:::
-
-
-::: {.team-card}
 ![](../assets/team/sam-rogers.png){.team-photo alt="Sam Rogers headshot"}
 <p class="team-name">Sam Rogers</p>
 <p class="team-role">Advice, Design and Development</p>
 :::
 
+:::
+
+## Legacy
+
+::: {.team-grid .legacy-grid}
+
 ::: {.team-card}
 ![](../assets/team/fonti-kar.png){.team-photo alt="Fonti Kar headshot"}
 <p class="team-name">Fonti Kar</p>
-<p class="team-role">Project Lead</p>
+<p class="team-role">Former Project Lead</p>
 :::
 
 :::
