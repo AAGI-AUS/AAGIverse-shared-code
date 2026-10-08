@@ -1,0 +1,939 @@
+/* Trial plan page (database/field.qmd).
+   .chip and .db-search come from aagi.scss; this file only adds what the
+   trial plan needs on top. */
+
+/* The plan fills the window below the navbar, so the page itself
+   shouldn't scroll. */
+body:has(#plan) {
+  overflow: hidden;
+}
+
+body:has(#plan) #quarto-content,
+body:has(#plan) main {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* Quarto wraps chunk output in these, which adds spacing above the plan */
+.cell:has(> .cell-output-display > #plan),
+.cell-output-display:has(> #plan) {
+  margin: 0;
+  padding: 0;
+}
+
+.plan {
+  --green: #00573c;
+  --green-deep: #003d2a;
+  --sage: #8cc0ae;
+  --mint: #e4efe9;
+  --ink: #1c1c1c;
+  --muted: #5d6560;
+  --rule: #dde2de;
+  --surface: #f7f9f8;
+
+  /* plot fill by activity level */
+  --v3: #eef6f1;
+  --v2: #f3f8f5;
+  --v1: #f8fbf9;
+  --v0: #fbfaf7;
+
+  /* crop colour by growth stage */
+  --c3: #1f6b45;
+  --c3-ear: #4f8a3c;
+  --c2: #4f9a6c;
+  --c1: #8cc0ae;
+  --c0: #bcae92;
+  --soil: #ddd3c1;
+
+  --body: "Source Sans 3", sans-serif;
+  --head: "Poppins", sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--nav-h, 58px));
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--body);
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+
+/* Header ------------------------------------------------------------- */
+
+/* The header (and the filter panel that drops from it) sits above
+   everything on the map, including an opened plot. */
+.plan-bar {
+  position: relative;
+  z-index: 5;
+  padding: 0.9rem 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.plan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.plan-title h1 {
+  margin: 0;
+  font: 600 1.35rem var(--head);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.plan-title p {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.plan-title p strong {
+  font-family: var(--body);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.plan-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 1 32rem;
+  min-width: 0;
+}
+
+.plan-search {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+}
+
+
+/* Filters button and panel --------------------------------------------
+   The button, panel and chips are styled in aagi.scss (shared with the
+   database page); this only places them on the plan. */
+
+.filter-panel {
+  position: absolute;
+  top: calc(100% - 0.4rem);
+  right: 2rem;
+  z-index: 6;
+  width: min(30rem, calc(100vw - 2rem));
+}
+
+/* Quarto puts a rule under every h2; this is a label, not a section */
+.e-name {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.chip-crop {
+  width: 0.7rem;
+  height: 1.15rem;
+  margin: -0.2rem 0 -0.1rem -0.15rem;
+  overflow: visible;
+}
+
+.facet-chip[aria-pressed="true"] .chip-crop :is(.stem, .leaf, .awn, .stubble) {
+  stroke: #fff;
+}
+
+.facet-chip[aria-pressed="true"] .chip-crop .grain {
+  fill: #fff;
+}
+
+.chip-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.facet-chip[aria-pressed="true"] .chip-dot {
+  background: #fff;
+}
+
+/* Active filters float over the top of the map, so turning them on and
+   off doesn't resize it */
+.plan-active {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  pointer-events: none;
+}
+
+.plan-active[hidden] {
+  display: none;
+}
+
+.plan-active > * {
+  pointer-events: auto;
+}
+
+/* Shown over the map when nothing matches */
+.plan-empty {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.plan-empty[hidden] {
+  display: none;
+}
+
+.plan-empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1.25rem 1.75rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 24px rgba(28, 28, 28, 0.06);
+  pointer-events: auto;
+}
+
+.plan-empty-title {
+  margin: 0;
+  font: 600 1.05rem var(--head);
+  color: var(--ink);
+}
+
+.plan-empty-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.plan-empty .chip-clear {
+  margin: 0;
+  background: #fff;
+}
+
+
+/* Map ----------------------------------------------------------------- */
+
+.plan-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+.plan-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.plan-svg.is-dragging {
+  cursor: grabbing;
+}
+
+.ground {
+  fill: #fff;
+}
+
+.block-cap {
+  font: 1.25px var(--body);
+  fill: var(--ink);
+}
+
+.block-letter {
+  font-family: var(--body);
+  font-weight: 500;
+  fill: var(--muted);
+  letter-spacing: 0.06px;
+}
+
+.axis-no {
+  font: 0.95px var(--body);
+  fill: #9aa39e;
+}
+
+
+/* Plots --------------------------------------------------------------- */
+
+.plot {
+  cursor: pointer;
+  outline: none;
+}
+
+.plot-fill {
+  stroke: #6b736e;
+  stroke-width: 0.08;
+  transition: fill-opacity 0.2s, stroke-width 0.12s, stroke 0.12s;
+}
+
+.plot.is-v3 .plot-fill { fill: var(--v3); }
+.plot.is-v2 .plot-fill { fill: var(--v2); }
+.plot.is-v1 .plot-fill { fill: var(--v1); }
+.plot.is-v0 .plot-fill { fill: var(--v0); }
+
+.plot.is-buffer {
+  fill: none;
+  stroke: #c4cbc7;
+  stroke-width: 0.1;
+  stroke-dasharray: 0.5 0.4;
+}
+
+.plot:hover .plot-fill,
+.plot:focus-visible .plot-fill {
+  stroke: var(--green);
+  stroke-width: 0.2;
+}
+
+.plot.is-selected .plot-fill {
+  stroke: var(--green);
+  stroke-width: 0.35;
+}
+
+/* An opened plot keeps only its outline; the entry is shown inside it */
+.plot.is-expanded > :not(.plot-fill) {
+  opacity: 0;
+}
+
+.plot.is-expanded .plot-fill {
+  fill: #fff;
+}
+
+/* Opening or closing a plot: plots glide to their new places and the
+   opened one grows; buffers and range numbers fade back in after. */
+.plan-svg.is-reflowing .plot,
+.plan-svg.is-reflowing .block-cap {
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.plan-svg.is-reflowing .plot-fill {
+  transition: width 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+              height 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+              fill 0.2s, stroke 0.12s, stroke-width 0.12s;
+}
+
+.block-extras {
+  transition: opacity 0.25s;
+}
+
+.plan-svg.is-reflowing .block-extras {
+  opacity: 0;
+  transition: none;
+}
+
+.plot-id {
+  font: 0.9px var(--body);
+  fill: var(--muted);
+}
+
+.plot-name {
+  font-family: var(--body);
+  font-weight: 500;
+  fill: var(--ink);
+}
+
+.plot-by {
+  font-family: var(--body);
+  fill: var(--muted);
+}
+
+.plot-cran {
+  fill: var(--green);
+}
+
+/* Plots that don't match the filters */
+.plot.is-out {
+  cursor: default;
+}
+
+.plot.is-out .plot-fill {
+  fill-opacity: 0.3;
+  stroke: #c4cbc7;
+}
+
+.plot.is-out text,
+.plot.is-out circle,
+.plot.is-out .crop {
+  opacity: 0.2;
+}
+
+
+/* Crops --------------------------------------------------------------- */
+
+.soil {
+  stroke: var(--soil);
+  stroke-width: 0.08;
+  stroke-linecap: round;
+}
+
+.stem,
+.leaf,
+.awn,
+.stubble {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.stem { stroke-width: 0.1; }
+.leaf { stroke-width: 0.09; }
+.awn { stroke-width: 0.045; }
+.stubble { stroke-width: 0.1; }
+
+.g-v3 .stem,
+.g-v3 .leaf { stroke: var(--c3); }
+.g-v3 .grain { fill: var(--c3-ear); }
+.g-v3 .awn { stroke: var(--c3-ear); }
+.g-v2 .stem,
+.g-v2 .leaf { stroke: var(--c2); }
+.g-v1 .stem,
+.g-v1 .leaf { stroke: var(--c1); }
+.g-v0 .stubble { stroke: var(--c0); }
+
+/* Plants grow in on load and sway while their plot is hovered or open */
+.plant,
+.sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.plant {
+  animation: grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+.plot:hover .sway,
+.plot.is-selected .sway {
+  animation: sway 2.2s ease-in-out infinite alternate;
+  animation-delay: calc(-1 * var(--s, 0s));
+}
+
+@keyframes grow {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes sway {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plant,
+  .sway {
+    animation: none !important;
+  }
+}
+
+
+/* Key and zoom -------------------------------------------------------- */
+
+.legend {
+  position: absolute;
+  left: 2rem;
+  bottom: 1.1rem;
+  z-index: 2;
+}
+
+.legend-toggle {
+  display: none;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend small {
+  opacity: 0.75;
+}
+
+.legend-note {
+  font-style: italic;
+}
+
+.lg-crop {
+  width: 1.1rem;
+  height: 1.9rem;
+  overflow: visible;
+}
+
+.sw {
+  display: inline-block;
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--ink);
+}
+
+.sw.is-buffer {
+  border: 1px dashed #9aa39e;
+}
+
+.sw.is-cran {
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-inline: 0.15rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.zoom {
+  position: absolute;
+  right: 2rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: flex;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+
+.zoom button {
+  width: 2.2rem;
+  height: 2rem;
+  border: 0;
+  background: none;
+  font: 500 0.9rem var(--body);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.zoom button + button {
+  border-left: 1px solid var(--rule);
+}
+
+.zoom button:hover {
+  background: var(--surface);
+}
+
+#z-fit {
+  width: auto;
+  padding: 0 0.7rem;
+  font: 0.72rem var(--body);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+/* Entry inside an opened plot -------------------------------------------
+   field.js places this exactly over the opened plot and keeps it there as
+   the map moves. The plot's own outline and fill show through. */
+
+.plot-entry {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  container-type: inline-size;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.16s, visibility 0s 0.16s;
+  user-select: text;
+}
+
+.plot-entry.is-open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.e-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.e-close:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* The plot stays put; only the entry inside it scrolls */
+.e-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.2rem 1.25rem;
+}
+
+/* Wide enough: description on the left, the numbers on the right */
+@container (min-width: 440px) {
+  .e-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+    align-items: start;
+  }
+
+  .e-body > * {
+    grid-column: 1 / -1;
+  }
+
+  .e-body > .e-desc {
+    grid-column: 1;
+  }
+
+  .e-body > .e-list {
+    grid-column: 2;
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plot-entry,
+  .plan-svg .plot,
+  .plan-svg .plot-fill,
+  .plan-svg .block-cap {
+    transition: none !important;
+  }
+}
+
+.e-crop {
+  display: block;
+  width: 100%;
+  height: 2.4rem;
+  margin: 0.1rem 0 0.8rem;
+  overflow: visible;
+}
+
+.e-kicker {
+  margin: 0 0 0.5rem;
+  font: 0.72rem var(--body);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.e-name {
+  margin: 0 0 0.15rem;
+  font: 600 1.6rem var(--head);
+  letter-spacing: -0.01em;
+}
+
+.e-name a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--sage);
+}
+
+.e-name a:hover {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+.e-by {
+  margin: 0 0 0.6rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.e-status {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.e-status span {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.e-desc {
+  margin: 0 0 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.e-list {
+  margin: 0 0 1.2rem;
+  border-top: 1px solid var(--ink);
+}
+
+.e-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.36rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.e-row dt {
+  font-weight: 400;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.e-row dd {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 0.86rem;
+  text-align: right;
+}
+
+.e-h {
+  margin: 0.9rem 0 0.2rem;
+  font: 600 0.66rem var(--head);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.e-tags {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.e-tags .dot {
+  padding: 0 0.45rem;
+  color: var(--sage);
+}
+
+.e-links {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1.4rem 0 0;
+  font-size: 0.9rem;
+}
+
+.e-links a {
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--sage);
+}
+
+.e-links a:hover {
+  border-bottom-color: var(--green);
+}
+
+
+/* Small screens --------------------------------------------------------
+   Keep these breakpoints in step with the media queries in field.js. */
+
+/* Phones, either way up */
+@media (max-width: 700px), (max-height: 520px) {
+  .plan-bar {
+    padding: 0.6rem 1rem 0.5rem;
+  }
+
+  .plan-title h1 {
+    font-size: 1.15rem;
+  }
+
+  .plan-title p {
+    font-size: 0.8rem;
+  }
+
+  /* 16px or more stops iOS zooming the page when the box is focused */
+  .plan-search {
+    font-size: 1rem;
+  }
+
+  .filter-panel {
+    right: 1rem;
+  }
+
+  .plan-active {
+    top: 0.6rem;
+    left: 0.75rem;
+    right: 0.75rem;
+  }
+
+  /* The key folds into a button so it doesn't cover the field */
+  .legend {
+    left: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  .legend-toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 0.95rem;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .legend-toggle[aria-expanded="true"] {
+    border-color: var(--sage);
+    background: var(--surface);
+  }
+
+  .legend-items {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 0.5rem);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    width: max-content;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.82rem;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 24px rgba(28, 28, 28, 0.08);
+  }
+
+  .legend.is-open .legend-items {
+    display: flex;
+  }
+
+  .zoom {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .zoom button {
+    width: 2.6rem;
+    height: 2.5rem;
+  }
+
+  .e-close {
+    top: 0.35rem;
+    right: 0.35rem;
+    z-index: 2;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/* Phone, portrait: search goes under the title and the entry becomes a
+   bottom sheet, leaving the plot visible above it */
+@media (max-width: 700px) {
+  .plan-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+  }
+
+  .plan-tools {
+    flex: 1 1 auto;
+  }
+
+  .filter-panel {
+    top: calc(100% - 0.25rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    max-height: calc(100dvh - var(--nav-h, 58px) - 9rem);
+  }
+
+  .e-body {
+    padding: 1.1rem 1.25rem 1.5rem;
+  }
+
+  .e-name {
+    font-size: 1.35rem;
+  }
+
+  .e-crop {
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Phone, landscape: give as much height as possible to the field */
+@media (max-height: 520px) and (min-width: 701px) {
+  /* a shorter crop strip leaves room for the card's text */
+  .e-crop {
+    height: 1.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .plan-bar {
+    padding: 0.45rem 1rem 0.4rem;
+  }
+
+  .plan-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+
+  .plan-title p {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .plan-search {
+    padding: 0.35rem 0.9rem;
+  }
+
+  .filter-btn {
+    height: 2.2rem;
+  }
+
+  .filter-panel {
+    max-height: calc(100dvh - var(--nav-h, 58px) - 4rem);
+  }
+
+  .e-body {
+    padding: 1rem 1.25rem 1.5rem;
+  }
+}
