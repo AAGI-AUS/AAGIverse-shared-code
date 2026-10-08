@@ -186,20 +186,8 @@ build_card <- function(i) {
 
 cards_html <- paste(vapply(seq_len(nrow(df)), build_card, character(1)), collapse = "\n")
 
-sum_na <- function(x) sum(as.numeric(x), na.rm = TRUE)
-summary_html <- sprintf(
-  '<dl class="db-summary">
-     <div><dd>%s</dd><dt>Packages</dt></div>
-     <div><dd>%s</dd><dt>Maintainers</dt></div>
-     <div><dd>%s</dd><dt>GitHub stars</dt></div>
-     <div><dd>%s</dd><dt>CRAN downloads</dt></div>
-   </dl>',
-  nrow(df), n_distinct(df$`Code maintainer`, na.rm = TRUE),
-  fmt_n(sum_na(df$github_stars)), fmt_n(sum_na(df$cran_downloads_total))
-)
-
 chips_html <- paste(
-  sprintf('<button type="button" class="chip" data-key="%s" aria-pressed="false">%s</button>',
+  sprintf('<button type="button" class="chip facet-chip" data-key="%s" aria-pressed="false"><span class="chip-label">%s</span><span class="chip-n" aria-hidden="true"></span></button>',
           esc(tolower(all_keywords)), esc(all_keywords)),
   collapse = ""
 )
@@ -210,11 +198,16 @@ chips_html <- paste(
 # A raw fence stops pandoc reading the indented HTML below as markdown code.
 cat('```{=html}\n')
 cat(sprintf('
-%s
 <div class="db-controls">
   <label class="visually-hidden" for="db-search">Search the database</label>
   <input id="db-search" class="db-search" type="search" autocomplete="off"
          placeholder="Search by package, author, keyword or description…">
+  <button type="button" class="filter-btn" id="db-filter-btn"
+          aria-expanded="false" aria-controls="db-filters">
+    <svg class="filter-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4 8h8M6.5 12h3"/></svg>
+    <span>Filters</span>
+    <span class="filter-badge" id="db-filter-n" hidden></span>
+  </button>
   <div class="db-sort">
     <label for="db-sort">Sort by</label>
     <select id="db-sort">
@@ -225,19 +218,33 @@ cat(sprintf('
     </select>
   </div>
   <p class="db-count-line"><strong id="db-count">%d</strong> of %d entries</p>
+
+  <div class="filter-panel" id="db-filters" role="dialog" aria-labelledby="db-fp-title" hidden>
+    <div class="fp-head">
+      <h2 class="fp-title" id="db-fp-title">Filters</h2>
+      <button type="button" class="fp-close" id="db-filters-close" aria-label="Close filters">×</button>
+    </div>
+    <div class="fp-body">
+      <section class="facet" role="group" aria-labelledby="db-f-kw">
+        <h3 class="facet-label" id="db-f-kw">Code keyword</h3>
+        <div class="facet-chips">%s</div>
+      </section>
+    </div>
+    <div class="fp-foot">
+      <button type="button" class="chip chip-clear" id="db-clear" hidden>Clear all</button>
+      <button type="button" class="fp-show" id="db-show">Show entries</button>
+    </div>
+  </div>
 </div>
 
-<div class="db-chips" role="group" aria-label="Filter by code keyword">
-  %s
-  <button type="button" class="chip chip-clear" id="db-clear">Clear filters</button>
-</div>
+<div class="db-active" id="db-active" aria-label="Active filters" hidden></div>
 
 <div class="db-results">
 %s
 </div>
 
 <p class="db-empty" id="db-empty" hidden>No entries match that search. Try a broader term or clear the filters.</p>
-', summary_html, nrow(df), nrow(df), chips_html, cards_html))
+', nrow(df), nrow(df), chips_html, cards_html))
 cat('\n```\n')
 ```
 
@@ -245,7 +252,7 @@ cat('\n```\n')
 <script>
 (function () {
   const input  = document.getElementById('db-search');
-  const chips  = Array.from(document.querySelectorAll('.chip[data-key]'));
+  const chips  = Array.from(document.querySelectorAll('.facet-chip'));
   const clear  = document.getElementById('db-clear');
   const cards  = Array.from(document.querySelectorAll('.entry'));
   const count  = document.getElementById('db-count');
@@ -253,6 +260,15 @@ cat('\n```\n')
   const active = new Set();
   const sortSel = document.getElementById('db-sort');
   const list    = document.querySelector('.db-results');
+  const filterBtn   = document.getElementById('db-filter-btn');
+  const panel       = document.getElementById('db-filters');
+  const badge       = document.getElementById('db-filter-n');
+  const showBtn     = document.getElementById('db-show');
+  const activeList  = document.getElementById('db-active');
+
+  const entries = n => n === 1 ? '1 entry' : `${n} entries`;
+  const cardKeys = card => (card.dataset.keywords || '').split('|').filter(Boolean);
+  const matchesText = (card, term) => !term || (card.dataset.search || '').includes(term);
 
   // Numeric sorts run high-to-low; name runs A-Z. Entries with no value
   // (stored as -1 / 0) naturally sink to the bottom.
@@ -265,39 +281,114 @@ cat('\n```\n')
   }
   sortSel.addEventListener('change', sortCards);
 
+  function setChip(chip, on) {
+    if (on) { active.add(chip.dataset.key); } else { active.delete(chip.dataset.key); }
+    chip.setAttribute('aria-pressed', String(on));
+  }
+
+  // Each chip shows how many entries it would match with the current search.
+  function updateChips(term) {
+    chips.forEach(chip => {
+      const n = cards.filter(card => matchesText(card, term) && cardKeys(card).includes(chip.dataset.key)).length;
+      const on = active.has(chip.dataset.key);
+      chip.querySelector('.chip-n').textContent = n;
+      chip.disabled = n === 0 && !on;
+      chip.setAttribute('aria-label', `${chip.querySelector('.chip-label').textContent}, ${entries(n)}`);
+    });
+  }
+
+  // Removable pills for the keywords that are on, so they stay visible
+  // with the panel closed.
+  function showActive() {
+    const on = chips.filter(chip => active.has(chip.dataset.key));
+    activeList.replaceChildren();
+    on.forEach(chip => {
+      const label = chip.querySelector('.chip-label').textContent;
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = 'chip active-pill';
+      pill.setAttribute('aria-label', `Remove filter: ${label}`);
+      pill.append(label);
+      const cross = document.createElement('span');
+      cross.className = 'x';
+      cross.setAttribute('aria-hidden', 'true');
+      cross.textContent = '×';
+      pill.append(cross);
+      pill.addEventListener('click', () => { setChip(chip, false); apply(); });
+      activeList.append(pill);
+    });
+    if (on.length > 1) {
+      const all = document.createElement('button');
+      all.type = 'button';
+      all.className = 'active-clear';
+      all.textContent = 'Clear all';
+      all.addEventListener('click', clearAll);
+      activeList.append(all);
+    }
+    activeList.hidden = on.length === 0;
+  }
+
   function apply() {
     const term = input.value.trim().toLowerCase();
     let shown = 0;
     cards.forEach(card => {
-      const hay  = card.dataset.search || '';
-      const keys = (card.dataset.keywords || '').split('|').filter(Boolean);
-      const okText = !term || hay.includes(term);
       // OR within the facet: any selected keyword is enough to match.
-      const okChip = active.size === 0 || keys.some(k => active.has(k));
-      const show = okText && okChip;
+      const okChip = active.size === 0 || cardKeys(card).some(k => active.has(k));
+      const show = matchesText(card, term) && okChip;
       card.hidden = !show;
       if (show) shown++;
     });
     count.textContent = shown;
     empty.hidden = shown !== 0;
+
+    updateChips(term);
+    showActive();
+    badge.hidden = active.size === 0;
+    badge.textContent = active.size;
+    filterBtn.classList.toggle('is-active', active.size > 0);
+    filterBtn.setAttribute('aria-label', active.size ? `Filters, ${active.size} active` : 'Filters');
+    showBtn.textContent = shown === 0 ? 'No matches' : `Show ${entries(shown)}`;
+    showBtn.disabled = shown === 0;
+    clear.hidden = active.size === 0;
   }
+
+  function clearAll() {
+    chips.forEach(chip => setChip(chip, false));
+    apply();
+  }
+
+  function setPanel(open, returnFocus = true) {
+    panel.hidden = !open;
+    filterBtn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      (panel.querySelector('.facet-chip:not(:disabled)') || panel.querySelector('.fp-close')).focus({ preventScroll: true });
+    } else if (returnFocus) {
+      filterBtn.focus({ preventScroll: true });
+    }
+  }
+
+  filterBtn.addEventListener('click', () => setPanel(panel.hidden));
+  document.getElementById('db-filters-close').addEventListener('click', () => setPanel(false));
+  showBtn.addEventListener('click', () => setPanel(false));
+
+  // Clicking anywhere else closes the panel, without pulling focus back.
+  document.addEventListener('pointerdown', e => {
+    if (panel.hidden || panel.contains(e.target) || filterBtn.contains(e.target)) return;
+    setPanel(false, false);
+  }, true);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !panel.hidden) setPanel(false);
+  });
 
   input.addEventListener('input', apply);
 
   chips.forEach(chip => chip.addEventListener('click', () => {
-    const key = chip.dataset.key;
-    const on  = active.has(key);
-    if (on) { active.delete(key); } else { active.add(key); }
-    chip.setAttribute('aria-pressed', String(!on));
+    setChip(chip, !active.has(chip.dataset.key));
     apply();
   }));
 
-  clear.addEventListener('click', () => {
-    active.clear();
-    chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
-    input.value = '';
-    apply();
-  });
+  clear.addEventListener('click', clearAll);
 
   // Allow the landing page to deep-link a search or a keyword.
   const params = new URLSearchParams(location.search);

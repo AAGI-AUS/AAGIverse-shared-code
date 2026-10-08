@@ -207,38 +207,6 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 // Database controls
 // ─────────────────────────────────────────────────────────────
 
-.db-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-  gap: 0.75rem;
-  margin: 0 0 1.5rem 0;
-
-  > div {
-    display: flex;
-    flex-direction: column-reverse;
-    padding: 0.8rem 1rem;
-    border-radius: $border-radius-lg;
-    background: linear-gradient(135deg, $green-dark, $green-deep);
-    color: #fff;
-  }
-
-  dd {
-    margin: 0;
-    font-family: "Poppins", sans-serif;
-    font-size: 1.65rem;
-    font-weight: 600;
-    line-height: 1.15;
-  }
-
-  dt {
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: $sage;
-  }
-}
-
 .db-sort {
   display: flex;
   align-items: center;
@@ -265,11 +233,12 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 }
 
 .db-controls {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 0.85rem;
+  margin-bottom: 1.25rem;
 }
 
 .db-search {
@@ -294,18 +263,29 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
   white-space: nowrap;
 
   strong {
-    font-family: $font-family-monospace;
+    font-variant-numeric: tabular-nums;
     color: $ink;
   }
 }
 
-.db-chips {
+// The filters panel drops from below the controls, right-aligned with them
+.db-controls .filter-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 1030;
+  width: min(30rem, 100%);
+}
+
+// Filters that are on, as removable pills above the results
+.db-active {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid $rule;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+
+  &[hidden] { display: none; }
 }
 
 .chip {
@@ -341,6 +321,240 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 }
 
 // ─────────────────────────────────────────────────────────────
+// Filters button and panel, shared by the database page and the
+// trial plan. Each page positions the panel itself.
+// ─────────────────────────────────────────────────────────────
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: none;
+  height: 2.5rem;
+  padding: 0 1rem;
+  font: inherit;
+  font-size: 0.92rem;
+  color: $ink;
+  white-space: nowrap;
+  background: #fff;
+  border: 1.5px solid $rule;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s, box-shadow 0.14s;
+
+  &:hover {
+    border-color: $sage;
+    background: $surface;
+  }
+
+  &:focus-visible,
+  &[aria-expanded="true"] {
+    outline: none;
+    border-color: $sage;
+    background: $surface;
+    box-shadow: 0 0 0 3px rgba(140, 192, 174, 0.38);
+  }
+
+  &.is-active {
+    border-color: $green-dark;
+    color: $green-dark;
+    font-weight: 600;
+  }
+}
+
+.filter-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: $green-dark;
+  color: #fff;
+  font: 600 0.72rem $font-family-sans-serif;
+
+  &[hidden] { display: none; }
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(70vh, 34rem);
+  background: #fff;
+  border: 1px solid $rule;
+  border-radius: 0.6rem;
+  box-shadow: 0 14px 40px rgba(28, 28, 28, 0.12);
+
+  &[hidden] { display: none; }
+}
+
+.fp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.7rem 0.2rem 1.15rem;
+}
+
+// Quarto puts a rule under every h2; this is a label, not a section
+.fp-title {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+  font: 600 0.98rem "Poppins", sans-serif;
+}
+
+.fp-close {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: $muted;
+  cursor: pointer;
+
+  &:hover {
+    background: $surface;
+    color: $ink;
+  }
+}
+
+.fp-body {
+  overflow-y: auto;
+  padding: 0.35rem 1.15rem 0.4rem;
+}
+
+.facet { margin: 0 0 1rem; }
+
+.facet-label {
+  margin: 0 0 0.45rem;
+  font: 600 0.66rem "Poppins", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.facet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.fp-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1.15rem;
+  border-top: 1px solid $rule;
+
+  .chip-clear { margin: 0; }
+  .chip-clear[hidden] { display: none; }
+}
+
+.fp-show {
+  margin-left: auto;
+  padding: 0.5rem 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  background: $green-dark;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover { background: $green-deep; }
+
+  &:disabled {
+    background: #b9c3be;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(140, 192, 174, 0.6);
+  }
+}
+
+// Filter chips: the .chip above plus a count of what they would match
+.facet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &[aria-pressed="true"] .chip-n { color: rgba(255, 255, 255, 0.75); }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  &:disabled:hover {
+    border-color: $rule;
+    background: #fff;
+  }
+}
+
+.chip-n {
+  min-width: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+  color: $muted;
+  text-align: center;
+}
+
+.chip.active-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.55rem 0.22rem 0.75rem;
+  font-size: 0.8rem;
+  background: $mint;
+  border-color: $sage;
+  color: $green-deep;
+
+  &:hover {
+    background: #d6e8de;
+    border-color: $green-dark;
+  }
+}
+
+.active-pill .x {
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.65;
+}
+
+.active-clear {
+  padding: 0.2rem 0.4rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.85);
+  font: inherit;
+  font-size: 0.8rem;
+  color: $muted;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover { color: $ink; }
+}
+
+@media (max-width: 700px) {
+  .fp-show { padding: 0.65rem 1.4rem; }
+}
+
+// ─────────────────────────────────────────────────────────────
 // Result cards: one entry per row, scannable, no hover-only
 // content. Replaces the wide scrolling table and its tooltips,
 // which were unusable on touch devices.
@@ -363,15 +577,6 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
     border-color: $sage;
     box-shadow: 0 4px 14px rgba(0, 87, 60, 0.07);
   }
-}
-
-// Left edge colour encodes how recently the package was updated.
-.entry {
-  border-left: 4px solid $stone;
-  &.is-active     { border-left-color: $green-dark; }
-  &.is-maintained { border-left-color: $amber; }
-  &.is-dormant    { border-left-color: $stone; }
-  &.is-unknown    { border-left-color: $rule; }
 }
 
 .status {
@@ -427,7 +632,7 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 
   dd {
     margin: 0;
-    font-family: $font-family-monospace;
+    font-variant-numeric: tabular-nums;
     font-size: 1.05rem;
     font-weight: 500;
     color: $ink;
@@ -482,7 +687,7 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 }
 
 .entry-name {
-  font-family: $font-family-monospace;
+  font-family: $headings-font-family;
   font-size: 1.1rem;
   font-weight: 500;
   margin: 0;
@@ -501,7 +706,6 @@ h3 { font-size: 1.2rem; margin-top: 1.5rem; }
 }
 
 .badge-meta {
-  font-family: $font-family-monospace;
   font-size: 0.72rem;
   letter-spacing: 0.02em;
   padding: 0.15rem 0.5rem;

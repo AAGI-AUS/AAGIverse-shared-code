@@ -49,3 +49,23 @@ parse_github_repo <- function(url) {
   }
   NULL
 }
+
+# Short display name for an entry, taken from its website:
+# github.com/owner/repo -> repo, owner.github.io/pkg -> pkg.
+derive_name <- function(url) {
+  if (is.na(url) || !nzchar(url)) return(NA_character_)
+  u <- sub("/+$", "", sub("^https?://", "", url))
+  parts <- strsplit(u, "/")[[1]]
+  host <- parts[1]
+  if (grepl("github\\.io$", host) && length(parts) >= 2) return(parts[2])
+  if (identical(host, "github.com") && length(parts) >= 3) return(parts[3])
+  if (length(parts) >= 2) return(parts[length(parts)])
+  sub("\\..*$", "", host)
+}
+
+# "a, b, c" -> c("a", "b", "c")
+split_tags <- function(x) {
+  if (is.na(x) || !nzchar(x)) return(character(0))
+  out <- trimws(unlist(strsplit(x, ",")))
+  out[nzchar(out)]
+}

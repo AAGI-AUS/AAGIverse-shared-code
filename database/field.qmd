@@ -7,17 +7,19 @@ format:
   html:
     page-layout: custom
     toc: false
+    css: ../assets/field.css
+    include-after-body:
+      text: <script src="../assets/field.js"></script>
 ---
 
 <!--
-PROTOTYPE. A field-trial take on the catalogue, kept separate from
-dtable.qmd so the two can be compared. Styles are inline for the same
-reason: deleting this file removes the whole experiment.
+Prototype: the shared code catalogue drawn as a field trial. Each package
+is a plot, blocks are organisations, and the crop in a plot shows how
+active the package is.
 
-The page is a full-viewport plan drawn as a line diagram, the way a
-design package or a methods paper would draw a trial. Each package is
-a plot; blocks are organisations; fill is a single green ramp for
-"vigour" (time since last commit). Click a plot for its entry.
+  scripts/trial_plan.R  builds the plots, entries and filter chips
+  assets/field.css      styles
+  assets/field.js       layout, pan/zoom, plot cards and filters
 -->
 
 ```{r}
@@ -27,1043 +29,140 @@ library(readr)
 library(dplyr)
 library(htmltools)
 
+source(here("scripts/00_helpers.R"))
+source(here("scripts/trial_plan.R"))
+
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
 
-metrics_path <- here("data/processed/package_metrics.csv")
-if (file.exists(metrics_path)) {
-  df <- left_join(df, read_csv(metrics_path, show_col_types = FALSE), by = "Software website")
-}
-for (col in c("github_stars", "github_followers", "first_commit_date", "last_commit_date",
-              "contributors", "cran_package", "cran_downloads_last_month", "cran_downloads_total")) {
-  if (!col %in% names(df)) df[[col]] <- NA
+metrics_file <- here("data/processed/package_metrics.csv")
+if (file.exists(metrics_file)) {
+  metrics <- read_csv(metrics_file, show_col_types = FALSE)
+  df <- left_join(df, metrics, by = "Software website")
 }
 
-esc <- function(x) htmltools::htmlEscape(ifelse(is.na(x), "", as.character(x)))
-fmt_n <- function(x) if (is.na(x)) "—" else format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
-`%||%` <- function(a, b) if (is.null(a) || is.na(a)) b else a
-
-derive_name <- function(url) {
-  if (is.na(url) || !nzchar(url)) return(NA_character_)
-  u <- sub("/+$", "", sub("^https?://", "", url))
-  parts <- strsplit(u, "/")[[1]]
-  host <- parts[1]
-  if (grepl("github\\.io$", host) && length(parts) >= 2) return(parts[2])
-  if (identical(host, "github.com") && length(parts) >= 3) return(parts[3])
-  if (length(parts) >= 2) return(parts[length(parts)])
-  sub("\\..*$", "", host)
+# The metrics file may be missing or out of date; make sure every column the
+# page uses exists.
+metric_cols <- c(
+  "github_stars", "github_followers", "first_commit_date", "last_commit_date",
+  "contributors", "cran_package", "cran_downloads_last_month", "cran_downloads_total"
+)
+for (col in setdiff(metric_cols, names(df))) {
+  df[[col]] <- NA
 }
-split_tags <- function(x) {
-  if (is.na(x) || !nzchar(x)) return(character(0))
-  out <- trimws(unlist(strsplit(x, ",")))
-  out[nzchar(out)]
-}
+df$last_commit_date <- as.Date(df$last_commit_date)
 
-today <- Sys.Date()
-
-vigour <- function(last) {
-  if (is.na(last)) return(list(lvl = 0, label = "Unscored", ago = ""))
-  d <- as.numeric(today - as.Date(last))
-  ago <- if (d < 1) "today" else if (d < 2) "yesterday" else if (d < 60) sprintf("%d days ago", d)
-         else if (d < 700) sprintf("%d months ago", round(d / 30.4)) else sprintf("%d years ago", round(d / 365))
-  if (d <= 90)       list(lvl = 3, label = "Active",     ago = ago)
-  else if (d <= 365) list(lvl = 2, label = "Maintained", ago = ago)
-  else if (d <= 730) list(lvl = 1, label = "Quiet",      ago = ago)
-  else               list(lvl = 0, label = "Dormant",    ago = ago)
-}
-
-df <- df |>
-  mutate(name  = vapply(`Software website`, derive_name, character(1)),
-         block = coalesce(Organisation, "Unaffiliated")) |>
-  arrange(block, desc(coalesce(as.Date(last_commit_date), as.Date("1900-01-01"))))
-
-blocks <- split(df, df$block)
-blocks <- blocks[order(-vapply(blocks, nrow, integer(1)), names(blocks))]
-all_keywords <- sort(unique(unlist(lapply(df$`Code keywords`, split_tags))))
-
-# ---- Geometry (plan units) -------------------------------------------------
-# Sizes only. The page script lays the blocks out to suit the screen: side
-# by side with roughly square blocks on wide screens, stacked in a single
-# column on phones. Short blocks get buffer plots so each is a rectangle.
-PW <- 14; PH <- 8.5        # plot footprint, laid out landscape
-CG <- 1; RG <- 2           # column gap; alley between ranges
-BG <- 10                   # minimum gap between blocks
-PAD <- 8
-
-# Plot IDs are fixed here (block letter + order within the block) so they
-# stay the same whatever the screen layout.
-plots_tbl <- bind_rows(lapply(seq_along(blocks), function(bi) {
-  b <- blocks[[bi]]
-  b$letter <- LETTERS[bi]
-  b$idx    <- seq_len(nrow(b))
-  b$id     <- sprintf("%s%02d", LETTERS[bi], b$idx)
-  b
-}))
-
-# ---- SVG ---------------------------------------------------------------------
-svg_text <- function(x, y, s, cls, extra = "") sprintf('<text class="%s" x="%.2f" y="%.2f"%s>%s</text>', cls, x, y, extra, esc(s))
-
-# ---- Crop glyphs ------------------------------------------------------------
-# Each plot is sown with one plant per contributor, drawn at the growth
-# stage that matches its activity: in ear (active), leafy (maintained),
-# seedling (quiet) or stubble (dormant). Glyphs are drawn at the origin,
-# growing up the negative y axis, in plan units.
-glyph <- function(lvl) switch(as.character(lvl),
-  "3" = paste0(
-    '<path class="stem" d="M0 0 Q0.06 -1.2 0 -2.1"/>',
-    '<path class="leaf" d="M0 -0.7 Q-0.55 -1 -0.9 -0.75"/>',
-    '<path class="leaf" d="M0 -1.3 Q0.55 -1.6 0.85 -1.35"/>',
-    paste0(vapply(0:4, function(j) sprintf(
-      '<ellipse class="grain" cx="%.2f" cy="%.2f" rx="0.11" ry="0.19" transform="rotate(%d %.2f %.2f)"/>',
-      if (j %% 2) 0.11 else -0.11, -2.25 - j * 0.17, if (j %% 2) 22 else -22,
-      if (j %% 2) 0.11 else -0.11, -2.25 - j * 0.17), character(1)), collapse = ""),
-    '<path class="awn" d="M0 -2.95 L-0.08 -3.4 M0.11 -2.75 L0.36 -3.2 M-0.11 -2.6 L-0.38 -3.05"/>'),
-  "2" = paste0(
-    '<path class="stem" d="M0 0 Q0.05 -1 0 -2"/>',
-    '<path class="leaf" d="M0 -0.55 Q-0.5 -0.85 -0.85 -0.65"/>',
-    '<path class="leaf" d="M0 -1.05 Q0.5 -1.35 0.8 -1.15"/>',
-    '<path class="leaf" d="M0 -1.55 Q-0.3 -1.95 -0.55 -2.1"/>'),
-  "1" = paste0(
-    '<path class="stem" d="M0 0 L0 -0.55"/>',
-    '<path class="leaf" d="M0 -0.45 Q-0.15 -0.85 -0.5 -0.95"/>',
-    '<path class="leaf" d="M0 -0.5 Q0.2 -0.95 0.45 -1.05"/>'),
-  '<path class="stubble" d="M-0.12 0 L-0.18 -0.45 M0.12 0 L0.16 -0.4"/>')
-
-# Deterministic wobble so the stand looks hand-sown but is identical on
-# every render.
-wobble <- function(i, seed) sin(i * 12.9898 + seed * 78.233)
-
-# A row of plants across [x0, x1] on a baseline at y. `delay0` staggers the
-# grow-in animation across the field.
-crop_row <- function(lvl, n, x0, x1, y, seed = 1, scale = 1, delay0 = 0) {
-  n  <- max(1, min(n, 14))
-  xs <- x0 + (x1 - x0) * (seq_len(n) - 0.5) / n
-  paste0(vapply(seq_len(n), function(i) {
-    h    <- scale * (1 + 0.08 * wobble(i, seed))
-    lean <- 4 * wobble(i + 7, seed)
-    sprintf('<g transform="translate(%.2f %.2f)"><g class="plant" style="--d:%.2fs"><g class="sway" style="--s:%.2fs"><g class="g-v%d" transform="rotate(%.1f) scale(%.2f)">%s</g></g></g></g>',
-            xs[i], y, delay0 + i * 0.03, 0.15 * abs(wobble(i, seed + 3)), lvl, lean, h, glyph(lvl))
-  }, character(1)), collapse = "")
-}
-
-plot_svg <- function(r) {
-  v  <- vigour(r$last_commit_date)
-  ck <- split_tags(r$`Code keywords`); tk <- split_tags(r$`Topic keywords`)
-  haystack <- tolower(paste(r$name, r$`Code maintainer`, r$Organisation, r$Description,
-                            paste(ck, collapse = " "), paste(tk, collapse = " "),
-                            r$Language, r$License, r$`Code type`))
-  # Shrink long names so they always fit across the plot.
-  name_size <- min(1.6, (PW - 1.2) / (0.62 * max(1, nchar(r$name %||% ""))))
-  by_size   <- min(0.9, (PW - 1.2) / (0.5 * max(1, nchar(r$`Code maintainer` %||% ""))))
-  n_plants  <- if (is.na(r$contributors)) 3 else r$contributors
-  base_y    <- PH - 0.55
-  seed      <- sum(utf8ToInt(r$id))
-  sprintf('
-  <g class="plot is-v%d" tabindex="0" role="button" data-id="%s" data-search="%s" data-keywords="%s"
-     data-status="%s" data-cran="%d">
-    <title>%s — %s</title>
-    <rect class="plot-fill" width="%g" height="%g"/>
-    <line class="soil" x1="0.5" x2="%.2f" y1="%.2f" y2="%.2f"/>
-    <g class="crop">%s</g>
-    %s
-    %s
-    <text class="plot-name" x="0.6" y="3" font-size="%.2f">%s</text>
-    <text class="plot-by" x="0.6" y="4.15" font-size="%.2f">%s</text>
-  </g>',
-    v$lvl, r$id, esc(haystack), esc(tolower(paste(ck, collapse = "|"))),
-    tolower(v$label), as.integer(!is.na(r$cran_package)),
-    esc(r$name), esc(r$`Code maintainer`),
-    PW, PH,
-    PW - 0.5, base_y, base_y,
-    crop_row(v$lvl, n_plants, 0.6, PW - 0.6, base_y, seed = seed, scale = 0.9,
-             delay0 = 0.05 * (match(r$letter, LETTERS) - 1) + 0.02 * r$idx),
-    svg_text(0.55, 1.35, r$id, "plot-id"),
-    if (!is.na(r$cran_package)) sprintf('<circle class="plot-cran" cx="%.2f" cy="1.0" r="0.38"><title>On CRAN</title></circle>', PW - 0.95) else "",
-    name_size, esc(r$name),
-    by_size, esc(r$`Code maintainer`))
-}
-
-block_svg <- function(bi) {
-  b <- plots_tbl[plots_tbl$letter == LETTERS[bi], ]
-  paste0(
-    sprintf('<g class="block" data-letter="%s">', LETTERS[bi]),
-    sprintf('<text class="block-cap" data-name="%s"><tspan class="block-letter">Block %s</tspan></text>',
-            esc(names(blocks)[bi]), LETTERS[bi]),
-    '<g class="block-extras"></g>',
-    paste0(vapply(seq_len(nrow(b)), function(i) plot_svg(b[i, ]), character(1)), collapse = ""),
-    '</g>')
-}
-field_svg <- paste0(vapply(seq_along(blocks), block_svg, character(1)), collapse = "\n")
-
-# ---- Entry panel content, one template per plot -----------------------------
-row <- function(k, v, hint = NULL) sprintf('<div class="e-row"%s><dt>%s</dt><dd>%s</dd></div>',
-                                            if (is.null(hint)) "" else sprintf(' title="%s"', esc(hint)), esc(k), v)
-detail_html <- function(r) {
-  v <- vigour(r$last_commit_date)
-  ck <- split_tags(r$`Code keywords`); tk <- split_tags(r$`Topic keywords`)
-  tags <- function(x) if (length(x)) paste0('<p class="e-tags">', paste0(esc(x), collapse = '<span class="dot">·</span>'), '</p>') else '<p class="e-tags">—</p>'
-  sprintf('
-  <template data-for="%s">
-    <svg class="e-crop" viewBox="0 0 26 4.2" aria-hidden="true"><line class="soil" x1="0" x2="26" y1="3.9" y2="3.9"/>%s</svg>
-    <p class="e-kicker">Plot %s · Block %s · <span class="e-pos"></span></p>
-    <h2 class="e-name">%s</h2>
-    <p class="e-by">%s · %s</p>
-    <p class="e-status">%s%s</p>
-    <p class="e-desc">%s</p>
-    <dl class="e-list">%s%s%s%s%s%s%s%s%s%s</dl>
-    <h3 class="e-h">Code keywords</h3>%s
-    <h3 class="e-h">Topics</h3>%s
-    <p class="e-links"><a href="%s" target="_blank" rel="noopener">Repository ↗</a><a href="mailto:%s">Email maintainer</a></p>
-  </template>',
-    r$id,
-    crop_row(v$lvl, if (is.na(r$contributors)) 3 else r$contributors, 1.2, 24.8, 3.9,
-             seed = sum(utf8ToInt(r$id)), scale = 1),
-    r$id, r$letter,
-    esc(r$name %||% r$`Code type`), esc(r$`Code maintainer`), esc(r$Organisation),
-    v$label, if (nzchar(v$ago)) sprintf('<span> · last commit %s</span>', v$ago) else "",
-    esc(r$Description),
-    row("Language", esc(r$Language)), row("Licence", esc(r$License)), row("Type", esc(r$`Code type`)),
-    row("CRAN", if (is.na(r$cran_package)) "—" else esc(r$cran_package)),
-    row("First commit", if (is.na(r$first_commit_date)) "—" else format(as.Date(r$first_commit_date), "%b %Y")),
-    row("Last commit", if (is.na(r$last_commit_date)) "—" else format(as.Date(r$last_commit_date), "%d %b %Y")),
-    row("GitHub stars", fmt_n(r$github_stars)),
-    row("Contributors", fmt_n(r$contributors)),
-    row("CRAN downloads, last month", fmt_n(r$cran_downloads_last_month), "cranlogs, last 30 days"),
-    row("CRAN downloads, all time", fmt_n(r$cran_downloads_total), "cranlogs, since Oct 2012"),
-    tags(ck), tags(tk),
-    esc(r$`Software website`), esc(r$Email))
-}
-templates <- paste0(vapply(seq_len(nrow(plots_tbl)), function(i) detail_html(plots_tbl[i, ]), character(1)), collapse = "\n")
-
-legend_html <- paste0(vapply(list(
-    list(3, "Active", "&lt;3 mo"), list(2, "Maintained", "&lt;1 yr"),
-    list(1, "Quiet", "&lt;2 yr"), list(0, "Dormant", "")),
-  function(x) sprintf('<span><svg class="lg-crop" viewBox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v%d">%s</g><line class="soil" x1="-1" x2="1" y1="0" y2="0"/></svg>%s%s</span>',
-                      x[[1]], glyph(x[[1]]), x[[2]], if (nzchar(x[[3]])) sprintf(' <small>%s</small>', x[[3]]) else ""),
-  character(1)), collapse = "\n      ")
-
-# Facet chips reuse the site's .chip style (see assets/aagi.scss) so the
-# filters read the same as on the database page. Each carries a live count.
-chip <- function(group, key, label, icon = "") sprintf(
-  '<button type="button" class="chip facet-chip" data-group="%s" data-key="%s" aria-pressed="false">%s<span class="chip-label">%s</span><span class="chip-n" aria-hidden="true"></span></button>',
-  group, esc(key), icon, esc(label))
-
-kw_chips <- paste(vapply(all_keywords, function(k) chip("kw", tolower(k), k), character(1)), collapse = "")
-status_chips <- paste(vapply(list(c(3, "Active"), c(2, "Maintained"), c(1, "Quiet"), c(0, "Dormant")), function(x)
-  chip("status", tolower(x[2]), x[2],
-       sprintf('<svg class="chip-crop" viewBox="-1.1 -3.5 2.2 3.6" aria-hidden="true"><g class="g-v%s">%s</g></svg>', x[1], glyph(x[1]))),
-  character(1)), collapse = "")
-cran_chip <- chip("cran", "1", "On CRAN", '<i class="chip-dot" aria-hidden="true"></i>')
+plots <- assign_plots(df)
+keywords <- sort(unique(unlist(lapply(plots$`Code keywords`, split_tags))))
 ```
 
 ```{r}
-#| output: asis
-cat('```{=html}\n')
-cat(sprintf('
-<div class="plan" id="plan">
-  <header class="plan-bar">
-    <div class="plan-head">
-      <div class="plan-title">
-        <h1>Trial plan</h1>
-        <p role="status"><strong id="n-match">%d</strong> of %d plots · %d blocks · %s</p>
-      </div>
-      <div class="plan-tools">
-        <label class="visually-hidden" for="pl-search">Search plots</label>
-        <input id="pl-search" class="db-search plan-search" type="search" autocomplete="off"
-               placeholder="Search packages or people…">
-        <button type="button" class="filter-btn" id="pl-filter-btn" aria-expanded="false" aria-controls="pl-filters">
-          <svg class="filter-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4 8h8M6.5 12h3"/></svg>
-          <span>Filters</span><span class="filter-badge" id="pl-filter-n" hidden></span>
-        </button>
-      </div>
-    </div>
+header <- tags$header(
+  class = "plan-bar",
+  div(
+    class = "plan-head",
+    div(
+      class = "plan-title",
+      h1("Trial plan"),
+      p(
+        role = "status",
+        strong(id = "n-match", nrow(plots)),
+        sprintf(" of %d plots · %d blocks · %s",
+                nrow(plots), n_distinct(plots$block), format(Sys.Date(), "%d %b %Y"))
+      )
+    ),
+    div(
+      class = "plan-tools",
+      tags$label(class = "visually-hidden", `for` = "pl-search", "Search plots"),
+      tags$input(
+        id = "pl-search", class = "db-search plan-search", type = "search",
+        autocomplete = "off", placeholder = "Search packages or people…"
+      ),
+      tags$button(
+        type = "button", class = "filter-btn", id = "pl-filter-btn",
+        `aria-expanded` = "false", `aria-controls` = "pl-filters",
+        svg_node("svg",
+          class = "filter-icon", viewBox = "0 0 16 16", `aria-hidden` = "true",
+          svg_node("path", d = "M2 4h12M4 8h8M6.5 12h3")
+        ),
+        span("Filters"),
+        span(class = "filter-badge", id = "pl-filter-n", hidden = NA)
+      )
+    )
+  ),
 
-    <div class="filter-panel" id="pl-filters" role="dialog" aria-labelledby="fp-title" hidden>
-      <div class="fp-head">
-        <h2 class="fp-title" id="fp-title">Filters</h2>
-        <button type="button" class="fp-close" id="pl-filters-close" aria-label="Close filters">×</button>
-      </div>
-      <div class="fp-body">
-        <section class="facet" role="group" aria-labelledby="f-kw"><h3 class="facet-label" id="f-kw">Keyword</h3><div class="facet-chips">%s</div></section>
-        <section class="facet" role="group" aria-labelledby="f-st"><h3 class="facet-label" id="f-st">Status</h3><div class="facet-chips">%s</div></section>
-        <section class="facet" role="group" aria-labelledby="f-av"><h3 class="facet-label" id="f-av">Availability</h3><div class="facet-chips">%s</div></section>
-      </div>
-      <div class="fp-foot">
-        <button type="button" class="chip chip-clear" id="pl-clear" hidden>Clear all</button>
-        <button type="button" class="fp-show" id="pl-show">Show plots</button>
-      </div>
-    </div>
-  </header>
+  div(
+    class = "filter-panel", id = "pl-filters", role = "dialog",
+    `aria-labelledby` = "fp-title", hidden = NA,
+    div(
+      class = "fp-head",
+      h2(class = "fp-title", id = "fp-title", "Filters"),
+      tags$button(type = "button", class = "fp-close", id = "pl-filters-close",
+                  `aria-label` = "Close filters", "×")
+    ),
+    div(
+      class = "fp-body",
+      facet("f-kw", "Keyword", keyword_chips(keywords)),
+      facet("f-st", "Status", status_chips()),
+      facet("f-av", "Availability", cran_chip())
+    ),
+    div(
+      class = "fp-foot",
+      tags$button(type = "button", class = "chip chip-clear", id = "pl-clear", hidden = NA, "Clear all"),
+      tags$button(type = "button", class = "fp-show", id = "pl-show", "Show plots")
+    )
+  )
+)
 
-  <div class="plan-stage">
-    <div class="plan-active" id="pl-active" aria-label="Active filters" hidden></div>
-    <svg class="plan-svg" id="plan-svg" data-pw="%g" data-ph="%g" data-cg="%g" data-rg="%g" data-bg="%g" data-pad="%g" xmlns="http://www.w3.org/2000/svg" aria-label="Trial plan of shared packages">
-      <g id="world">
-        <rect class="ground" x="0" y="0" width="1" height="1"/>
-        %s
-      </g>
-    </svg>
+field <- svg_node("svg",
+  class = "plan-svg", id = "plan-svg", xmlns = "http://www.w3.org/2000/svg",
+  `aria-label` = "Trial plan of shared packages",
+  `data-pw` = PLOT_W, `data-ph` = PLOT_H, `data-cg` = COL_GAP,
+  `data-rg` = RANGE_GAP, `data-bg` = BLOCK_GAP, `data-pad` = PLAN_PAD,
+  svg_node("g",
+    id = "world",
+    svg_node("rect", class = "ground", x = 0, y = 0, width = 1, height = 1),
+    lapply(split(plots, plots$letter), block_tag)
+  )
+)
 
-    <div class="legend" id="legend">
-      <button type="button" class="legend-toggle" aria-expanded="false" aria-controls="legend-items">Key</button>
-      <div class="legend-items" id="legend-items" aria-label="Key">
-        %s
-        <span><i class="sw is-buffer"></i>Buffer</span>
-        <span><i class="sw is-cran"></i>On CRAN</span>
-        <span class="legend-note">One plant per contributor</span>
-      </div>
-    </div>
+stage <- div(
+  class = "plan-stage",
+  div(class = "plan-active", id = "pl-active", `aria-label` = "Active filters", hidden = NA),
+  field,
+  div(
+    class = "legend", id = "legend",
+    tags$button(type = "button", class = "legend-toggle", `aria-expanded` = "false",
+                `aria-controls` = "legend-items", "Key"),
+    div(class = "legend-items", id = "legend-items", `aria-label` = "Key", key_items())
+  ),
+  div(
+    class = "plan-empty", id = "pl-empty", hidden = NA,
+    div(
+      class = "plan-empty-card", role = "status",
+      p(class = "plan-empty-title", "No plots match"),
+      p(class = "plan-empty-hint", "Try fewer filters or a broader search."),
+      tags$button(type = "button", class = "chip chip-clear", id = "pl-empty-clear", "Clear all")
+    )
+  ),
+  div(
+    class = "zoom", role = "group", `aria-label` = "Zoom",
+    tags$button(type = "button", id = "z-out", `aria-label` = "Zoom out", "−"),
+    tags$button(type = "button", id = "z-fit", "Fit"),
+    tags$button(type = "button", id = "z-in", `aria-label` = "Zoom in", "+")
+  ),
+  # a div rather than an <aside>: Quarto gives asides a high z-index for
+  # margin notes, which would put the entry above the filter panel
+  div(
+    class = "plot-entry", id = "entry", `aria-label` = "Plot entry", `aria-hidden` = "true",
+    tags$button(type = "button", class = "e-close", id = "e-close", `aria-label` = "Close", "×"),
+    div(class = "e-body", id = "e-body")
+  )
+)
 
-    <div class="plan-empty" id="pl-empty" hidden>
-      <div class="plan-empty-card" role="status">
-        <p class="plan-empty-title">No plots match</p>
-        <p class="plan-empty-hint">Try fewer filters or a broader search.</p>
-        <button type="button" class="chip chip-clear" id="pl-empty-clear">Clear all</button>
-      </div>
-    </div>
+entries <- div(
+  hidden = NA, id = "e-templates",
+  lapply(seq_len(nrow(plots)), function(i) entry_template(plots[i, ]))
+)
 
-    <div class="zoom" role="group" aria-label="Zoom">
-      <button type="button" id="z-out" aria-label="Zoom out">−</button>
-      <button type="button" id="z-fit">Fit</button>
-      <button type="button" id="z-in" aria-label="Zoom in">+</button>
-    </div>
-
-    <aside class="entry" id="entry" aria-label="Plot entry" aria-hidden="true">
-      <button type="button" class="e-close" id="e-close" aria-label="Close">×</button>
-      <div class="e-body" id="e-body"></div>
-    </aside>
-  </div>
-
-  <div hidden id="e-templates">%s</div>
-</div>
-',
-  nrow(df), nrow(df), length(blocks), format(today, "%d %b %Y"),
-  kw_chips, status_chips, cran_chip, PW, PH, CG, RG, BG, PAD, field_svg, legend_html, templates))
-cat('\n```\n')
-```
-
-```{=html}
-<style>
-body:has(#plan) { overflow: hidden; }
-body:has(#plan) #quarto-content, body:has(#plan) main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
-
-.plan {
-  --green: #00573c; --green-deep: #003d2a; --sage: #8cc0ae; --mint: #e4efe9;
-  --ink: #1c1c1c; --muted: #5d6560; --rule: #dde2de; --surface: #f7f9f8;
-  /* plot tints by activity; the crops carry the colour */
-  --v3: #eef6f1; --v2: #f3f8f5; --v1: #f8fbf9; --v0: #fbfaf7;
-  /* crop inks by growth stage */
-  --c3: #1f6b45; --c3-ear: #4f8a3c; --c2: #4f9a6c; --c1: #8cc0ae; --c0: #bcae92;
-  --soil: #ddd3c1;
-  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  --head: "Poppins", sans-serif;
-  display: flex; flex-direction: column;
-  height: calc(100dvh - var(--nav-h, 58px));
-  background: #fff; color: var(--ink);
-  font-family: "Source Sans 3", sans-serif;
-}
-
-/* ---- top bar ---- */
-.plan-bar { position: relative; padding: .9rem 2rem; border-bottom: 1px solid var(--rule); }
-.plan-head { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-.plan-title h1 { margin: 0; font: 600 1.35rem var(--head); letter-spacing: -.01em; }
-.plan-title p { margin: .1rem 0 0; font-size: .85rem; color: var(--muted); }
-.plan-title p strong { font-family: var(--mono); font-weight: 500; color: var(--ink); }
-/* .db-search and .chip come from assets/aagi.scss; only layout tweaks here */
-.plan-tools { display: flex; align-items: center; gap: .6rem; flex: 0 1 32rem; min-width: 0; }
-.plan-search { flex: 1 1 auto; min-width: 0; font-size: .95rem; padding: .5rem 1rem; }
-
-/* Filters button: same pill language as the search box */
-.filter-btn {
-  display: inline-flex; align-items: center; gap: .45rem; flex: none;
-  height: 2.5rem; padding: 0 1rem;
-  font: inherit; font-size: .92rem; color: var(--ink); white-space: nowrap;
-  background: #fff; border: 1.5px solid var(--rule); border-radius: 999px; cursor: pointer;
-  transition: border-color .14s, background .14s, box-shadow .14s;
-}
-.filter-btn:hover { border-color: var(--sage); background: var(--surface); }
-.filter-btn:focus-visible, .filter-btn[aria-expanded="true"] {
-  outline: none; border-color: var(--sage); background: var(--surface); box-shadow: 0 0 0 3px rgba(140,192,174,.38);
-}
-.filter-btn.is-active { border-color: var(--green); color: var(--green); font-weight: 600; }
-.filter-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
-.filter-badge {
-  display: inline-flex; align-items: center; justify-content: center; min-width: 1.3rem; height: 1.3rem; padding: 0 .35rem;
-  border-radius: 999px; background: var(--green); color: #fff; font: 600 .72rem var(--mono);
-}
-.filter-badge[hidden] { display: none; }
-
-/* Filters panel: drops from the button over the map */
-.filter-panel {
-  position: absolute; top: calc(100% - .4rem); right: 2rem; z-index: 6;
-  display: flex; flex-direction: column; width: min(30rem, calc(100vw - 2rem)); max-height: min(70vh, 34rem);
-  background: #fff; border: 1px solid var(--rule); border-radius: .6rem; box-shadow: 0 14px 40px rgba(28,28,28,.12);
-}
-.filter-panel[hidden] { display: none; }
-.fp-head { display: flex; align-items: center; justify-content: space-between; padding: .7rem .7rem .2rem 1.15rem; }
-.fp-title { margin: 0; font: 600 .98rem var(--head); }
-/* Quarto underlines every h2; these are labels, not section headings */
-.fp-title, .e-name { border-bottom: 0; padding-bottom: 0; }
-.fp-close {
-  width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; background: none;
-  font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer;
-}
-.fp-close:hover { background: var(--surface); color: var(--ink); }
-.fp-body { overflow-y: auto; padding: .35rem 1.15rem .4rem; }
-.facet { margin: 0 0 1rem; }
-.facet-label { margin: 0 0 .45rem; font: 600 .66rem var(--head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
-.facet-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
-.fp-foot { display: flex; align-items: center; gap: .75rem; padding: .7rem 1.15rem; border-top: 1px solid var(--rule); }
-.fp-foot .chip-clear { margin: 0; }
-.fp-foot .chip-clear[hidden] { display: none; }
-.fp-show {
-  margin-left: auto; padding: .5rem 1.15rem; border: 0; border-radius: 999px;
-  background: var(--green); color: #fff; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
-}
-.fp-show:hover { background: var(--green-deep); }
-.fp-show:disabled { background: #b9c3be; cursor: default; }
-.fp-show:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(140,192,174,.6); }
-
-/* active filters, floating over the top of the map */
-.plan-active {
-  position: absolute; top: .75rem; left: 1rem; right: 1rem; z-index: 2;
-  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; pointer-events: none;
-}
-.plan-active[hidden] { display: none; }
-.plan-active > * { pointer-events: auto; }
-.chip.active-pill {
-  display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; padding: .22rem .55rem .22rem .75rem;
-  background: var(--mint); border-color: var(--sage); color: var(--green-deep);
-}
-.chip.active-pill:hover { background: #d6e8de; border-color: var(--green); }
-.active-pill .x { font-size: 1rem; line-height: 1; opacity: .65; }
-.active-clear {
-  padding: .2rem .4rem; border: 0; background: rgba(255,255,255,.85); border-radius: .25rem;
-  font: inherit; font-size: .8rem; color: var(--muted); text-decoration: underline; cursor: pointer;
-}
-.active-clear:hover { color: var(--ink); }
-
-.facet-chip { display: inline-flex; align-items: center; gap: .35rem; }
-.chip-n { font-family: var(--mono); font-size: .72rem; color: var(--muted); min-width: .6rem; text-align: center; }
-.facet-chip[aria-pressed="true"] .chip-n { color: rgba(255,255,255,.75); }
-.facet-chip:disabled { opacity: .4; cursor: default; }
-.facet-chip:disabled:hover { border-color: var(--rule); background: #fff; }
-.chip-crop { width: .7rem; height: 1.15rem; margin: -.2rem 0 -.1rem -.15rem; overflow: visible; }
-.facet-chip[aria-pressed="true"] .chip-crop :is(.stem, .leaf, .awn, .stubble) { stroke: #fff; }
-.facet-chip[aria-pressed="true"] .chip-crop .grain { fill: #fff; }
-.chip-dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); }
-.facet-chip[aria-pressed="true"] .chip-dot { background: #fff; }
-
-/* empty state, centred over the map */
-.plan-empty {
-  position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-}
-.plan-empty[hidden] { display: none; }
-.plan-empty-card {
-  pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: .3rem;
-  padding: 1.25rem 1.75rem; text-align: center;
-  background: rgba(255,255,255,.96); border: 1px solid var(--rule); border-radius: .5rem;
-  box-shadow: 0 6px 24px rgba(28,28,28,.06);
-}
-.plan-empty-title { margin: 0; font: 600 1.05rem var(--head); color: var(--ink); }
-.plan-empty-hint { margin: 0 0 .5rem; font-size: .9rem; color: var(--muted); }
-.plan-empty .chip-clear { margin: 0; background: #fff; }
-
-/* ---- stage ---- */
-.plan-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; user-select: none; }
-.plan-svg { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
-.plan-svg.is-dragging { cursor: grabbing; }
-.ground { fill: #fff; }
-
-.block-cap { font: 1.25px "Source Sans 3", sans-serif; fill: var(--ink); }
-.block-letter { font-family: var(--mono); font-weight: 500; fill: var(--muted); letter-spacing: .06px; }
-.axis-no { font: .95px var(--mono); fill: #9aa39e; }
-
-.plot { cursor: pointer; outline: none; }
-.plot-fill { stroke: #6b736e; stroke-width: .08; transition: fill-opacity .2s, stroke-width .12s, stroke .12s; }
-.plot.is-v3 .plot-fill { fill: var(--v3); } .plot.is-v2 .plot-fill { fill: var(--v2); }
-.plot.is-v1 .plot-fill { fill: var(--v1); } .plot.is-v0 .plot-fill { fill: var(--v0); }
-.plot.is-buffer { fill: none; stroke: #c4cbc7; stroke-width: .1; stroke-dasharray: .5 .4; }
-.plot:hover .plot-fill, .plot:focus-visible .plot-fill { stroke: var(--green); stroke-width: .2; }
-.plot.is-selected .plot-fill { stroke: var(--green); stroke-width: .35; }
-.plot-id { font: .9px var(--mono); fill: var(--muted); }
-.plot-name { font-family: var(--mono); font-weight: 500; fill: var(--ink); }
-.plot-by { font-family: "Source Sans 3", sans-serif; fill: var(--muted); }
-.plot-cran { fill: var(--green); }
-.plot.is-out .plot-fill { fill-opacity: .3; stroke: #c4cbc7; }
-.plot.is-out text, .plot.is-out circle, .plot.is-out .crop { opacity: .2; }
-
-/* ---- crops ---- */
-.soil { stroke: var(--soil); stroke-width: .08; stroke-linecap: round; }
-.stem, .leaf, .awn, .stubble { fill: none; stroke-linecap: round; }
-.stem { stroke-width: .1; } .leaf { stroke-width: .09; } .awn { stroke-width: .045; } .stubble { stroke-width: .1; }
-.g-v3 .stem, .g-v3 .leaf { stroke: var(--c3); }
-.g-v3 .grain { fill: var(--c3-ear); } .g-v3 .awn { stroke: var(--c3-ear); }
-.g-v2 .stem, .g-v2 .leaf { stroke: var(--c2); }
-.g-v1 .stem, .g-v1 .leaf { stroke: var(--c1); }
-.g-v0 .stubble { stroke: var(--c0); }
-.plant, .sway { transform-box: fill-box; transform-origin: 50% 100%; }
-.plant { animation: grow .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
-.plot:hover .sway, .plot.is-selected .sway { animation: sway 2.2s ease-in-out infinite alternate; animation-delay: calc(-1 * var(--s, 0s)); }
-@keyframes grow { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
-@keyframes sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
-@media (prefers-reduced-motion: reduce) { .plant, .sway { animation: none !important; } }
-.plot.is-out { cursor: default; }
-
-/* ---- overlays ---- */
-.legend { position: absolute; left: 2rem; bottom: 1.1rem; z-index: 2; }
-.legend-toggle { display: none; }
-.legend-items {
-  display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: center;
-  font-size: .78rem; color: var(--muted);
-  padding: .3rem .6rem; background: rgba(255,255,255,.92);
-}
-.legend span { display: inline-flex; align-items: center; gap: .4rem; }
-.legend small { opacity: .75; }
-.sw { width: .75rem; height: .75rem; display: inline-block; border: 1px solid var(--ink); flex: none; }
-.lg-crop { width: 1.1rem; height: 1.9rem; overflow: visible; }
-.legend-note { font-style: italic; }
-.sw.is-buffer { border: 1px dashed #9aa39e; }
-.sw.is-cran { border: 0; width: .45rem; height: .45rem; border-radius: 50%; background: var(--green); margin-inline: .15rem; }
-
-.zoom { position: absolute; right: 2rem; bottom: 1rem; z-index: 2; display: flex; border: 1px solid var(--rule); background: #fff; }
-.zoom button { font: 500 .9rem var(--mono); width: 2.2rem; height: 2rem; border: 0; background: none; color: var(--ink); cursor: pointer; }
-.zoom button + button { border-left: 1px solid var(--rule); }
-.zoom button:hover { background: var(--surface); }
-#z-fit { font: .72rem "Source Sans 3", sans-serif; width: auto; padding: 0 .7rem; letter-spacing: .04em; text-transform: uppercase; }
-
-/* ---- entry panel ---- */
-.entry {
-  position: absolute; top: 0; right: 0; bottom: 0; z-index: 3; width: min(26rem, 100%);
-  background: #fff; border-left: 1px solid var(--rule);
-  transform: translateX(100%); transition: transform .26s cubic-bezier(.2,.7,.2,1);
-  overflow-y: auto; user-select: text;
-}
-.entry.is-open { transform: none; box-shadow: -12px 0 30px rgba(28,28,28,.06); }
-.e-close { position: absolute; top: .7rem; right: .8rem; width: 1.9rem; height: 1.9rem; border: 0; background: none; font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer; }
-.e-close:hover { color: var(--ink); }
-.e-body { padding: 1.5rem 1.75rem 2rem; }
-.e-crop { display: block; width: 100%; height: auto; margin: .2rem 0 1rem; overflow: visible; }
-.e-kicker { margin: 0 0 .5rem; font: .72rem var(--mono); color: var(--muted); letter-spacing: .04em; }
-.e-name { margin: 0 0 .15rem; font: 500 1.6rem var(--mono); letter-spacing: -.01em; }
-.e-by { margin: 0 0 .6rem; color: var(--muted); font-size: .92rem; }
-.e-status { display: flex; align-items: center; gap: .3rem; margin: 0 0 1rem; font-size: .88rem; font-weight: 600; }
-.e-status span { font-weight: 400; color: var(--muted); }
-.e-desc { line-height: 1.55; margin: 0 0 1.1rem; font-size: .95rem; }
-.e-list { margin: 0 0 1.2rem; border-top: 1px solid var(--ink); }
-.e-row { display: flex; justify-content: space-between; gap: 1rem; padding: .36rem 0; border-bottom: 1px solid var(--rule); }
-.e-row dt { font-weight: 400; color: var(--muted); font-size: .84rem; }
-.e-row dd { margin: 0; font-family: var(--mono); font-size: .86rem; text-align: right; }
-.e-h { margin: .9rem 0 .2rem; font: 600 .66rem var(--head); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
-.e-tags { margin: 0; font-size: .88rem; line-height: 1.6; }
-.e-tags .dot { color: var(--sage); padding: 0 .45rem; }
-.e-links { margin: 1.4rem 0 0; display: flex; gap: 1.5rem; font-size: .9rem; }
-.e-links a { color: var(--green); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--sage); }
-.e-links a:hover { border-bottom-color: var(--green); }
-
-.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-/* ---- small screens --------------------------------------------------------
-   Compact chrome for phones in either orientation; keep the two queries in
-   step with STACK and SHORT in the script. */
-@media (max-width: 700px), (max-height: 520px) {
-  .plan-bar { padding: .6rem 1rem .5rem; }
-  .plan-title h1 { font-size: 1.15rem; }
-  .plan-title p { font-size: .8rem; }
-  .plan-search { font-size: 1rem; }   /* 16px+ stops iOS zooming the page on focus */
-  .filter-panel { right: 1rem; }
-  .plan-active { left: .75rem; right: .75rem; top: .6rem; }
-
-  /* key folds into a button so it doesn't cover the field */
-  .legend { left: .75rem; bottom: .75rem; }
-  .legend-toggle {
-    display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .95rem;
-    font: inherit; font-size: .85rem; color: var(--ink);
-    background: #fff; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer;
-  }
-  .legend-toggle[aria-expanded="true"] { border-color: var(--sage); background: var(--surface); }
-  .legend-items {
-    display: none; position: absolute; left: 0; bottom: calc(100% + .5rem);
-    flex-direction: column; align-items: flex-start; gap: .35rem; width: max-content;
-    max-height: calc(100vh - 10rem); overflow-y: auto;
-    padding: .7rem .9rem; font-size: .82rem;
-    background: #fff; border: 1px solid var(--rule); border-radius: .5rem; box-shadow: 0 6px 24px rgba(28,28,28,.08);
-  }
-  .legend.is-open .legend-items { display: flex; }
-
-  .zoom { right: .75rem; bottom: .75rem; border-radius: 999px; overflow: hidden; }
-  .zoom button { width: 2.6rem; height: 2.5rem; }
-  .e-close { width: 2.75rem; height: 2.75rem; top: .35rem; right: .35rem; z-index: 2; }
-}
-
-/* phone portrait: search under the title, entry as a bottom sheet */
-@media (max-width: 700px) {
-  .plan-head { flex-direction: column; align-items: stretch; gap: .55rem; }
-  .plan-tools { flex: 1 1 auto; }
-  /* full-width dropdown under the header on phones */
-  .filter-panel { left: .75rem; right: .75rem; width: auto; top: calc(100% - .25rem); max-height: calc(100dvh - var(--nav-h, 58px) - 9rem); }
-  .fp-show { padding: .65rem 1.4rem; }
-  /* the plot stays visible in the strip above the sheet */
-  .entry {
-    top: auto; left: 0; width: 100%; height: min(66%, 36rem);
-    border-left: 0; border-top: 1px solid var(--rule); border-radius: .9rem .9rem 0 0;
-    transform: translateY(100%);
-  }
-  .entry.is-open { box-shadow: 0 -12px 30px rgba(28,28,28,.08); }
-  .entry::before {
-    content: ""; display: block; position: sticky; top: 0; height: 1.1rem; z-index: 1;
-    background: linear-gradient(#fff 70%, transparent);
-  }
-  .entry::after {
-    content: ""; position: absolute; top: .45rem; left: 50%; width: 2.5rem; height: .25rem;
-    margin-left: -1.25rem; border-radius: 999px; background: var(--rule);
-  }
-  .e-body { padding: .4rem 1.25rem 2rem; }
-  .e-name { font-size: 1.35rem; }
-  .e-crop { margin-bottom: .75rem; }
-}
-
-/* phone landscape: every pixel of height goes to the field */
-@media (max-height: 520px) and (min-width: 701px) {
-  .plan-bar { padding: .45rem 1rem .4rem; }
-  .plan-title { display: flex; align-items: baseline; gap: .7rem; }
-  .plan-title p { margin: 0; }
-  .plan-search { padding: .35rem .9rem; }
-  .filter-btn { height: 2.2rem; }
-  .filter-panel { max-height: calc(100dvh - var(--nav-h, 58px) - 4rem); }
-  .entry { width: min(24rem, 50%); }
-  .e-body { padding: 1rem 1.25rem 1.5rem; }
-}
-</style>
-
-<script>
-(function () {
-  const plan  = document.getElementById('plan');
-  const stage = plan.querySelector('.plan-stage');
-  const svg   = document.getElementById('plan-svg');
-  const world = document.getElementById('world');
-  const ground = svg.querySelector('.ground');
-  const blocks = Array.from(svg.querySelectorAll('.block'));
-  const D = svg.dataset;
-  const PW = +D.pw, PH = +D.ph, CG = +D.cg, RG = +D.rg, BG = +D.bg, PAD = +D.pad;
-  const NS = 'http://www.w3.org/2000/svg';
-  // Keep in step with the small-screen @media rules.
-  const STACK = matchMedia('(max-width: 700px)');   // phone portrait
-  const SHORT = matchMedia('(max-height: 520px)');  // phone landscape
-  const currentMode = () => STACK.matches ? 'stack' : SHORT.matches ? 'row' : 'grid';
-  let FW = 1, FH = 1, layoutMode = null;
-
-  const svgEl = (tag, attrs, text) => {
-    const e = document.createElementNS(NS, tag);
-    for (const a in attrs) e.setAttribute(a, attrs[a]);
-    if (text != null) e.textContent = text;
-    return e;
-  };
-
-  // ---- layout -------------------------------------------------------------
-  //   grid  (desktop/tablet): blocks side by side, each roughly square; the
-  //         whole plan fits on screen.
-  //   stack (phone portrait): blocks stacked, one plot per range; fits the
-  //         width and you scroll down through it.
-  //   row   (phone landscape): every block a single range, side by side;
-  //         fits the height and you scroll across it.
-  function layoutPlan(mode) {
-    const narrow = mode === 'stack';
-    // Stacked, the plan is zoomed to the screen width, so the usual margin
-    // above it would become a large blank band; start close to the top.
-    let x0 = PAD, y0 = narrow ? 1.5 : PAD, maxR = 0, maxB = 0;
-    const capY = 3.4;  // room above a block for its caption
-    blocks.forEach(b => {
-      const ps = Array.from(b.querySelectorAll('.plot[data-id]'));
-      const n = ps.length;
-      const ncol = mode === 'stack' ? 1 : mode === 'row' ? n : Math.max(1, Math.ceil(Math.sqrt(n * PH / PW)));
-      const nrow = Math.ceil(n / ncol);
-      const w = ncol * PW + (ncol - 1) * CG, h = nrow * PH + (nrow - 1) * RG;
-
-      // Caption: letter and organisation on one line when wide; on phones the
-      // organisation wraps onto lines under the letter to fit the plot width.
-      const cap = b.querySelector('.block-cap');
-      cap.querySelectorAll('.block-name').forEach(t => t.remove());
-      const name = cap.dataset.name;
-      let lines = [name];
-      if (narrow) {
-        lines = []; let line = '';
-        const maxChars = Math.floor(PW / 0.62);
-        name.split(/\s+/).forEach(word => {
-          if (line && (line + ' ' + word).length > maxChars) { lines.push(line); line = word; }
-          else line = line ? line + ' ' + word : word;
-        });
-        if (line) lines.push(line);
-      }
-      lines.forEach((ln, i) => cap.appendChild(svgEl('tspan', narrow
-        ? { class: 'block-name', x: 0, dy: i === 0 ? 1.55 : 1.45 }
-        : { class: 'block-name', dx: 1.6 }, ln)));
-      const capH = narrow ? 2.4 + lines.length * 1.5 : capY;
-
-      const bx = narrow ? PAD : x0;
-      const by = narrow ? y0 + capH : PAD + capY;
-      cap.setAttribute('x', bx); cap.setAttribute('y', by - capH + 1.1);
-      cap.querySelectorAll('tspan.block-name[x]').forEach(t => t.setAttribute('x', bx));
-      const capW = cap.getComputedTextLength ? (narrow ? Math.min(cap.getComputedTextLength(), PW) : cap.getComputedTextLength()) : 0;
-
-      ps.forEach((p, i) => {
-        const r = Math.floor(i / ncol), c = i % ncol;
-        const x = bx + c * (PW + CG), y = by + r * (PH + RG);
-        p.setAttribute('transform', `translate(${x} ${y})`);
-        Object.assign(p.dataset, { cx: x + PW / 2, cy: y + PH / 2, row: r + 1, col: c + 1 });
-      });
-
-      // Buffers and range/column numbers depend on the layout, so rebuild them.
-      const extras = b.querySelector('.block-extras');
-      extras.replaceChildren();
-      for (let i = n; i < ncol * nrow; i++) {
-        const r = Math.floor(i / ncol), c = i % ncol;
-        extras.appendChild(svgEl('rect', { class: 'plot is-buffer', x: bx + c * (PW + CG), y: by + r * (PH + RG), width: PW, height: PH }));
-      }
-      for (let r = 0; r < nrow; r++)
-        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx - 1, y: by + r * (PH + RG) + PH / 2 + 0.45, 'text-anchor': 'end' }, r + 1));
-      for (let c = 0; c < ncol; c++)
-        extras.appendChild(svgEl('text', { class: 'axis-no', x: bx + c * (PW + CG) + PW / 2, y: by + h + 2.2, 'text-anchor': 'middle' }, c + 1));
-
-      maxR = Math.max(maxR, bx + Math.max(w, capW));
-      maxB = Math.max(maxB, by + h + 3);
-      if (narrow) y0 = by + h + 3 + BG * 0.6;
-      else x0 += Math.max(w + BG, capW + 4);
-    });
-    FW = maxR + PAD; FH = maxB + PAD;
-    ground.setAttribute('width', FW); ground.setAttribute('height', FH);
-  }
-
-  // ---- pan / zoom ---------------------------------------------------------
-  let k = 1, tx = 0, ty = 0, anim = null;
-  const render = () => world.setAttribute('transform', `translate(${tx} ${ty}) scale(${k})`);
-  // grid: fit the whole plan. stack: fit the width, start at the top.
-  // row: fit the height, start at the left.
-  function fitParams() {
-    const W = svg.clientWidth, H = svg.clientHeight;
-    if (layoutMode === 'stack') {
-      const pad = 12, kk = (W - pad * 2) / FW;
-      return { k: kk, tx: (W - FW * kk) / 2, ty: FH * kk <= H - pad * 2 ? (H - FH * kk) / 2 : pad };
-    }
-    if (layoutMode === 'row') {
-      const pad = 8, kk = (H - pad * 2) / FH;
-      return { k: kk, ty: (H - FH * kk) / 2, tx: FW * kk <= W - pad * 2 ? (W - FW * kk) / 2 : pad };
-    }
-    const pad = 48, kk = Math.min((W - pad * 2) / FW, (H - pad * 2) / FH);
-    return { k: kk, tx: (W - FW * kk) / 2, ty: (H - FH * kk) / 2 };
-  }
-  const clampK = v => Math.max(fitParams().k * 0.6, Math.min(v, 60));
-  function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
-  function animateTo(t, ms) {
-    stopAnim();
-    const f = { k, tx, ty }, t0 = performance.now(), ease = x => 1 - Math.pow(1 - x, 3);
-    (function step(now) {
-      const p = ease(Math.min(1, (now - t0) / ms));
-      k = f.k + (t.k - f.k) * p; tx = f.tx + (t.tx - f.tx) * p; ty = f.ty + (t.ty - f.ty) * p;
-      render(); anim = p < 1 ? requestAnimationFrame(step) : null;
-    })(t0);
-  }
-  function fit(animate = true) {
-    const p = fitParams();
-    animate ? animateTo(p, 320) : (stopAnim(), ({ k, tx, ty } = p), render());
-  }
-  function zoomAt(f, cx, cy) {
-    stopAnim();
-    const nk = clampK(k * f);
-    tx = cx - (cx - tx) * (nk / k); ty = cy - (cy - ty) * (nk / k); k = nk; render();
-  }
-  svg.addEventListener('wheel', e => {
-    e.preventDefault();
-    const r = svg.getBoundingClientRect();
-    zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - r.left, e.clientY - r.top);
-  }, { passive: false });
-
-  // One pointer pans (or taps); two pointers pinch-zoom around their midpoint.
-  const pts = new Map();
-  let drag = null, pinch = null;
-  const local = (x, y) => { const r = svg.getBoundingClientRect(); return [x - r.left, y - r.top]; };
-  svg.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    stopAnim();
-    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    try { svg.setPointerCapture(e.pointerId); } catch (_) {}
-    if (pts.size === 1) {
-      // Remember the plot now: once the pointer is captured, later events
-      // are retargeted to the svg and the plot is no longer e.target.
-      drag = { x: e.clientX, y: e.clientY, tx, ty, moved: false, plot: e.target.closest('.plot[data-id]') };
-    } else if (pts.size === 2) {
-      drag = null;  // a second finger makes this a pinch, never a tap
-      const [a, b] = [...pts.values()];
-      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
-      pinch = { d0: Math.hypot(b.x - a.x, b.y - a.y) || 1, k0: k, tx0: tx, ty0: ty, mx0: mx, my0: my };
-    }
-  });
-  svg.addEventListener('pointermove', e => {
-    if (!pts.has(e.pointerId)) return;
-    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pinch && pts.size >= 2) {
-      const [a, b] = [...pts.values()];
-      const [mx, my] = local((a.x + b.x) / 2, (a.y + b.y) / 2);
-      const nk = clampK(pinch.k0 * Math.hypot(b.x - a.x, b.y - a.y) / pinch.d0);
-      // keep the point that started under the fingers under the fingers
-      tx = mx - (pinch.mx0 - pinch.tx0) * (nk / pinch.k0);
-      ty = my - (pinch.my0 - pinch.ty0) * (nk / pinch.k0);
-      k = nk; render();
-      return;
-    }
-    if (!drag) return;
-    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (Math.hypot(dx, dy) > 4) { drag.moved = true; svg.classList.add('is-dragging'); }
-    if (drag.moved) { tx = drag.tx + dx; ty = drag.ty + dy; render(); }
-  });
-  function endPointer(e) {
-    if (!pts.has(e.pointerId)) return;
-    pts.delete(e.pointerId);
-    if (pinch) { if (pts.size < 2) pinch = null; return; }  // lifting after a pinch is not a tap
-    if (!drag || pts.size) return;
-    const { moved, plot } = drag; drag = null; svg.classList.remove('is-dragging');
-    if (moved || e.type === 'pointercancel') return;
-    // Fall back to a hit test at the release point, which is immune to
-    // pointer-capture retargeting.
-    const g = plot || document.elementFromPoint(e.clientX, e.clientY)?.closest('.plot[data-id]');
-    if (g && !g.classList.contains('is-out')) open(g); else close();
-  }
-  svg.addEventListener('pointerup', endPointer);
-  svg.addEventListener('pointercancel', endPointer);
-
-  const mid = () => [svg.clientWidth / 2, svg.clientHeight / 2];
-  document.getElementById('z-in').onclick  = () => zoomAt(1.5, ...mid());
-  document.getElementById('z-out').onclick = () => zoomAt(1 / 1.5, ...mid());
-  document.getElementById('z-fit').onclick = () => { close(); fit(); };
-
-  // ---- key (collapsible on phones) ----------------------------------------
-  const legend = document.getElementById('legend');
-  const legendBtn = legend.querySelector('.legend-toggle');
-  legendBtn.addEventListener('click', () => {
-    const open = !legend.classList.contains('is-open');
-    legend.classList.toggle('is-open', open);
-    legendBtn.setAttribute('aria-expanded', String(open));
-  });
-
-  // ---- entry panel ----
-  const panel = document.getElementById('entry');
-  const body  = document.getElementById('e-body');
-  const plots = Array.from(svg.querySelectorAll('.plot[data-id]'));
-  let selected = null;
-
-  function open(g) {
-    plots.forEach(p => p.classList.toggle('is-selected', p === g));
-    selected = g;
-    body.replaceChildren(document.querySelector(`template[data-for="${g.dataset.id}"]`).content.cloneNode(true));
-    body.querySelector('.e-pos').textContent = `range ${g.dataset.row}, column ${g.dataset.col}`;
-    panel.classList.add('is-open'); panel.setAttribute('aria-hidden', 'false');
-    legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
-    body.parentElement.scrollTop = 0;
-    animateTo(frame(g), 380);
-  }
-  // Where to put the view so plot g sits centred in the space the panel
-  // leaves free: to its left on wide screens, above the sheet on phones.
-  function frame(g) {
-    const W = svg.clientWidth, H = svg.clientHeight;
-    const sheet = STACK.matches;
-    const fw = sheet ? W : W - Math.min(panel.offsetWidth, W);
-    const fh = sheet ? H - Math.min(panel.offsetHeight, H) : H;
-    // Wide: about a third of the free space, so neighbours stay in view.
-    // Phone: as large as the free strip above the sheet comfortably allows.
-    const nk = sheet ? Math.min(fw * 0.8 / PW, fh * 0.75 / PH, 40)
-                     : Math.max(k, Math.min(fw * 0.3 / PW, fh * 0.3 / PH, 30));
-    return { k: nk, tx: fw / 2 - g.dataset.cx * nk, ty: fh / 2 - g.dataset.cy * nk };
-  }
-  function close() {
-    if (!selected) return;
-    selected.classList.remove('is-selected'); selected = null;
-    panel.classList.remove('is-open'); panel.setAttribute('aria-hidden', 'true');
-  }
-  document.getElementById('e-close').onclick = close;
-  addEventListener('keydown', e => {
-    if (e.key === 'Escape') close();
-    if ((e.key === 'Enter' || e.key === ' ') && document.activeElement?.classList.contains('plot')) {
-      e.preventDefault(); open(document.activeElement);
-    }
-  });
-
-  // ---- search + faceted filters ----
-  // Within a group, chips are OR (any selected keyword); across groups and
-  // search, AND. Each chip shows how many plots you'd see if you added it.
-  const input   = document.getElementById('pl-search');
-  const chips   = Array.from(document.querySelectorAll('.facet-chip'));
-  const clearEl = document.getElementById('pl-clear');
-  const emptyEl = document.getElementById('pl-empty');
-  const nMatch  = document.getElementById('n-match');
-  const active  = { kw: new Set(), status: new Set(), cran: new Set() };
-  const facts = new Map(plots.map(p => [p, {
-    search: p.dataset.search,
-    kw: (p.dataset.keywords || '').split('|').filter(Boolean),
-    status: [p.dataset.status],
-    cran: p.dataset.cran === '1' ? ['1'] : []
-  }]));
-
-  function matches(p, term, skip) {
-    const f = facts.get(p);
-    if (term && !f.search.includes(term)) return false;
-    for (const g of Object.keys(active)) {
-      if (g === skip || active[g].size === 0) continue;
-      if (!f[g].some(v => active[g].has(v))) return false;
-    }
-    return true;
-  }
-
-  const fBtn    = document.getElementById('pl-filter-btn');
-  const fPanel  = document.getElementById('pl-filters');
-  const fBadge  = document.getElementById('pl-filter-n');
-  const fShow   = document.getElementById('pl-show');
-  const activeEl = document.getElementById('pl-active');
-
-  function apply() {
-    const term = input.value.trim().toLowerCase();
-    let n = 0;
-    plots.forEach(p => {
-      const ok = matches(p, term);
-      p.classList.toggle('is-out', !ok);
-      p.setAttribute('tabindex', ok ? '0' : '-1');
-      if (ok) n++;
-    });
-    nMatch.textContent = n;
-
-    chips.forEach(c => {
-      const g = c.dataset.group, k = c.dataset.key;
-      const count = plots.filter(p => matches(p, term, g) && facts.get(p)[g].includes(k)).length;
-      const on = active[g].has(k);
-      c.querySelector('.chip-n').textContent = count;
-      c.disabled = count === 0 && !on;
-      c.setAttribute('aria-label', `${c.querySelector('.chip-label').textContent}, ${count} plot${count === 1 ? '' : 's'}`);
-    });
-
-    const nOn = Object.values(active).reduce((a, s) => a + s.size, 0);
-    const filtering = !!term || nOn > 0;
-    clearEl.hidden = !filtering;
-    fBadge.hidden = nOn === 0;
-    fBadge.textContent = nOn;
-    fBtn.classList.toggle('is-active', nOn > 0);
-    fBtn.setAttribute('aria-label', nOn ? `Filters, ${nOn} active` : 'Filters');
-    fShow.textContent = n === 0 ? 'No matches' : `Show ${n} plot${n === 1 ? '' : 's'}`;
-    fShow.disabled = n === 0;
-    renderActive();
-    emptyEl.hidden = n !== 0;
-    if (selected && selected.classList.contains('is-out')) close();
-    syncUrl(term);
-  }
-
-  // Keep the filter state in the URL so a filtered view can be shared.
-  // (Not ?q=: Quarto's site search claims and strips that parameter.)
-  function syncUrl(term) {
-    const u = new URL(location.href);
-    ['search', 'k', 'status', 'cran'].forEach(x => u.searchParams.delete(x));
-    if (term) u.searchParams.set('search', term);
-    if (active.kw.size) u.searchParams.set('k', [...active.kw].join(','));
-    if (active.status.size) u.searchParams.set('status', [...active.status].join(','));
-    if (active.cran.size) u.searchParams.set('cran', '1');
-    history.replaceState(null, '', u);
-  }
-
-  // Removable pills for whatever is switched on, so the filters stay
-  // visible while the panel is closed.
-  function renderActive() {
-    const on = chips.filter(c => c.getAttribute('aria-pressed') === 'true');
-    activeEl.replaceChildren();
-    on.forEach(c => {
-      const label = c.querySelector('.chip-label').textContent;
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip active-pill';
-      b.setAttribute('aria-label', `Remove filter: ${label}`);
-      b.append(label);
-      const x = document.createElement('span'); x.className = 'x'; x.setAttribute('aria-hidden', 'true'); x.textContent = '×';
-      b.append(x);
-      b.addEventListener('click', () => { setChip(c, false); apply(); });
-      activeEl.append(b);
-    });
-    if (on.length > 1) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'active-clear'; b.textContent = 'Clear all';
-      b.addEventListener('click', clearAll);
-      activeEl.append(b);
-    }
-    activeEl.hidden = on.length === 0;
-  }
-
-  function setFilters(open, returnFocus = true) {
-    fPanel.hidden = !open;
-    fBtn.setAttribute('aria-expanded', String(open));
-    if (open) {
-      legend.classList.remove('is-open'); legendBtn.setAttribute('aria-expanded', 'false');
-      (fPanel.querySelector('.facet-chip:not(:disabled)') || fPanel.querySelector('.fp-close')).focus({ preventScroll: true });
-    } else if (returnFocus) fBtn.focus({ preventScroll: true });
-  }
-  fBtn.addEventListener('click', () => setFilters(fPanel.hidden));
-  document.getElementById('pl-filters-close').addEventListener('click', () => setFilters(false));
-  fShow.addEventListener('click', () => setFilters(false));
-  // Click or tap anywhere else closes it (without stealing focus back).
-  document.addEventListener('pointerdown', e => {
-    if (!fPanel.hidden && !fPanel.contains(e.target) && !fBtn.contains(e.target)) setFilters(false, false);
-  }, true);
-  // Escape closes the panel first, before anything else on the page reacts.
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !fPanel.hidden) { e.stopPropagation(); setFilters(false); }
-  }, true);
-
-  function setChip(c, on) {
-    active[c.dataset.group][on ? 'add' : 'delete'](c.dataset.key);
-    c.setAttribute('aria-pressed', String(on));
-  }
-  function clearAll() {
-    chips.forEach(c => setChip(c, false));
-    input.value = '';
-    apply();
-  }
-
-  input.addEventListener('input', apply);
-  input.addEventListener('keydown', e => { if (e.key === 'Escape' && input.value) { e.stopPropagation(); input.value = ''; apply(); } });
-  chips.forEach(c => c.addEventListener('click', () => {
-    setChip(c, c.getAttribute('aria-pressed') !== 'true'); apply();
-  }));
-  clearEl.addEventListener('click', clearAll);
-  document.getElementById('pl-empty-clear').addEventListener('click', clearAll);
-
-  // Restore state from the URL. ?k= matches the database page's deep links.
-  const params = new URLSearchParams(location.search);
-  input.value = params.get('search') || params.get('q') || '';
-  const want = { kw: params.get('k'), status: params.get('status'), cran: params.get('cran') };
-  chips.forEach(c => {
-    const list = (want[c.dataset.group] || '').toLowerCase().split(',').map(x => x.trim());
-    if (list.includes(c.dataset.key)) setChip(c, true);
-  });
-
-  apply();
-
-  function sizeToNav() {
-    const nav = document.querySelector('#quarto-header') || document.querySelector('.navbar');
-    plan.style.setProperty('--nav-h', (nav ? nav.getBoundingClientRect().bottom : 0) + 'px');
-  }
-  // Re-lay out only when crossing the phone breakpoint; otherwise just keep
-  // the view sensible for the new size.
-  function relayout() {
-    sizeToNav();
-    const mode = currentMode();
-    if (mode !== layoutMode) { layoutMode = mode; layoutPlan(mode); }
-    if (selected) {
-      const pos = body.querySelector('.e-pos');
-      if (pos) pos.textContent = `range ${selected.dataset.row}, column ${selected.dataset.col}`;
-      stopAnim(); ({ k, tx, ty } = frame(selected)); render();
-    }
-    else fit(false);
-  }
-  relayout();
-  let pending = null;
-  const ro = new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(relayout); });
-  ro.observe(stage);
-  const header = document.querySelector('#quarto-header');
-  if (header) ro.observe(header);
-  if (document.fonts) document.fonts.ready.then(() => { layoutMode = null; relayout(); });
-})();
-</script>
+div(class = "plan", id = "plan", header, stage, entries)
 ```
