@@ -919,6 +919,12 @@ div.callout-tip  { border-left-color: $sage; }
   margin-top: 1.75rem;
 }
 
+// auto-fill keeps empty tracks, so a short row (e.g. one legacy card)
+// stays card-sized instead of stretching across the page.
+.legacy-grid {
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+
 .team-card {
   display: flex;
   flex-direction: column;
