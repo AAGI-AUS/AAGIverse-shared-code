@@ -24,6 +24,11 @@ format:
     theme: [cosmo, assets/aagi.scss]
     toc: true
     code-fold: true
+    # GoatCounter visitor analytics, loaded on every page.
+    include-in-header:
+      text: |
+        <script data-goatcounter="https://aagiverse.goatcounter.com/count"
+                async src="//gc.zgo.at/count.js"></script>
     # page-layout:full was here to give the old wide DataTable room. The
     # card layout that replaced it wants a constrained, responsive column,
     # which is Quarto's default article layout.
