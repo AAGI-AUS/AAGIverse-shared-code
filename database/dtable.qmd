@@ -16,6 +16,8 @@ library(readr)
 library(dplyr)
 library(htmltools)
 
+source(here("scripts/00_helpers.R"))
+
 df <- read_csv(here("data/processed/submissions_cleaned.csv"), show_col_types = FALSE)
 
 # Metrics come from scripts/03_fetch_metrics.R, keyed on the software website.
@@ -25,7 +27,7 @@ if (file.exists(metrics_path)) {
   df <- left_join(df, read_csv(metrics_path, show_col_types = FALSE),
                   by = "Software website")
 }
-for (col in c("github_stars", "github_followers", "first_commit_date",
+for (col in c("forge", "stars", "owner_followers", "first_commit_date",
               "last_commit_date", "contributors", "cran_downloads_last_month",
               "cran_downloads_total")) {
   if (!col %in% names(df)) df[[col]] <- NA
@@ -33,24 +35,7 @@ for (col in c("github_stars", "github_followers", "first_commit_date",
 
 esc <- function(x) htmltools::htmlEscape(ifelse(is.na(x), "", x))
 
-# Entries have no name field of their own, so derive one from the repository
-# URL: github.com/owner/repo -> repo, owner.github.io/pkg -> pkg.
-derive_name <- function(url) {
-  if (is.na(url) || !nzchar(url)) return(NA_character_)
-  u <- sub("/+$", "", sub("^https?://", "", url))
-  parts <- strsplit(u, "/")[[1]]
-  host <- parts[1]
-  if (grepl("github\\.io$", host) && length(parts) >= 2) return(parts[2])
-  if (identical(host, "github.com") && length(parts) >= 3) return(parts[3])
-  if (length(parts) >= 2) return(parts[length(parts)])
-  sub("\\..*$", "", host)
-}
-
-split_tags <- function(x) {
-  if (is.na(x) || !nzchar(x)) return(character(0))
-  out <- trimws(unlist(strsplit(x, ",")))
-  out[nzchar(out)]
-}
+# Entry names come from derive_name() in scripts/00_helpers.R.
 
 badge <- function(label, class = "") {
   if (is.na(label) || !nzchar(label)) return("")
@@ -100,11 +85,11 @@ lifespan_html <- function(r) {
 
 stats_html <- function(r) {
   items <- paste0(
-    stat("GitHub stars", r$github_stars, primary = TRUE),
+    stat(paste(r$forge, "stars"), r$stars, primary = TRUE),
     stat("CRAN downloads / month", r$cran_downloads_last_month, "CRAN downloads in the last 30 days (cranlogs)", primary = TRUE),
     stat("CRAN downloads total", r$cran_downloads_total, "Total CRAN downloads since 2012-10-01 (cranlogs)"),
     stat("Contributors", r$contributors),
-    stat("Owner followers", r$github_followers, "Followers of the owning GitHub user/organisation")
+    stat("Owner followers", r$owner_followers, paste("Followers of the owning", r$forge, "user/organisation"))
   )
   if (!nzchar(items)) return("")
   sprintf('<dl class="entry-stats">%s</dl>', items)
@@ -161,7 +146,7 @@ build_card <- function(i) {
     esc(haystack),
     esc(tolower(paste(ck, collapse = "|"))),
     esc(tolower(name)),
-    num(r$github_stars) %|na|% -1,
+    num(r$stars) %|na|% -1,
     num(r$cran_downloads_total) %|na|% -1,
     if (is.na(r$last_commit_date)) 0 else as.numeric(as.Date(r$last_commit_date)),
     title_html,
@@ -213,7 +198,7 @@ cat(sprintf('
     <select id="db-sort">
       <option value="updated" selected>Recently updated</option>
       <option value="name">Name</option>
-      <option value="stars">GitHub stars</option>
+      <option value="stars">Stars</option>
       <option value="downloads">CRAN downloads</option>
     </select>
   </div>

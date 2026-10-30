@@ -49,7 +49,15 @@ install.packages("renv")
 renv::restore()
 ```
 
-5.  Click on any .qmd and hit ‘Render’ or use the `quarto render` and
+5.  Pull the latest submissions and package metrics. The data in
+    `data/processed/` is only as fresh as the last commit; the live site
+    refreshes it daily.
+
+``` bash
+Rscript scripts/refresh_data.R
+```
+
+6.  Click on any .qmd and hit ‘Render’ or use the `quarto render` and
     `quarto preview` command on the command line
 
 ## Project Team

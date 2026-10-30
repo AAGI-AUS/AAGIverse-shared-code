@@ -306,7 +306,8 @@ entry_template <- function(pkg) {
       entry_row("CRAN", coalesce(pkg$cran_package, "—")),
       entry_row("First commit", format_date(pkg$first_commit_date, "%b %Y")),
       entry_row("Last commit", format_date(pkg$last_commit_date, "%d %b %Y")),
-      entry_row("GitHub stars", format_count(pkg$github_stars)),
+      entry_row("Hosted on", coalesce(pkg$forge, "—")),
+      entry_row("Stars", format_count(pkg$stars)),
       entry_row("Contributors", format_count(pkg$contributors)),
       entry_row("CRAN downloads, last month", format_count(pkg$cran_downloads_last_month), "cranlogs, last 30 days"),
       entry_row("CRAN downloads, all time", format_count(pkg$cran_downloads_total), "cranlogs, since Oct 2012")

@@ -1,7 +1,11 @@
-Software website,github_stars,github_followers,first_commit_date,last_commit_date,contributors,github_repo,cran_package,cran_downloads_last_month,cran_downloads_total,metrics_updated
-https://anu-aagi.github.io/heritable/,7,9,2025-09-08,2026-08-28,5,anu-aagi/heritable,heritable,445,4052,2026-10-02
-https://github.com/AAGI-AUS/CBADASReml,1,25,2025-03-06,2026-05-28,4,AAGI-AUS/CBADASReml,NA,NA,NA,2026-10-02
-https://biometryhub.github.io/biometryassist/,12,12,2022-01-25,2026-09-03,7,biometryhub/biometryassist,biometryassist,641,26525,2026-10-02
-https://github.com/biometryhub/speed/,5,12,2025-04-15,2026-09-03,5,biometryhub/speed,NA,NA,NA,2026-10-02
-https://github.com/DrJ001/wgAim,1,9,2019-10-10,2026-08-05,2,DrJ001/wgAim,NA,NA,NA,2026-10-02
-https://github.com/DrJ001/biomAid,1,9,2026-04-20,2026-10-01,2,DrJ001/biomAid,NA,NA,NA,2026-10-02
+Software website,forge,repo,stars,owner_followers,first_commit_date,last_commit_date,contributors,cran_package,cran_downloads_last_month,cran_downloads_total,metrics_updated
+https://anu-aagi.github.io/heritable/,GitHub,anu-aagi/heritable,7,8,2025-09-08,2026-10-14,5,heritable,331,4352,2026-10-30
+https://github.com/AAGI-AUS/CBADASReml,GitHub,AAGI-AUS/CBADASReml,1,26,2025-03-06,2026-05-28,4,NA,NA,NA,2026-10-30
+https://biometryhub.github.io/biometryassist/,GitHub,biometryhub/biometryassist,12,13,2022-01-25,2026-10-07,7,biometryassist,786,27353,2026-10-30
+https://github.com/biometryhub/speed/,GitHub,biometryhub/speed,5,13,2025-04-15,2026-10-16,5,NA,NA,NA,2026-10-30
+https://github.com/DrJ001/wgAim,GitHub,DrJ001/wgAim,1,9,2019-10-10,2026-08-05,2,NA,NA,NA,2026-10-30
+https://github.com/DrJ001/biomAid,GitHub,DrJ001/biomAid,1,9,2026-04-20,2026-10-09,2,NA,NA,NA,2026-10-30
+https://github.com/AAGI-AUS/nert,GitHub,AAGI-AUS/nert,4,26,2024-08-22,2026-10-30,8,NA,NA,NA,2026-10-30
+https://github.com/anu-aagi/torch-openreml,GitHub,anu-aagi/torch-openreml,7,8,2026-03-28,2026-10-24,1,NA,NA,NA,2026-10-30
+https://github.com/anu-aagi/broom.asreml,GitHub,anu-aagi/broom.asreml,1,8,2025-04-13,2026-10-14,1,NA,NA,NA,2026-10-30
+https://codeberg.org/adamhsparks/fifo,Codeberg,adamhsparks/fifo,2,18,2024-11-16,2026-10-07,1,NA,NA,NA,2026-10-30
