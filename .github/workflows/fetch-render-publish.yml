@@ -49,10 +49,13 @@ jobs:
       - name: Clean and validate data
         run: Rscript scripts/02_clean_validate.R
 
-      # GitHub + CRAN metrics for each package (stars, commits, downloads...)
+      # GitHub/GitLab/Codeberg + CRAN metrics for each package (stars, commits,
+      # downloads...). GITLAB_TOKEN is an optional repo secret, only needed for
+      # GitLab user follower counts.
       - name: Fetch package metrics
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: Rscript scripts/03_fetch_metrics.R
 
       # Render site (DT reads data/processed/submissions_cleaned.csv)

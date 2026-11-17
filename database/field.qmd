@@ -43,7 +43,7 @@ if (file.exists(metrics_file)) {
 # The metrics file may be missing or out of date; make sure every column the
 # page uses exists.
 metric_cols <- c(
-  "github_stars", "github_followers", "first_commit_date", "last_commit_date",
+  "forge", "stars", "owner_followers", "first_commit_date", "last_commit_date",
   "contributors", "cran_package", "cran_downloads_last_month", "cran_downloads_total"
 )
 for (col in setdiff(metric_cols, names(df))) {
