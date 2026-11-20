@@ -11,7 +11,7 @@ Have a function you keep reusing? Others probably need it too.
 Submit your desk-drawer code in a short form. We review every submission and work with you on documentation and licensing before anything is added to the database, so it doesn't need to be polished.
 
 ::: {.cta-actions}
-[Submit your code](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){.btn .btn-primary .btn-lg .cta-button target="_blank" rel="noopener"}
+[Submit your code]({{< var submission-form >}}){.btn .btn-primary .btn-lg .cta-button target="_blank" rel="noopener"}
 [See what happens next](#what-to-expect-once-youve-reached-out-to-us){.cta-secondary}
 :::
 :::
@@ -20,7 +20,7 @@ Submit your desk-drawer code in a short form. We review every submission and wor
 
 This is a living resource that we hope will grow and evolve with the AAGI community. We encourage everyone to contribute their desk-drawer code to help build a rich database of shared resources.  We want  a frictionless submission process that minimises barriers to contribute to the community. If you have code that you think would be useful to others, all you need to do is reach out to [our team]() and we will work with you to get your code added to the database.
 
-If you are familar with GitHub and licenses, you can also submit your code directly via the [submission form](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){target="_blank"}. We will review the submission and work with you to ensure that it is properly documented and licensed before adding it to the database.
+If you are familar with GitHub and licenses, you can also submit your code directly via the [submission form]({{< var submission-form >}}){target="_blank"}. We will review the submission and work with you to ensure that it is properly documented and licensed before adding it to the database.
 
 <!-- TODO: Can we make a contact form here or link to Github issues for submissions? -->
 
@@ -73,5 +73,5 @@ If you are able to maintain the code and keep it up-to-date, you can provide det
 Yes! We encourage collaboration and sharing improvements to code. If you have made updates to someone else's code, you can share it back to the database by reaching out to us and providing details about the changes you made. We will work with you to get your updated code added to the database and ensure that proper credit is given to the original author(s) as well as yourself for the improvements.
 
 ::: {.cta-closing}
-Ready to share? [Submit your code](https://docs.google.com/forms/d/e/1FAIpQLSdTo_Fmx2lsDqWLtMBIenVIIfUKpK4aksAV3ub2Q7gngRoMqg/viewform?usp=sharing&ouid=105074112879814111870){.btn .btn-primary .cta-button target="_blank" rel="noopener"}
+Ready to share? [Submit your code]({{< var submission-form >}}){.btn .btn-primary .cta-button target="_blank" rel="noopener"}
 :::

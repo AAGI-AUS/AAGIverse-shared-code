@@ -1,0 +1,181 @@
+name: Add form submission
+
+# A Power Automate flow sends each new Microsoft Forms response here as a
+# repository_dispatch event (see data/README.md). The response is added to
+# data/submissions/entries.csv on the form-submissions branch, then:
+#
+#   - a pull request is already open: the response is added to it;
+#   - otherwise the workflow opens one, if the repository lets Actions
+#     create pull requests (Settings > Actions > General);
+#   - if it doesn't, the workflow opens an issue instead, with a link that
+#     opens the pull request in one click. The PR closes the issue on merge.
+#
+# Merging publishes the entries: the push to main triggers
+# fetch-render-publish.yml.
+#
+# Logs of a public repository are public, so nothing here prints the payload.
+
+on:
+  repository_dispatch:
+    types: [form-response]
+  # For testing with made-up data only: workflow inputs are shown on the
+  # run's page.
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: 'Test payload, e.g. {"response": {"Code maintainer": "Test", ...}}'
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# One at a time, so two submissions never write the branch at once. If a
+# burst queues several, GitHub keeps only the newest waiting run, so import
+# the full Forms export now and then to pick up anything that was dropped
+# (the import skips what's already there).
+concurrency:
+  group: form-submission
+  cancel-in-progress: false
+
+env:
+  BRANCH: form-submissions
+  ISSUE_TITLE: New code database submissions waiting for review
+  PR_TITLE: New code database submissions
+
+jobs:
+  add:
+    runs-on: ubuntu-24.04
+
+    env:
+      # Same as fetch-render-publish.yml: binary packages for this Ubuntu.
+      RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/noble/latest
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.2'  # must match the R version pinned in renv.lock
+          use-public-rspm: true
+
+      - name: Restore renv (cached)
+        uses: r-lib/actions/setup-renv@v2
+
+      - name: Save payload
+        env:
+          PAYLOAD: ${{ github.event_name == 'repository_dispatch' && toJSON(github.event.client_payload) || inputs.payload }}
+        run: printf '%s' "$PAYLOAD" > "$RUNNER_TEMP/payload.json"
+
+      # Keep adding to the branch while it holds entries that aren't on main
+      # yet (waiting in a PR, or in an issue nobody has opened the PR from).
+      # Once they're merged, start again from main. Comparing the file
+      # rather than commits also works after a squash merge.
+      - name: Check out the submissions branch
+        id: branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git rev-parse -q --verify "origin/$BRANCH" > /dev/null &&
+             ! git diff --quiet origin/main "origin/$BRANCH" -- data/submissions/entries.csv; then
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            # Pick up anything changed on main since, e.g. a fix to an entry.
+            git merge -q --no-edit origin/main
+          else
+            git checkout -B "$BRANCH" origin/main
+          fi
+
+          pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: Import the response
+        run: Rscript scripts/import_form_responses.R --payload "$RUNNER_TEMP/payload.json" --summary "$RUNNER_TEMP/summary.md"
+
+      - name: Validate entries
+        id: validate
+        run: |
+          if Rscript scripts/02_clean_validate.R > "$RUNNER_TEMP/validate.txt" 2>&1; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            cat "$RUNNER_TEMP/validate.txt"
+          fi
+
+      - name: Commit, push and open or update the PR
+        run: |
+          if git diff --quiet -- data/submissions/entries.csv; then
+            echo "Nothing new to add."
+            exit 0
+          fi
+
+          {
+            cat "$RUNNER_TEMP/summary.md"
+            if [ "${{ steps.validate.outputs.ok }}" != "true" ]; then
+              echo ""
+              echo ":x: **Validation failed.** Fix \`data/submissions/entries.csv\` on this branch before merging:"
+              echo '```'
+              cat "$RUNNER_TEMP/validate.txt"
+              echo '```'
+            fi
+          } > "$RUNNER_TEMP/body.md"
+
+          git add data/submissions/entries.csv
+          git commit -q -m "Add form submission"
+          git push -q --force-with-lease origin "$BRANCH"
+
+          review="Review each entry (edit \`data/submissions/entries.csv\` on the \`$BRANCH\` branch, or delete a row to leave it out), then merge to publish."
+
+          # 1. A PR is open: add this submission to it.
+          pr="${{ steps.branch.outputs.pr }}"
+          if [ -n "$pr" ]; then
+            gh pr comment "$pr" --body-file "$RUNNER_TEMP/body.md"
+            exit 0
+          fi
+
+          # An issue may already be waiting from an earlier submission.
+          issue=$(gh issue list --state open --limit 100 --json number,title \
+                    --jq '.[] | "\(.number)\t\(.title)"' |
+                  awk -F'\t' -v t="$ISSUE_TITLE" '$2 == t { print $1; exit }')
+
+          # 2. Open the PR, if the repository lets Actions do that.
+          {
+            echo "New submissions from the Microsoft Form. $review"
+            if [ -n "$issue" ]; then echo ""; echo "Closes #$issue"; fi
+            echo ""
+            cat "$RUNNER_TEMP/body.md"
+          } > "$RUNNER_TEMP/pr.md"
+          if gh pr create --base main --head "$BRANCH" --title "$PR_TITLE" --body-file "$RUNNER_TEMP/pr.md"; then
+            exit 0
+          fi
+          echo "::notice::Actions can't open pull requests in this repository, so the submission goes in an issue instead."
+
+          # 3. Otherwise, use an issue with a link that opens the PR.
+          if [ -n "$issue" ]; then
+            gh issue comment "$issue" --body-file "$RUNNER_TEMP/body.md"
+            exit 0
+          fi
+          url=$(gh issue create --title "$ISSUE_TITLE" --body-file "$RUNNER_TEMP/body.md")
+          issue="${url##*/}"
+
+          # The link prefills the PR's title and description, including
+          # "Closes #<issue>" so merging closes this issue.
+          enc() { jq -rn --arg s "$1" '$s | @uri'; }
+          pr_body="New submissions from the Microsoft Form, listed in #$issue. $review
+
+          Closes #$issue"
+          link="https://github.com/$GITHUB_REPOSITORY/compare/main...$BRANCH?quick_pull=1&title=$(enc "$PR_TITLE")&body=$(enc "$pr_body")"
+          {
+            echo "New submissions from the Microsoft Form are on the \`$BRANCH\` branch, waiting to be published."
+            echo ""
+            echo "**[Open the pull request]($link)**, review it, then merge. Merging publishes the entries and closes this issue. Submissions that arrive before then are added below and to the same branch."
+            echo ""
+            cat "$RUNNER_TEMP/body.md"
+          } > "$RUNNER_TEMP/issue.md"
+          gh issue edit "$issue" --body-file "$RUNNER_TEMP/issue.md"

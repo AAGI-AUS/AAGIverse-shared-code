@@ -42,11 +42,9 @@ jobs:
       - name: Restore renv (cached)
         uses: r-lib/actions/setup-renv@v2
 
-      # Pull + clean your sheet data
-      - name: Fetch data from Google Sheet (published CSV)
-        run: Rscript scripts/01_fetch_data.R
-
-      - name: Clean and validate data
+      # Approved entries are committed in data/submissions/entries.csv
+      # (added from Microsoft Forms exports, see data/README.md).
+      - name: Clean and validate entries
         run: Rscript scripts/02_clean_validate.R
 
       # GitHub/GitLab/Codeberg + CRAN metrics for each package (stars, commits,

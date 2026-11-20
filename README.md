@@ -49,9 +49,11 @@ install.packages("renv")
 renv::restore()
 ```
 
-5.  Pull the latest submissions and package metrics. The data in
-    `data/processed/` is only as fresh as the last commit; the live site
-    refreshes it daily.
+5.  Rebuild the entries and pull the latest package metrics. The
+    metrics in `data/processed/` are only as fresh as the last commit;
+    the live site refreshes them daily. Submissions come in through
+    Microsoft Forms and arrive as a pull request that adds them to
+    `data/submissions/entries.csv`, see [data/README.md](data/README.md).
 
 ``` bash
 Rscript scripts/refresh_data.R

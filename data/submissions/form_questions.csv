@@ -1,0 +1,13 @@
+column,question,required,multi
+Code maintainer,What is your name? (Please enter your full name only),yes,no
+Organisation,What Institution or Organisation do you belong to?,yes,no
+Email,What is the best email to reach you on?,yes,no
+Language,Which programming language is your code written in,yes,no
+Field,Which research field is your code supporting?,yes,no
+Code type,What type of regularly used code are you sharing?,yes,no
+Code keywords,Select as many code keywords that apply to your code.,yes,yes
+Topic keywords,Select as many topic keywords that apply to your code.,no,yes
+Description,Provide a brief description (<200 words) of what your code is doing,yes,no
+_ip_check,Have you checked your organisation's Intellectual Property Register and confirm that your code is considered developed output can be shared with the AAGI community?,yes,no
+License,What is the license associated with your code?,yes,no
+Software website,"Is there a public repository for this code? e.g. GitHub, GitLab, Codeberg etc. If so, please share the link (Optional)",no,no
