@@ -1,14 +1,16 @@
 #!/usr/bin/env Rscript
 
-# Pull the latest submissions and package metrics into data/, the same steps
-# the daily workflow runs before it renders. To preview the site with
-# today's data:
+# Rebuild data/processed/ from the committed entries and fetch today's
+# package metrics, the same steps the daily workflow runs before it renders.
+# To preview the site with today's data:
 #
 #   Rscript scripts/refresh_data.R && quarto preview
+#
+# New form responses are added separately, with
+# scripts/import_form_responses.R (see data/README.md).
 
 library(here)
 
-# 01_fetch_data.R writes to paths relative to the project root.
 setwd(here())
 
 # Unauthenticated GitHub requests are capped at 60/hour, which a few
@@ -25,7 +27,7 @@ if (!nzchar(Sys.getenv("GITHUB_TOKEN")) && !nzchar(Sys.getenv("GITHUB_PAT"))) {
             "Add GITHUB_PAT=<token> to ~/.Renviron (a token with no scopes is enough).")
 }
 
-for (script in c("01_fetch_data.R", "02_clean_validate.R", "03_fetch_metrics.R")) {
+for (script in c("02_clean_validate.R", "03_fetch_metrics.R")) {
     message("\n── ", script)
     source(here("scripts", script), local = new.env())
 }

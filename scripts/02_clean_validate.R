@@ -2,32 +2,66 @@ suppressPackageStartupMessages({
     library(here)
     library(readr)
     library(dplyr)
-    library(janitor)
     library(stringr)
-    library(lubridate)
 })
 
 source(here("scripts/00_helpers.R"))
 
-HEADER_KEY_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrMbNgIBmkS9Vgy-AWpHkYiCwqEW_IsE0jvUWMqTC2ha_j50eS68uc1AYKzegViEMZs32buIQGf8R4/pub?gid=267641157&single=true&output=csv"
-RAW_CSV <- here("data/raw/submissions_raw.csv")
+# Approved entries live in the repo. New ones are added from Microsoft Forms
+# exports with scripts/import_form_responses.R (see data/README.md).
+ENTRIES_CSV <- here("data/submissions/entries.csv")
+QUESTIONS_CSV <- here("data/submissions/form_questions.csv")
 OUT_CSV <- here("data/processed/submissions_cleaned.csv")
+STAMP_FILE <- here("data/processed/last_refresh.txt")
 
-header_key <- read_csv(HEADER_KEY_URL) |> clean_names()
+questions <- read_csv(QUESTIONS_CSV, col_types = cols(.default = "c"))
+# Columns starting with "_" are only used while importing and aren't stored.
+stored <- filter(questions, !startsWith(column, "_"))
+required <- stored$column[stored$required == "yes"]
 
-df <- read_csv(RAW_CSV, show_col_types = FALSE) |>
-    # clean_names() |>
-    mutate(across(where(is.character), ~ str_squish(.x))) |>
+df <- read_csv(ENTRIES_CSV, col_types = cols(.default = "c"), na = c("", "NA")) |>
+    mutate(across(everything(), ~ na_if(str_squish(.x), ""))) |>
     distinct()
 
-# Rename columns based on header key
-header_lookup <- setNames(header_key$submission_question, header_key$dt_display_header)
+# Collect every problem before stopping, so one run shows them all.
+problems <- character(0)
 
-df_clean <- df |>
-  rename(all_of(header_lookup)) |>
-  mutate(across(where(is.character), ~ na_if(.x, "")))
+missing_cols <- setdiff(stored$column, names(df))
+if (length(missing_cols)) {
+    problems <- c(problems, paste("Missing column(s):", paste(missing_cols, collapse = ", ")))
+}
+
+for (col in intersect(required, names(df))) {
+    rows <- which(is.na(df[[col]]))
+    if (length(rows)) {
+        # +1 for the header line, so the number matches the line in the file.
+        problems <- c(problems, sprintf("'%s' is empty on line(s) %s", col, paste(rows + 1, collapse = ", ")))
+    }
+}
+
+if ("Software website" %in% names(df)) {
+    url <- df$`Software website`
+    bad <- which(!is.na(url) & !grepl("^https?://[^ ]+$", url))
+    if (length(bad)) {
+        problems <- c(problems, sprintf("'Software website' isn't a http(s) URL on line(s) %s",
+                                        paste(bad + 1, collapse = ", ")))
+    }
+    # Same rule as the import script: ignore http(s)://, www. and a trailing /.
+    site <- tolower(sub("/+$", "", sub("^https?://(www\\.)?", "", url)))
+    dup <- which(!is.na(url) & duplicated(site))
+    if (length(dup)) {
+        problems <- c(problems, sprintf("'Software website' repeats an earlier entry on line(s) %s",
+                                        paste(dup + 1, collapse = ", ")))
+    }
+}
+
+if (length(problems)) {
+    stop("data/submissions/entries.csv has problems:\n  - ",
+         paste(problems, collapse = "\n  - "), call. = FALSE)
+}
 
 dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
-write_csv(df_clean, OUT_CSV)
+write_csv(df, OUT_CSV)
+writeLines(format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"), STAMP_FILE)
 
-cat("✓ Data cleaned and validated successfully\n")
+cat(sprintf("✓ %d entries cleaned and validated\n", nrow(df)))
